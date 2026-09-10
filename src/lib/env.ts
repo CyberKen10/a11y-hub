@@ -1,11 +1,12 @@
 import "server-only";
+import { normalizeSupabaseUrl, supabaseUrlError } from "@/lib/supabase/config";
 
 /**
  * Server-only environment access. All secrets stay on the server;
  * only NEXT_PUBLIC_* values ever reach the browser.
  */
 function required(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
@@ -14,7 +15,10 @@ function required(name: string): string {
 
 export const env = {
   get supabaseUrl() {
-    return required("NEXT_PUBLIC_SUPABASE_URL");
+    const url = normalizeSupabaseUrl(required("NEXT_PUBLIC_SUPABASE_URL"));
+    const problem = supabaseUrlError(url);
+    if (problem) throw new Error(problem);
+    return url;
   },
   get supabaseAnonKey() {
     return required("NEXT_PUBLIC_SUPABASE_ANON_KEY");

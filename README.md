@@ -34,11 +34,11 @@ Necesitas 3 cuentas, las tres con capa gratuita: [Supabase](https://supabase.com
    - En el menú lateral de Supabase, abre **SQL Editor** → **New query**.
    - Abre el archivo [`supabase/migrations/20260910000000_init.sql`](supabase/migrations/20260910000000_init.sql) de este proyecto, copia **todo** su contenido y pégalo en el editor.
    - Pulsa **Run** (abajo a la derecha). Debe decir "Success. No rows returned".
-5. Copia las 3 claves que necesitarás en el Paso 4:
-   - Menú lateral → **Project Settings** (engranaje) → **API Keys**:
-     - **Project URL** → será `NEXT_PUBLIC_SUPABASE_URL`
-     - **anon / public key** → será `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-     - **service_role key** (pulsa "Reveal") → será `SUPABASE_SERVICE_ROLE_KEY`. ⚠️ Esta clave es secreta: no la compartas ni la subas a git.
+5. Copia las 3 claves que necesitarás en el Paso 4. En **Project Settings → API** (a veces se llama **API Keys**):
+   - **Project URL** — solo esto, sin rutas extra: `https://xxxxx.supabase.co` → `NEXT_PUBLIC_SUPABASE_URL`
+   - **anon public** o **publishable** (`eyJ…` o `sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **service_role** o **secret** (`eyJ…` o `sb_secret_…`) → `SUPABASE_SERVICE_ROLE_KEY`. ⚠️ Secreta: no la subas a git.
+   - No pongas una clave en el campo de URL, ni la URL del dashboard (`supabase.com/dashboard/...`).
 6. Configura la autenticación:
    - Menú lateral → **Authentication** → **Sign In / Providers**: verifica que **Email** esté habilitado (lo está por defecto).
    - **Authentication** → **URL Configuration**:
