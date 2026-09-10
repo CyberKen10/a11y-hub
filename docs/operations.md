@@ -27,16 +27,11 @@ Tras importar, la indexación y el espejo quedan como trabajos en lotes: procesa
 - El dashboard avisa a los admins cuando hay sincronizaciones fallidas.
 - El espejo vive en pestañas `Hub · <tipo>` del spreadsheet. No edites esas pestañas a mano: se sobrescriben en la siguiente sincronización. La fuente oficial es la plataforma.
 
-## Costes de OpenAI (referencia septiembre 2026)
+## Costes de IA
 
-| Uso | Modelo por defecto | Precio aproximado |
-| --- | --- | --- |
-| Embeddings | `text-embedding-3-small` | $0.02 / 1M tokens (indexar 1.000 fichas ≈ centavos) |
-| Chat | `OPENAI_CHAT_MODEL` (env) | según modelo elegido |
-| Dictado (STT) | `gpt-4o-transcribe` | por minuto de audio |
-| Lectura (TTS) | `gpt-4o-mini-tts` | por millón de caracteres |
+El default es **Gemini (Google AI Studio), capa gratuita**: chat (`gemini-2.5-flash`), embeddings (`gemini-embedding-001`), dictado (audio al mismo modelo) y TTS (`gemini-2.5-flash-preview-tts`). No hay factura. Hay cupos diarios (aprox. 15 req/min y ~1.500/día en Flash).
 
-Los modelos se cambian por variables de entorno sin tocar código. Si cambias el de embeddings, reindexa todo y compara `npm run eval:rag` antes y después.
+OpenAI es opcional (`AI_PROVIDER=openai`). Si cambias de proveedor, reindexa todo: los embeddings no son intercambiables. Compara `npm run eval:rag` antes y después.
 
 ## Mantenimiento
 

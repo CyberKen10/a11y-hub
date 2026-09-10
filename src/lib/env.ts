@@ -22,13 +22,10 @@ export const env = {
   get supabaseServiceRoleKey() {
     return required("SUPABASE_SERVICE_ROLE_KEY");
   },
-  get openaiApiKey() {
-    return required("OPENAI_API_KEY");
-  },
-  chatModel: process.env.OPENAI_CHAT_MODEL ?? "gpt-5",
-  embeddingModel: process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small",
-  transcribeModel: process.env.OPENAI_TRANSCRIBE_MODEL ?? "gpt-4o-transcribe",
-  ttsModel: process.env.OPENAI_TTS_MODEL ?? "gpt-4o-mini-tts",
+  /** Optional: only required when AI_PROVIDER=openai. */
+  openaiApiKey: process.env.OPENAI_API_KEY,
+  /** Optional: only required when using Gemini (the default). */
+  googleGenerativeAiApiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   allowedEmailDomains: (process.env.ALLOWED_EMAIL_DOMAINS ?? "")
     .split(",")
     .map((d) => d.trim().toLowerCase())

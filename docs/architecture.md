@@ -33,7 +33,7 @@ flowchart LR
 
 - **DB como fuente de verdad, Sheets como espejo.** El espejo escribe solo en pestañas `Hub · <tipo>`; las pestañas originales del equipo solo se leen durante la importación. Posición del espejo en `mirror_tab`/`mirror_row`; origen de importación en `source_sheet_*` con checksum para idempotencia.
 - **Búsqueda híbrida en SQL.** `hybrid_search` combina ranking vectorial y full-text con Reciprocal Rank Fusion (k=60) y filtra por apartado y `status='published'`. Se ejecuta con el cliente del usuario, así que RLS aplica también al retrieval.
-- **Embeddings configurables.** `text-embedding-3-small` (1536 dims) por defecto; el modelo se cambia por env var. Si cambias la dimensión, ajusta `vector(1536)` en la migración y reindexa. Ejecuta `npm run eval:rag` antes/después.
+- **Embeddings configurables.** Por defecto Gemini `gemini-embedding-001` recortado a 1536 dims (capa gratuita). OpenAI `text-embedding-3-small` si `AI_PROVIDER=openai`. Si cambias de proveedor o de dimensión, reindexa. Ejecuta `npm run eval:rag` antes/después.
 - **Chunking por estructura.** División por encabezados Markdown (~500 tokens máx.), fusión de fragmentos diminutos y partición de secciones enormes por frases. El título del documento y la sección se anteponen al texto al embeber (mejor recall), pero se guarda el texto crudo.
 - **La IA propone, la persona dispone.** Toda alta/edición por prompt o voz pasa por `generateObject` con esquema Zod y una vista previa editable; nada se publica sin confirmación humana.
 - **Voz por turnos (STT + TTS).** Dictado con `gpt-4o-transcribe` y lectura con `gpt-4o-mini-tts` — más barato y simple que la Realtime API, decisión tomada al planificar.

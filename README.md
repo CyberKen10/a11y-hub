@@ -14,13 +14,13 @@ Plataforma interna de conocimiento
 | Frontend | Next.js 15 (App Router), React 19, Tailwind CSS 4, shadcn/ui (Radix) |
 | Backend | Server Actions + Route Handlers de Next.js |
 | Base de datos | Supabase (PostgreSQL + pgvector + Auth + Storage + RLS) |
-| IA | Vercel AI SDK + OpenAI (chat, embeddings, STT `gpt-4o-transcribe`, TTS `gpt-4o-mini-tts`) |
+| IA | Vercel AI SDK + **Gemini gratis** (chat, embeddings, dictado y lectura). OpenAI es opcional. |
 | Búsqueda | Híbrida: vectorial (HNSW, coseno) + full-text de Postgres, fusionadas con RRF |
 | Integración | Google Sheets API (cuenta de servicio) |
 
 ## Puesta en marcha (paso a paso, desde cero)
 
-Necesitas 3 cuentas: [Supabase](https://supabase.com) (gratis), [OpenAI Platform](https://platform.openai.com) (pago por uso) y [Google Cloud](https://console.cloud.google.com) (gratis). Tiempo estimado: 30–40 minutos.
+Necesitas 3 cuentas, las tres con capa gratuita: [Supabase](https://supabase.com), [Google AI Studio](https://aistudio.google.com/app/apikey) (Gemini, sin tarjeta) y [Google Cloud](https://console.cloud.google.com) (solo para el Sheet). Tiempo estimado: 30–40 minutos.
 
 ### Paso 1 — Crear el proyecto en Supabase (base de datos)
 
@@ -45,13 +45,18 @@ Necesitas 3 cuentas: [Supabase](https://supabase.com) (gratis), [OpenAI Platform
      - **Site URL**: `http://localhost:3000` (cámbiala por tu dominio cuando despliegues).
      - **Redirect URLs**: añade `http://localhost:3000/auth/confirm`.
 
-### Paso 2 — Crear la API key de OpenAI
+### Paso 2 — Crear la API key de Gemini (gratis)
 
-1. Entra en [platform.openai.com](https://platform.openai.com) e inicia sesión.
-2. Ve a **Settings → Billing** y añade un método de pago o carga saldo (con $5–10 sobra para empezar).
-3. Ve a **API keys** → **Create new secret key**:
-   - Nombre: `a11y-hub`.
-   - Copia la clave (empieza por `sk-`) **en ese momento**: no se vuelve a mostrar. Será `OPENAI_API_KEY`.
+Esta es la IA del hub: chat, embeddings, dictado y lectura. **No pide tarjeta.**
+
+1. Entra en [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) con tu cuenta de Google.
+2. Acepta los términos si te los pide.
+3. Pulsa **Create API key** → elige un proyecto de Google Cloud (puedes usar el mismo que el Sheet o crear uno nuevo llamado `a11y-hub`).
+4. Copia la clave (empieza por `AIza…`). Será `GOOGLE_GENERATIVE_AI_API_KEY`.
+
+Límites de la capa gratuita (más que suficiente para un equipo interno): del orden de 15 peticiones/minuto y ~1.500 al día en Flash. Fuera de la UE/UK, Google puede usar prompts de la capa gratuita para mejorar sus productos.
+
+Si más adelante quieres OpenAI de pago, pon `AI_PROVIDER=openai` y `OPENAI_API_KEY=sk-…`. No mezcles embeddings: al cambiar de proveedor hay que reindexar.
 
 ### Paso 3 — Conectar Google Sheets (cuenta de servicio)
 
@@ -87,7 +92,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co        # Paso 1.5
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...                      # Paso 1.5
 SUPABASE_SERVICE_ROLE_KEY=eyJ...                          # Paso 1.5 (secreta)
 
-OPENAI_API_KEY=sk-...                                     # Paso 2
+AI_PROVIDER=google                                        # gratis por defecto
+GOOGLE_GENERATIVE_AI_API_KEY=AIza...                      # Paso 2
+# OPENAI_API_KEY=sk-...                                   # solo si cambias a AI_PROVIDER=openai
 
 ALLOWED_EMAIL_DOMAINS=tuempresa.com                       # dominio de correo permitido (vacío = cualquiera)
 
@@ -98,7 +105,7 @@ GOOGLE_SHEET_ID=1AbC...                                   # Paso 3.7
 
 Notas:
 - `GOOGLE_PRIVATE_KEY`: copia el valor de `private_key` del JSON **tal cual**, entre comillas dobles; los `\n` literales son correctos, la app los convierte.
-- Los modelos (`OPENAI_CHAT_MODEL`, etc.) son opcionales; hay valores por defecto sensatos.
+- Los modelos Gemini (`GEMINI_CHAT_MODEL`, etc.) son opcionales; el default es `gemini-2.5-flash`.
 - `.env.local` está en `.gitignore`: nunca se sube al repositorio.
 
 ### Paso 5 — Arrancar y crear tu cuenta de administrador
@@ -148,7 +155,7 @@ Las demás columnas (`ID`, `Status`, `CP`, `Bug Type`, `Platform`, `Aproach to b
 | El espejo falla con error de permisos | No compartiste el Sheet con el `client_email` como Editor. |
 | El chat responde "No encuentro esa información" a todo | El contenido no está publicado o faltan trabajos de indexación: procesa pendientes en Sincronización. |
 | No llega el correo de confirmación | Revisa spam; en Supabase **Authentication → Logs** puedes ver el envío. |
-| Error 401 de OpenAI | La API key es incorrecta o no tiene saldo/billing activo. |
+| Error 401 / "API key" en el chat | Falta `GOOGLE_GENERATIVE_AI_API_KEY` o la clave es inválida. |
 
 ## Flujo de datos
 
