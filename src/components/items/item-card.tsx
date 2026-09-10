@@ -16,11 +16,16 @@ export function ItemCard({ item }: { item: KnowledgeItemWithType }) {
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-medium leading-snug">{item.title}</h3>
-        {item.status !== "published" && (
-          <Badge variant="outline" className="shrink-0">
-            {STATUS_LABEL[item.status]}
-          </Badge>
-        )}
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {typeof item.metadata?.wiki_id === "string" && (
+            <Badge variant="outline" className="font-mono text-[0.7rem]">
+              {item.metadata.wiki_id}
+            </Badge>
+          )}
+          {item.status !== "published" && (
+            <Badge variant="outline">{STATUS_LABEL[item.status]}</Badge>
+          )}
+        </div>
       </div>
       {item.summary && (
         <p className="line-clamp-3 text-sm text-muted-foreground">

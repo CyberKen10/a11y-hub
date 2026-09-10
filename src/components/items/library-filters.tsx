@@ -25,6 +25,7 @@ export function LibraryFilters() {
       const params = new URLSearchParams(searchParams.toString());
       if (q.trim()) params.set("q", q.trim());
       else params.delete("q");
+      params.delete("page");
       router.replace(`${pathname}?${params.toString()}`);
     }, 350);
     return () => clearTimeout(handle);
@@ -35,6 +36,7 @@ export function LibraryFilters() {
     const params = new URLSearchParams(searchParams.toString());
     if (value === "activos") params.delete("estado");
     else params.set("estado", value);
+    params.delete("page");
     router.replace(`${pathname}?${params.toString()}`);
   }
 

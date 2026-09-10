@@ -22,8 +22,8 @@ const SECTIONS = [
   {
     href: "/admin/import",
     icon: Sheet,
-    title: "Importar desde Sheets",
-    description: "Trae el contenido del Google Sheet al hub (idempotente).",
+    title: "Importar conocimiento",
+    description: "Carga el Excel Wiki Approaches o una pestaña de Google Sheets.",
   },
   {
     href: "/admin/sync",

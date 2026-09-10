@@ -3,10 +3,12 @@ import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { isSheetsConfigured } from "@/lib/env";
 import { ImportWizard } from "@/components/admin/import-wizard";
+import { WikiApproachesImport } from "@/components/admin/wiki-approaches-import";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { KnowledgeType } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Importar desde Sheets" };
+export const metadata: Metadata = { title: "Importar conocimiento" };
+export const maxDuration = 300;
 
 export default async function ImportPage() {
   await requireProfile("admin");
@@ -20,14 +22,16 @@ export default async function ImportPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
-          Importar desde Google Sheets
+          Importar conocimiento
         </h1>
         <p className="text-muted-foreground">
-          Trae el contenido existente al hub. Las pestañas originales solo se
-          leen; el hub mantiene sus propias pestañas espejo &quot;Hub ·
-          &lt;tipo&gt;&quot;.
+          La base de Approaches es el Excel Wiki. Google Sheets solo se usa
+          como espejo: las pestañas originales se leen; el hub escribe en
+          &quot;Hub · &lt;tipo&gt;&quot;.
         </p>
       </div>
+
+      <WikiApproachesImport />
 
       {!isSheetsConfigured() && (
         <Alert>

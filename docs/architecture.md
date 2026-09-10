@@ -31,7 +31,7 @@ flowchart LR
 
 ## Decisiones clave
 
-- **DB como fuente de verdad, Sheets como espejo.** El espejo escribe solo en pestañas `Hub · <tipo>`; las pestañas originales del equipo solo se leen durante la importación. Posición del espejo en `mirror_tab`/`mirror_row`; origen de importación en `source_sheet_*` con checksum para idempotencia.
+- **DB como fuente de verdad, Sheets como espejo.** Approaches se siembra desde `docs/Wiki - Approaches .xlsx` (`npm run seed:approaches`). El espejo escribe solo en pestañas `Hub · <tipo>`; las pestañas originales del equipo solo se leen durante importaciones extra. Posición del espejo en `mirror_tab`/`mirror_row`; origen en `source_sheet_*` con checksum para idempotencia.
 - **Búsqueda híbrida en SQL.** `hybrid_search` combina ranking vectorial y full-text con Reciprocal Rank Fusion (k=60) y filtra por apartado y `status='published'`. Se ejecuta con el cliente del usuario, así que RLS aplica también al retrieval.
 - **Embeddings configurables.** Por defecto Gemini `gemini-embedding-001` recortado a 1536 dims (capa gratuita). OpenAI `text-embedding-3-small` si `AI_PROVIDER=openai`. Si cambias de proveedor o de dimensión, reindexa. Ejecuta `npm run eval:rag` antes/después.
 - **Chunking por estructura.** División por encabezados Markdown (~500 tokens máx.), fusión de fragmentos diminutos y partición de secciones enormes por frases. El título del documento y la sección se anteponen al texto al embeber (mejor recall), pero se guarda el texto crudo.

@@ -12,7 +12,13 @@ El primer usuario registrado se convierte en admin automáticamente. Los siguien
 
 Para restringir el alta a tu dominio corporativo define `ALLOWED_EMAIL_DOMAINS=tuempresa.com`.
 
-## Importación desde Google Sheets
+## Importación de Approaches (Excel Wiki)
+
+1. Coloca `docs/Wiki - Approaches .xlsx` en el repo (ya está).
+2. Con las claves de Supabase en `.env.local`, ejecuta `npm run seed:approaches`, o en la app **Administración → Importar conocimiento → Cargar Wiki Approaches**.
+3. Es idempotente por ID de wiki / fila. Tras cargar, procesa los trabajos `reindex` en **Administración → Sincronización** para que el chat encuentre el contenido.
+
+## Importación desde Google Sheets (otras pestañas)
 
 1. **Administración → Importar desde Sheets** → conectar → elegir pestaña.
 2. Mapear columnas: título (obligatorio), resumen, contenido y tags (opcionales). El resto de columnas se conservan como campos del elemento (mismo dato que el Sheet).

@@ -16,7 +16,7 @@ export default async function LibraryPage({
 
   let query = supabase
     .from("knowledge_items")
-    .select("id, title, summary, status, updated_at, knowledge_types(slug, name, icon)")
+    .select("id, title, summary, status, updated_at, metadata, knowledge_types(slug, name, icon)")
     .order("updated_at", { ascending: false })
     .limit(60);
 

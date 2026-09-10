@@ -121,9 +121,25 @@ npm run dev
 3. Revisa tu bandeja de entrada y pulsa el enlace de confirmación de Supabase.
 4. Inicia sesión. **Como eres el primer usuario, ya eres administrador.** Los siguientes entran como lectores y tú les subes el rol en **Administración → Usuarios**.
 
-### Paso 6 — Importar tu Google Sheet
+### Paso 6 — Cargar la Wiki Approaches (Excel)
 
-1. En la app: **Administración → Importar desde Sheets** → **Conectar y listar pestañas**.
+El archivo [`docs/Wiki - Approaches .xlsx`](docs/Wiki%20-%20Approaches%20.xlsx) es la base del apartado **Approaches**. PostgreSQL queda como fuente de verdad; el Google Sheet solo se usa como espejo (`Hub · Approaches`).
+
+Con `.env.local` ya configurado:
+
+```bash
+npm run seed:approaches
+```
+
+Es idempotente (identifica cada fila por pestaña + número de fila). El Excel tiene muchas filas vacías: entran los approaches con contenido (**262** al día de hoy: ~224 Approaches, 35 UTest, 3 Grouping; PDFs todavía está vacío). Repítelo si actualizas el Excel. Luego ve a **Administración → Sincronización** y pulsa **Procesar pendientes** para generar los embeddings del chat (el cupo gratis de Gemini es bajo: hazlo por lotes).
+
+También puedes cargarlo en la app: **Administración → Importar conocimiento → Cargar Wiki Approaches**.
+
+Pestañas que entran: Approaches, PDFs Approaches (solo filas con contenido), UTest – Not a Bug, Grouping. No se importan LEEME, Sources ni Change log.
+
+### Paso 6b — Importar otras pestañas desde Google Sheets (opcional)
+
+1. En la app: **Administración → Importar conocimiento** → **Conectar y listar pestañas**.
 2. Elige una pestaña → verás una vista previa de las primeras filas.
 3. Indica la **fila de encabezados**: si la pestaña tiene un banner o título encima de la tabla, selecciona la fila donde están los nombres reales de las columnas (todo lo anterior se ignora).
 4. Mapea las columnas: cuál es el **título** (obligatoria) y, si existen, resumen, contenido y tags. Las columnas sin mapear no se pierden: quedan como campos del elemento y también se indexan para el chat.
@@ -131,17 +147,7 @@ npm run dev
 6. Pulsa **Importar**. Repite con cada pestaña del Sheet, eligiendo su apartado.
 7. Ve a **Administración → Sincronización** y pulsa **Procesar pendientes** hasta que no queden trabajos: eso genera los embeddings (chat) y escribe el espejo en el Sheet.
 
-**Ejemplo concreto: la pestaña "Wiki - Approaches"** (spreadsheet `1Fo30tY…`, ya configurado en `.env.local`):
-
-| Ajuste | Valor |
-| --- | --- |
-| Fila de encabezados | **2** (la fila 1 es el banner "Nuevo approach agregado!") |
-| Título | `Bug Description / Topic` |
-| Contenido | `Approach to be followed` |
-| Resumen / Tags | — No usar — |
-| Apartado de destino | Approaches |
-
-Las demás columnas (`ID`, `Status`, `CP`, `Bug Type`, `Platform`, `Aproach to be followed (Spanish)`, `Team`…) se guardan como campos del elemento, se muestran en su ficha y el chat también las usa. Las filas separadoras tipo "From Crownspeak" se omiten solas porque no tienen título.
+No vuelvas a importar la wiki de Approaches desde Sheets: el Excel ya es esa base. El espejo se escribe solo en pestañas `Hub · <tipo>`.
 
 ### Paso 7 — Probar todo
 

@@ -26,6 +26,19 @@ const STATUS_LABEL: Record<string, string> = {
   archived: "Archivado",
 };
 
+const META_LABEL: Record<string, string> = {
+  wiki_id: "ID Wiki",
+  Origen: "Pestaña wiki",
+  Status: "Status",
+  CP: "CP",
+  "Bug Type": "Bug Type",
+  Platform: "Platform",
+  Team: "Team",
+  UTest: "UTest",
+  Crownspeak: "Crownspeak",
+  Barcelo: "Barcelo",
+};
+
 export default async function ItemPage({
   params,
 }: {
@@ -164,7 +177,7 @@ export default async function ItemPage({
             .map((f) => ({ key: f.key, label: f.label, value: metadata[f.key] })),
           ...Object.entries(metadata)
             .filter(([k, v]) => !covered.has(k) && v != null && v !== "")
-            .map(([k, v]) => ({ key: k, label: k, value: v })),
+            .map(([k, v]) => ({ key: k, label: META_LABEL[k] ?? k, value: v })),
         ];
         if (entries.length === 0) return null;
         return (
