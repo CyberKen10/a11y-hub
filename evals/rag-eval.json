@@ -1,0 +1,26 @@
+{
+  "description": "Conjunto de evaluación de recuperación. Cada caso define una pregunta y un fragmento que debe aparecer en el título de alguna de las fuentes top-k. Ajusta los casos a tu contenido real tras la importación.",
+  "top_k": 8,
+  "cases": [
+    {
+      "question": "¿Qué approach usamos para auditorías rápidas de accesibilidad?",
+      "expected_title_contains": "auditoría"
+    },
+    {
+      "question": "¿Cuáles son los pasos de nuestra metodología de evaluación con usuarios?",
+      "expected_title_contains": "metodología"
+    },
+    {
+      "question": "¿Qué criterios de WCAG aplican a los formularios?",
+      "expected_title_contains": "formulario"
+    },
+    {
+      "question": "¿Qué herramientas usamos para testing automatizado?",
+      "expected_title_contains": "herramienta"
+    },
+    {
+      "question": "¿Qué dice la EN 301 549?",
+      "expected_title_contains": "301 549"
+    }
+  ]
+}
