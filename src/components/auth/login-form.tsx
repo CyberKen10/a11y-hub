@@ -81,7 +81,7 @@ export function LoginForm() {
           <CardHeader>
             <CardTitle>Crear cuenta</CardTitle>
             <CardDescription>
-              Solo correos del dominio corporativo autorizado.
+              El correo de confirmación del plan gratuito suele no llegar: confirma el usuario en el panel de Supabase o desactiva Confirm email.
             </CardDescription>
           </CardHeader>
           <CardContent>

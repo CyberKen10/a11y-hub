@@ -44,6 +44,7 @@ Necesitas 3 cuentas, las tres con capa gratuita: [Supabase](https://supabase.com
    - **Authentication** → **URL Configuration**:
      - **Site URL**: `http://localhost:3000` (cámbiala por tu dominio cuando despliegues).
      - **Redirect URLs**: añade `http://localhost:3000/auth/confirm`.
+   - **Authentication → Providers → Email**: desactiva **Confirm email**. El correo de confirmación del plan gratuito casi nunca llega; en un hub interno no hace falta. Si ya creaste un usuario, **Authentication → Users** → ábrelo → **Confirm user**, y luego inicia sesión.
 
 ### Paso 2 — Crear la API key de Gemini (gratis)
 
