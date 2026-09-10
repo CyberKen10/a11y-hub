@@ -5,9 +5,8 @@ import {
   streamText,
   type UIMessage,
 } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { chatModel } from "@/lib/ai";
 import { createClient } from "@/lib/supabase/server";
 import { retrieve } from "@/lib/rag/retrieval";
 import type { RetrievedSource } from "@/lib/types";
@@ -87,7 +86,7 @@ export async function POST(request: Request) {
       });
 
       const result = streamText({
-        model: openai(env.chatModel),
+        model: chatModel(),
         system,
         messages: await convertToModelMessages(messages),
       });

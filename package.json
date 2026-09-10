@@ -13,6 +13,7 @@
     "eval:rag": "node scripts/eval-rag.mjs"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.67",
     "@ai-sdk/openai": "^4.0.65",
     "@ai-sdk/react": "^4.0.100",
     "@supabase/ssr": "^0.12.7",

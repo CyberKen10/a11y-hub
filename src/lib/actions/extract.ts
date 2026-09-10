@@ -1,10 +1,9 @@
 "use server";
 
 import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { env } from "@/lib/env";
+import { chatModel } from "@/lib/ai";
 import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
@@ -56,7 +55,7 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
 
   try {
     const { object } = await generateObject({
-      model: openai(env.chatModel),
+      model: chatModel(),
       schema: extractionSchema,
       system: `Eres un asistente que estructura conocimiento para el hub interno de una empresa de accesibilidad digital.
 Apartados disponibles (elige el slug más adecuado):

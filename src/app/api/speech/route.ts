@@ -1,7 +1,6 @@
 import { generateSpeech } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { speechModel, ttsVoice } from "@/lib/ai";
 import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 60;
@@ -33,15 +32,15 @@ export async function POST(request: Request) {
 
   try {
     const result = await generateSpeech({
-      model: openai.speech(env.ttsModel),
+      model: speechModel(),
       text: speakable,
-      voice: "nova",
+      voice: ttsVoice(),
       outputFormat: "mp3",
     });
 
     return new Response(Buffer.from(result.audio.uint8Array), {
       headers: {
-        "Content-Type": "audio/mpeg",
+        "Content-Type": result.audio.mediaType || "audio/mpeg",
         "Cache-Control": "no-store",
       },
     });
