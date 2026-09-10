@@ -22,6 +22,8 @@ export interface ImportConfig {
   typeSlug: string;
   mapping: ImportMapping;
   publish: boolean;
+  /** 1-based row that contains the column headers (default 1). */
+  headerRow: number;
 }
 
 export interface ImportSummary {
@@ -56,19 +58,18 @@ export async function fetchTabs(): Promise<
 export async function previewTab(tab: string): Promise<
   | {
       ok: true;
-      headers: string[];
-      sampleRows: string[][];
+      /** First raw rows so the admin can pick the header row. */
+      sampleRows: { rowNumber: number; values: string[] }[];
       totalRows: number;
     }
   | { ok: false; error: string }
 > {
   await requireProfile("admin");
   try {
-    const { headers, rows } = await readTab(tab);
+    const { rows } = await readTab(tab);
     return {
       ok: true,
-      headers,
-      sampleRows: rows.slice(0, 5).map((r) => r.values),
+      sampleRows: rows.slice(0, 8),
       totalRows: rows.length,
     };
   } catch (error) {
@@ -101,16 +102,24 @@ export async function runImport(
     .single();
   if (!type) return { ok: false, error: "Apartado de destino desconocido." };
 
-  let headers: string[];
-  let rows: { rowNumber: number; values: string[] }[];
+  let allRows: { rowNumber: number; values: string[] }[];
   try {
-    ({ headers, rows } = await readTab(config.tab));
+    ({ rows: allRows } = await readTab(config.tab));
   } catch (error) {
     return {
       ok: false,
       error: error instanceof Error ? error.message : String(error),
     };
   }
+
+  const headerRowNumber = Math.max(1, config.headerRow || 1);
+  const headerRowData = allRows.find((r) => r.rowNumber === headerRowNumber);
+  if (!headerRowData) {
+    return { ok: false, error: "La fila de encabezados indicada no existe." };
+  }
+  const headers = headerRowData.values.map((h) => h.trim());
+  // Data starts after the header row; banner rows above it are ignored.
+  const rows = allRows.filter((r) => r.rowNumber > headerRowNumber);
 
   const colIndex = (name?: string) =>
     name ? headers.findIndex((h) => h === name) : -1;

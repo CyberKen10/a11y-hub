@@ -34,4 +34,22 @@ describe("buildIndexableText", () => {
     );
     expect(text).toBe("Solo cuerpo.");
   });
+
+  it("indexes extra metadata keys not defined in the type (imported columns)", () => {
+    const text = buildIndexableText(
+      {
+        summary: null,
+        content: "Approach principal.",
+        metadata: {
+          CP: "4.1.2",
+          Platform: "Android",
+          "Aproach to be followed (Spanish)": "Solo un campo…",
+        },
+      },
+      fields
+    );
+    expect(text).toContain("## CP\n4.1.2");
+    expect(text).toContain("## Platform\nAndroid");
+    expect(text).toContain("## Aproach to be followed (Spanish)\nSolo un campo…");
+  });
 });

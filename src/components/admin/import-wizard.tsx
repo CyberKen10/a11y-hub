@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import {
   fetchTabs,
@@ -30,6 +30,11 @@ import type { KnowledgeType } from "@/lib/types";
 
 const NONE = "__none__";
 
+interface RawRow {
+  rowNumber: number;
+  values: string[];
+}
+
 export function ImportWizard({
   types,
 }: {
@@ -39,9 +44,9 @@ export function ImportWizard({
 
   const [tabs, setTabs] = useState<string[] | null>(null);
   const [tab, setTab] = useState("");
-  const [headers, setHeaders] = useState<string[]>([]);
-  const [sampleRows, setSampleRows] = useState<string[][]>([]);
+  const [sampleRows, setSampleRows] = useState<RawRow[]>([]);
   const [totalRows, setTotalRows] = useState(0);
+  const [headerRow, setHeaderRow] = useState(1);
 
   const [titleCol, setTitleCol] = useState("");
   const [summaryCol, setSummaryCol] = useState(NONE);
@@ -51,6 +56,12 @@ export function ImportWizard({
   const [publish, setPublish] = useState(true);
 
   const [summary, setSummary] = useState<ImportSummary | null>(null);
+
+  /** Headers derived from the selected header row. */
+  const headers = useMemo(() => {
+    const row = sampleRows.find((r) => r.rowNumber === headerRow);
+    return (row?.values ?? []).map((h) => h.trim()).filter(Boolean);
+  }, [sampleRows, headerRow]);
 
   function loadTabs() {
     startTransition(async () => {
@@ -70,10 +81,14 @@ export function ImportWizard({
     startTransition(async () => {
       const result = await previewTab(selected);
       if (result.ok) {
-        setHeaders(result.headers);
         setSampleRows(result.sampleRows);
         setTotalRows(result.totalRows);
-        setTitleCol(result.headers[0] ?? "");
+        // Heuristic: pick the first row where most cells are non-empty.
+        const best = result.sampleRows.find(
+          (r) => r.values.filter(Boolean).length >= 3
+        );
+        setHeaderRow(best?.rowNumber ?? 1);
+        setTitleCol("");
         setSummaryCol(NONE);
         setContentCol(NONE);
         setTagsCol(NONE);
@@ -93,6 +108,7 @@ export function ImportWizard({
         tab,
         typeSlug,
         publish,
+        headerRow,
         mapping: {
           title: titleCol,
           summary: summaryCol === NONE ? undefined : summaryCol,
@@ -166,32 +182,68 @@ export function ImportWizard({
         )}
       </section>
 
-      {/* Paso 2: previsualizar y mapear */}
-      {headers.length > 0 && (
+      {/* Paso 2: fila de encabezados + previsualización */}
+      {sampleRows.length > 0 && (
         <section aria-labelledby="paso2" className="space-y-4">
           <h2 id="paso2" className="text-lg font-semibold">
-            2. Revisar y mapear columnas
+            2. Indicar la fila de encabezados y revisar
           </h2>
           <p className="text-sm text-muted-foreground">
-            {totalRows} filas detectadas. Las columnas sin mapear se conservan
-            como campos adicionales del elemento.
+            {totalRows} filas detectadas. Si tu pestaña tiene un banner o
+            título encima de la tabla, elige la fila donde están los nombres de
+            las columnas; todo lo anterior se ignora.
           </p>
+
+          <div className="max-w-sm space-y-1.5">
+            <Label htmlFor="import-header-row">Fila de encabezados</Label>
+            <Select
+              value={String(headerRow)}
+              onValueChange={(v) => setHeaderRow(Number(v))}
+            >
+              <SelectTrigger id="import-header-row">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {sampleRows.map((r) => (
+                  <SelectItem key={r.rowNumber} value={String(r.rowNumber)}>
+                    Fila {r.rowNumber}:{" "}
+                    {r.values.filter(Boolean).slice(0, 4).join(" · ").slice(0, 60) ||
+                      "(vacía)"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="overflow-x-auto rounded-lg border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  {headers.map((h) => (
-                    <TableHead key={h}>{h}</TableHead>
+                  <TableHead>#</TableHead>
+                  {(sampleRows[0]?.values ?? []).map((_, j) => (
+                    <TableHead key={j}>
+                      {headers[j] ?? `Col ${j + 1}`}
+                    </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sampleRows.map((row, i) => (
-                  <TableRow key={i}>
-                    {headers.map((_, j) => (
+                {sampleRows.map((row) => (
+                  <TableRow
+                    key={row.rowNumber}
+                    className={
+                      row.rowNumber === headerRow ? "bg-primary/10" : undefined
+                    }
+                  >
+                    <TableCell className="text-xs text-muted-foreground">
+                      {row.rowNumber}
+                      {row.rowNumber === headerRow && (
+                        <span className="sr-only"> (fila de encabezados)</span>
+                      )}
+                    </TableCell>
+                    {(sampleRows[0]?.values ?? []).map((_, j) => (
                       <TableCell key={j} className="max-w-56 truncate">
-                        {row[j] ?? ""}
+                        {row.values[j] ?? ""}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -199,6 +251,19 @@ export function ImportWizard({
               </TableBody>
             </Table>
           </div>
+        </section>
+      )}
+
+      {/* Paso 3: mapear columnas */}
+      {headers.length > 0 && (
+        <section aria-labelledby="paso3" className="space-y-4">
+          <h2 id="paso3" className="text-lg font-semibold">
+            3. Mapear columnas
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Las columnas sin mapear se conservan como campos adicionales del
+            elemento (y también se indexan para el chat).
+          </p>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {columnSelect("map-title", "Título (obligatorio)", titleCol, setTitleCol, true)}
@@ -237,18 +302,19 @@ export function ImportWizard({
         </section>
       )}
 
-      {/* Paso 3: ejecutar */}
+      {/* Paso 4: ejecutar */}
       {headers.length > 0 && (
-        <section aria-labelledby="paso3" className="space-y-3">
-          <h2 id="paso3" className="text-lg font-semibold">
-            3. Ejecutar importación
+        <section aria-labelledby="paso4" className="space-y-3">
+          <h2 id="paso4" className="text-lg font-semibold">
+            4. Ejecutar importación
           </h2>
           <p className="text-sm text-muted-foreground">
             La importación es idempotente: puedes repetirla y solo se procesan
-            filas nuevas o modificadas.
+            filas nuevas o modificadas. Las filas sin título (p. ej. separadores
+            de sección) se omiten.
           </p>
           <Button onClick={startImport} disabled={pending || !titleCol}>
-            {pending ? "Importando…" : `Importar ${totalRows} filas`}
+            {pending ? "Importando…" : `Importar ${Math.max(0, totalRows - headerRow)} filas`}
           </Button>
 
           {summary && (

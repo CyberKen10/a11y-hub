@@ -53,23 +53,22 @@ export async function listSheetTabs(): Promise<string[]> {
     .filter((t): t is string => Boolean(t));
 }
 
-/** Reads a tab and returns headers + data rows (row numbers are 1-based). */
+/**
+ * Reads a tab and returns all raw rows (1-based row numbers). The header row
+ * is chosen by the caller — real-world sheets often have banners above it.
+ */
 export async function readTab(
   tab: string
-): Promise<{ headers: string[]; rows: { rowNumber: number; values: string[] }[] }> {
+): Promise<{ rows: { rowNumber: number; values: string[] }[] }> {
   const sheets = getSheetsClient();
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: env.google.sheetId!,
     range: `'${tab.replace(/'/g, "''")}'!A1:ZZ100000`,
   });
   const values = (data.values ?? []) as string[][];
-  if (values.length === 0) return { headers: [], rows: [] };
-
-  const [headerRow, ...dataRows] = values;
   return {
-    headers: headerRow.map((h) => String(h ?? "").trim()),
-    rows: dataRows.map((row, i) => ({
-      rowNumber: i + 2,
+    rows: values.map((row, i) => ({
+      rowNumber: i + 1,
       values: row.map((v) => String(v ?? "")),
     })),
   };

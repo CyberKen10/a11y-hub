@@ -153,31 +153,42 @@ export default async function ItemPage({
 
       <Markdown>{item.content}</Markdown>
 
-      {(type?.fields ?? []).some((f) => metadata[f.key]) && (
-        <section aria-labelledby="campos-heading" className="space-y-3">
-          <h2 id="campos-heading" className="text-lg font-semibold">
-            Campos específicos
-          </h2>
-          <dl className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
-            {(type?.fields ?? []).map((field) => {
-              const value = metadata[field.key];
-              if (value == null || value === "") return null;
-              return (
-                <div key={field.key}>
+      {(() => {
+        // Defined type fields first (with their label), then any extra
+        // metadata (e.g. columns imported from the spreadsheet).
+        const fieldDefs = type?.fields ?? [];
+        const covered = new Set(fieldDefs.map((f) => f.key));
+        const entries: { key: string; label: string; value: unknown }[] = [
+          ...fieldDefs
+            .filter((f) => metadata[f.key] != null && metadata[f.key] !== "")
+            .map((f) => ({ key: f.key, label: f.label, value: metadata[f.key] })),
+          ...Object.entries(metadata)
+            .filter(([k, v]) => !covered.has(k) && v != null && v !== "")
+            .map(([k, v]) => ({ key: k, label: k, value: v })),
+        ];
+        if (entries.length === 0) return null;
+        return (
+          <section aria-labelledby="campos-heading" className="space-y-3">
+            <h2 id="campos-heading" className="text-lg font-semibold">
+              Campos específicos
+            </h2>
+            <dl className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
+              {entries.map((entry) => (
+                <div key={entry.key}>
                   <dt className="text-sm font-medium text-muted-foreground">
-                    {field.label}
+                    {entry.label}
                   </dt>
                   <dd className="mt-1 whitespace-pre-wrap text-sm">
-                    {Array.isArray(value)
-                      ? (value as unknown[]).map(String).join(", ")
-                      : String(value)}
+                    {Array.isArray(entry.value)
+                      ? (entry.value as unknown[]).map(String).join(", ")
+                      : String(entry.value)}
                   </dd>
                 </div>
-              );
-            })}
-          </dl>
-        </section>
-      )}
+              ))}
+            </dl>
+          </section>
+        );
+      })()}
 
       {sources.length > 0 && (
         <section aria-labelledby="fuentes-heading" className="space-y-3">

@@ -117,10 +117,23 @@ npm run dev
 
 1. En la app: **Administración → Importar desde Sheets** → **Conectar y listar pestañas**.
 2. Elige una pestaña → verás una vista previa de las primeras filas.
-3. Mapea las columnas: cuál es el **título** (obligatoria) y, si existen, resumen, contenido y tags. Las columnas sin mapear no se pierden: quedan como campos del elemento.
-4. Elige el **apartado de destino** (p. ej. Approaches) y deja marcado **Publicar directamente**.
-5. Pulsa **Importar**. Repite con cada pestaña del Sheet, eligiendo su apartado.
-6. Ve a **Administración → Sincronización** y pulsa **Procesar pendientes** hasta que no queden trabajos: eso genera los embeddings (chat) y escribe el espejo en el Sheet.
+3. Indica la **fila de encabezados**: si la pestaña tiene un banner o título encima de la tabla, selecciona la fila donde están los nombres reales de las columnas (todo lo anterior se ignora).
+4. Mapea las columnas: cuál es el **título** (obligatoria) y, si existen, resumen, contenido y tags. Las columnas sin mapear no se pierden: quedan como campos del elemento y también se indexan para el chat.
+5. Elige el **apartado de destino** (p. ej. Approaches) y deja marcado **Publicar directamente**.
+6. Pulsa **Importar**. Repite con cada pestaña del Sheet, eligiendo su apartado.
+7. Ve a **Administración → Sincronización** y pulsa **Procesar pendientes** hasta que no queden trabajos: eso genera los embeddings (chat) y escribe el espejo en el Sheet.
+
+**Ejemplo concreto: la pestaña "Wiki - Approaches"** (spreadsheet `1Fo30tY…`, ya configurado en `.env.local`):
+
+| Ajuste | Valor |
+| --- | --- |
+| Fila de encabezados | **2** (la fila 1 es el banner "Nuevo approach agregado!") |
+| Título | `Bug Description / Topic` |
+| Contenido | `Approach to be followed` |
+| Resumen / Tags | — No usar — |
+| Apartado de destino | Approaches |
+
+Las demás columnas (`ID`, `Status`, `CP`, `Bug Type`, `Platform`, `Aproach to be followed (Spanish)`, `Team`…) se guardan como campos del elemento, se muestran en su ficha y el chat también las usa. Las filas separadoras tipo "From Crownspeak" se omiten solas porque no tienen título.
 
 ### Paso 7 — Probar todo
 
