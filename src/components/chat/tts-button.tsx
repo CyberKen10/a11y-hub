@@ -49,7 +49,14 @@ export function TtsButton({ text }: { text: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-      if (!response.ok) throw new Error("No se pudo generar el audio.");
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        throw new Error(
+          payload?.error ?? `No se pudo generar el audio (HTTP ${response.status}).`
+        );
+      }
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       urlRef.current = url;

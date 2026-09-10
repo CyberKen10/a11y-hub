@@ -1,6 +1,7 @@
 import { generateSpeech } from "ai";
 import { z } from "zod";
 import { speechModel, ttsVoice } from "@/lib/ai";
+import { publicAiError } from "@/lib/ai-errors";
 import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 60;
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[speech] failed", error);
     return Response.json(
-      { error: "No se pudo generar el audio." },
+      { error: publicAiError("speech", error) },
       { status: 500 }
     );
   }

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import {
+  CircleAlert,
   Loader2,
   MessageSquarePlus,
   SendHorizonal,
@@ -13,13 +14,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { submitFeedback } from "@/lib/actions/feedback";
+import { formatClientChatError } from "@/lib/ai-errors";
 import { Markdown } from "@/components/items/markdown";
 import { MicButton } from "@/components/chat/mic-button";
 import { TtsButton } from "@/components/chat/tts-button";
 import { SourcesPanel } from "@/components/chat/sources-panel";
+import { AiDiagnosticsPanel } from "@/components/chat/ai-diagnostics-panel";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -45,6 +49,21 @@ function sourcesOf(message: UIMessage): RetrievedSource[] {
   return part?.data ?? [];
 }
 
+interface ChatDebug {
+  retrieval: string;
+  sourceCount: number;
+  warnings: string[];
+  provider?: string;
+  model?: string;
+}
+
+function debugOf(message: UIMessage): ChatDebug | null {
+  const part = message.parts.find((p) => p.type === "data-debug") as
+    | { type: "data-debug"; data: ChatDebug }
+    | undefined;
+  return part?.data ?? null;
+}
+
 export function ChatClient({
   types,
 }: {
@@ -63,6 +82,7 @@ export function ChatClient({
       : ALL_SCOPES
   );
   const [input, setInput] = useState("");
+  const [seenError, setSeenError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status, setMessages, error } = useChat({
@@ -71,14 +91,18 @@ export function ChatClient({
   });
 
   const busy = status === "submitted" || status === "streaming";
+  const errorText = error ? formatClientChatError(error) : null;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
   useEffect(() => {
-    if (error) toast.error("El chat falló. Inténtalo de nuevo.");
-  }, [error]);
+    if (!errorText || errorText === seenError) return;
+    setSeenError(errorText);
+    console.error("[chat ui]", error);
+    toast.error(errorText, { duration: 12000 });
+  }, [errorText, seenError, error]);
 
   function submit(text: string) {
     const trimmed = text.trim();
@@ -99,6 +123,7 @@ export function ChatClient({
     setConversationId(crypto.randomUUID());
     setMessages([]);
     setInput("");
+    setSeenError(null);
     router.replace("/chat");
   }
 
@@ -143,6 +168,22 @@ export function ChatClient({
         </Button>
       </div>
 
+      <AiDiagnosticsPanel />
+
+      {errorText && (
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>El chat falló en una capa concreta</AlertTitle>
+          <AlertDescription>
+            <p className="whitespace-pre-wrap">{errorText}</p>
+            <p className="mt-2">
+              Pulsa Diagnosticar IA arriba o revisa la terminal de{" "}
+              <code>npm run dev</code> (líneas que empiezan por [chat · …]).
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div
         className="flex-1 space-y-6 overflow-y-auto rounded-xl border bg-card/50 p-4"
         role="log"
@@ -165,6 +206,7 @@ export function ChatClient({
         {messages.map((message) => {
           const text = textOf(message);
           const sources = sourcesOf(message);
+          const debug = debugOf(message);
           return (
             <article
               key={message.id}
@@ -179,6 +221,16 @@ export function ChatClient({
               ) : (
                 <div className="max-w-[95%] space-y-1">
                   <Markdown className="prose-sm">{text}</Markdown>
+                  {debug && (
+                    <p className="text-xs text-muted-foreground">
+                      Recuperación: {debug.retrieval} · {debug.sourceCount}{" "}
+                      fuentes
+                      {debug.model ? ` · ${debug.model}` : ""}
+                      {debug.warnings?.length
+                        ? ` · ${debug.warnings.join(" · ")}`
+                        : ""}
+                    </p>
+                  )}
                   <SourcesPanel sources={sources} />
                   {text && status !== "streaming" && (
                     <div className="flex items-center gap-1">
@@ -210,7 +262,7 @@ export function ChatClient({
         {status === "submitted" && (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            Buscando en el hub…
+            Buscando en el hub y llamando al modelo…
           </p>
         )}
         <div ref={bottomRef} />

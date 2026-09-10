@@ -1,6 +1,7 @@
 import "server-only";
 import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
+import { stagedError } from "@/lib/ai-errors";
 
 export type AiProvider = "openai" | "google";
 
@@ -33,10 +34,28 @@ const defaults = {
   },
 } as const;
 
+export function chatModelId(): string {
+  return aiProvider === "google" ? defaults.google.chat : defaults.openai.chat;
+}
+
+export function embeddingModelId(): string {
+  return aiProvider === "google"
+    ? defaults.google.embedding
+    : defaults.openai.embedding;
+}
+
 export function chatModel() {
   return aiProvider === "google"
     ? google(defaults.google.chat)
     : openai(defaults.openai.chat);
+}
+
+/** Skip Gemini "thinking" so free-tier chat is faster and less likely to 429. */
+export function chatProviderOptions() {
+  if (aiProvider === "google") {
+    return { google: { thinkingConfig: { thinkingBudget: 0 } } };
+  }
+  return undefined;
 }
 
 export function embeddingModel() {
@@ -72,4 +91,48 @@ export function transcriptionModelId(): string {
 
 export function openaiTranscriptionModel() {
   return openai.transcription(defaults.openai.transcribe);
+}
+
+export function assertAiConfigured(): void {
+  if (aiProvider === "google") {
+    const key = process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim();
+    if (!key) {
+      throw stagedError(
+        "config",
+        "Falta GOOGLE_GENERATIVE_AI_API_KEY en .env.local. Créala en https://aistudio.google.com/app/apikey y reinicia npm run dev."
+      );
+    }
+    if (key.startsWith("http") || key === "AIza..." || key.length < 20) {
+      throw stagedError(
+        "config",
+        "GOOGLE_GENERATIVE_AI_API_KEY no parece una clave válida (debe ser la API key de AI Studio, no una URL)."
+      );
+    }
+    return;
+  }
+  const key = process.env.OPENAI_API_KEY?.trim();
+  if (!key) {
+    throw stagedError(
+      "config",
+      "AI_PROVIDER=openai pero falta OPENAI_API_KEY en .env.local."
+    );
+  }
+}
+
+export function aiConfigSummary(): {
+  provider: AiProvider;
+  chatModel: string;
+  embeddingModel: string;
+  hasKey: boolean;
+} {
+  const hasKey =
+    aiProvider === "google"
+      ? Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim())
+      : Boolean(process.env.OPENAI_API_KEY?.trim());
+  return {
+    provider: aiProvider,
+    chatModel: chatModelId(),
+    embeddingModel: embeddingModelId(),
+    hasKey,
+  };
 }

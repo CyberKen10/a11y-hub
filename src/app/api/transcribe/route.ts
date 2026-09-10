@@ -1,5 +1,6 @@
 import { generateText, transcribe } from "ai";
 import { aiProvider, chatModel, openaiTranscriptionModel } from "@/lib/ai";
+import { publicAiError } from "@/lib/ai-errors";
 import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 60;
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[transcribe] failed", error);
     return Response.json(
-      { error: "No se pudo transcribir el audio." },
+      { error: publicAiError("transcribe", error) },
       { status: 500 }
     );
   }
