@@ -15,6 +15,24 @@ export type AiProvider = "openai" | "google";
 export const aiProvider: AiProvider =
   process.env.AI_PROVIDER === "openai" ? "openai" : "google";
 
+const GOOGLE_CHAT_DEFAULT = "gemini-3.6-flash";
+const GOOGLE_TTS_DEFAULT = "gemini-3.1-flash-tts-preview";
+const RETIRED_GEMINI = /^(gemini-1\.5|gemini-2\.0|gemini-2\.5)/;
+
+function resolveGoogleModel(
+  requested: string | undefined,
+  fallback: string
+): string {
+  const id = requested?.trim() || fallback;
+  if (RETIRED_GEMINI.test(id)) {
+    console.warn(
+      `[ai] ${id} ya no está disponible para claves nuevas. Usando ${fallback}.`
+    );
+    return fallback;
+  }
+  return id;
+}
+
 const defaults = {
   openai: {
     chat: process.env.OPENAI_CHAT_MODEL ?? "gpt-5",
@@ -24,12 +42,13 @@ const defaults = {
     voice: "nova",
   },
   google: {
-    chat: process.env.GEMINI_CHAT_MODEL ?? "gemini-2.5-flash",
+    chat: resolveGoogleModel(process.env.GEMINI_CHAT_MODEL, GOOGLE_CHAT_DEFAULT),
     embedding: process.env.GEMINI_EMBEDDING_MODEL ?? "gemini-embedding-001",
-    // STT with Gemini runs through the chat model (audio input), see
-    // /api/transcribe.
-    transcribe: process.env.GEMINI_CHAT_MODEL ?? "gemini-2.5-flash",
-    tts: process.env.GEMINI_TTS_MODEL ?? "gemini-2.5-flash-preview-tts",
+    transcribe: resolveGoogleModel(
+      process.env.GEMINI_CHAT_MODEL,
+      GOOGLE_CHAT_DEFAULT
+    ),
+    tts: resolveGoogleModel(process.env.GEMINI_TTS_MODEL, GOOGLE_TTS_DEFAULT),
     voice: "Kore",
   },
 } as const;
@@ -50,10 +69,10 @@ export function chatModel() {
     : openai(defaults.openai.chat);
 }
 
-/** Skip Gemini "thinking" so free-tier chat is faster and less likely to 429. */
+/** Gemini 3 uses thinkingLevel; budget 0 rompe el chat en 3.x. */
 export function chatProviderOptions() {
   if (aiProvider === "google") {
-    return { google: { thinkingConfig: { thinkingBudget: 0 } } };
+    return { google: { thinkingConfig: { thinkingLevel: "minimal" as const } } };
   }
   return undefined;
 }

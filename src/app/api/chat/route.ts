@@ -156,7 +156,12 @@ export async function POST(request: Request) {
           messages: await convertToModelMessages(messages),
           providerOptions: chatProviderOptions(),
         });
-        writer.merge(result.toUIMessageStream({ sendStart: false }));
+        writer.merge(
+          result.toUIMessageStream({
+            sendStart: false,
+            onError: (error) => publicAiError("generate", error),
+          })
+        );
       } catch (error) {
         const message = publicAiError("generate", error);
         console.error("[chat · generate]", message);

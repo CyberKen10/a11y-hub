@@ -24,6 +24,15 @@ describe("ai-errors", () => {
     expect(message).toContain("GOOGLE_GENERATIVE_AI_API_KEY");
   });
 
+  it("explains retired Gemini 2.5 for new API keys", () => {
+    const message = publicAiError(
+      "generate",
+      "This model models/gemini-2.5-flash is no longer available to new users."
+    );
+    expect(message).toContain("gemini-3.6-flash");
+    expect(message).toContain("[Gemini (respuesta)]");
+  });
+
   it("explains HTML 500 pages from Next.js", () => {
     const message = formatClientChatError(
       new Error("<!DOCTYPE html><html><body>Internal Server Error</body></html>")

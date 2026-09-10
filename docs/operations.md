@@ -35,7 +35,7 @@ Tras importar, la indexación y el espejo quedan como trabajos en lotes: procesa
 
 ## Costes de IA
 
-El default es **Gemini (Google AI Studio), capa gratuita**: chat (`gemini-2.5-flash`), embeddings (`gemini-embedding-001`), dictado (audio al mismo modelo) y TTS (`gemini-2.5-flash-preview-tts`). No hay factura. Hay cupos diarios (aprox. 15 req/min y ~1.500/día en Flash).
+El default es **Gemini (Google AI Studio), capa gratuita**: chat (`gemini-3.6-flash`; `gemini-2.5-flash` ya no admite claves nuevas), embeddings (`gemini-embedding-001`), dictado (audio al mismo modelo) y TTS (`gemini-3.1-flash-tts-preview`). No hay factura. Hay cupos diarios (aprox. 15 req/min y ~1.500/día en Flash).
 
 OpenAI es opcional (`AI_PROVIDER=openai`). Si cambias de proveedor, reindexa todo: los embeddings no son intercambiables. Compara `npm run eval:rag` antes y después.
 

@@ -106,7 +106,7 @@ GOOGLE_SHEET_ID=1AbC...                                   # Paso 3.7
 
 Notas:
 - `GOOGLE_PRIVATE_KEY`: copia el valor de `private_key` del JSON **tal cual**, entre comillas dobles; los `\n` literales son correctos, la app los convierte.
-- Los modelos Gemini (`GEMINI_CHAT_MODEL`, etc.) son opcionales; el default es `gemini-2.5-flash`.
+- Los modelos Gemini (`GEMINI_CHAT_MODEL`, etc.) son opcionales; el default es `gemini-3.6-flash` (el 2.5 ya no admite claves nuevas).
 - `.env.local` está en `.gitignore`: nunca se sube al repositorio.
 
 ### Paso 5 — Arrancar y crear tu cuenta de administrador

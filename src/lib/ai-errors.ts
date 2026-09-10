@@ -46,6 +46,12 @@ function rawMessage(error: unknown): string {
 function hintFor(message: string): string | null {
   const m = message.toLowerCase();
   if (
+    m.includes("no longer available to new users") ||
+    m.includes("models/gemini-2.5")
+  ) {
+    return "El modelo de chat está retirado para claves nuevas. El hub ya usa gemini-3.6-flash; recarga y vuelve a Diagnosticar IA. Si en .env.local tienes GEMINI_CHAT_MODEL=gemini-2.5-flash, bórralo o cámbialo.";
+  }
+  if (
     m.includes("api key is missing") ||
     m.includes("google_generative_ai_api_key") ||
     m.includes("openai_api_key")
@@ -106,6 +112,9 @@ export function formatClientChatError(error: unknown): string {
       "generate",
       "El servidor devolvió una página HTML (error interno). Revisa la terminal de npm run dev."
     );
+  }
+  if (raw === "An error occurred.") {
+    return "[Gemini (respuesta)] Error genérico del stream. Casi siempre es el modelo (gemini-2.5-flash ya no está disponible). Recarga, pulsa Diagnosticar IA y reintenta.";
   }
   return sanitizeAiError(raw);
 }
