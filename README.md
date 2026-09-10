@@ -157,6 +157,56 @@ Las demás columnas (`ID`, `Status`, `CP`, `Bug Type`, `Platform`, `Aproach to b
 | No llega el correo de confirmación | Revisa spam; en Supabase **Authentication → Logs** puedes ver el envío. |
 | Error 401 / "API key" en el chat | Falta `GOOGLE_GENERATIVE_AI_API_KEY` o la clave es inválida. |
 
+### Paso 8 — Publicar en internet (gratis)
+
+Supabase, Gemini y Google Sheets ya son gratis. Lo que falta es **un sitio web** con URL pública. Comparación:
+
+| Hosting | Precio | Encaja con Next.js | Límite importante |
+| --- | --- | --- | --- |
+| **Render** (recomendado para un hub interno) | Gratis | Sí (`npm start`) | Se duerme tras ~15 min sin uso: la 1.ª visita tarda 30–60 s |
+| **Cloudflare Pages** | Gratis | Sí, con adaptador extra | Más configuración |
+| **Vercel Hobby** | Gratis | El más fácil | Solo uso **personal**, no comercial. Un hub de empresa no entra en las reglas |
+| Vercel Pro | ~$20/mes | Ideal | El plan correcto si la empresa paga hosting |
+
+#### Opción A — Render (gratis de verdad para un equipo pequeño)
+
+1. Sube el código a un repositorio GitHub (puede ser privado).
+2. Entra en [render.com](https://render.com) → **Sign up** con GitHub.
+3. **New +** → **Web Service** → conecta el repo `a11y-hub`.
+4. Configuración:
+   - **Runtime**: Node
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Instance type**: Free
+5. En **Environment** pega las mismas variables de `.env.local` (sin comillas de más, sin espacios alrededor del `=`).
+6. **Create Web Service**. Al terminar te da una URL tipo `https://a11y-hub.onrender.com`.
+7. En Supabase → **Authentication → URL Configuration**:
+   - **Site URL**: esa URL de Render
+   - **Redirect URLs**: añade `https://a11y-hub.onrender.com/auth/confirm` (usa tu URL real)
+8. Entra a esa URL, crea la cuenta admin y sigue el Paso 6 (importar el Sheet).
+
+Si nadie entra en ~15 minutos, Render apaga el servidor. La siguiente persona espera medio minuto: es el precio de $0. Para un hub interno de pocas personas al día suele ser aceptable.
+
+#### Opción B — Vercel (más cómodo, con asterisco legal)
+
+1. Entra en [vercel.com](https://vercel.com) → Import Git Repository.
+2. Framework: Next.js (se detecta solo).
+3. Pega las variables de `.env.local` en **Environment Variables**.
+4. Deploy. Te da `https://a11y-hub.vercel.app`.
+5. Actualiza Site URL y Redirect URLs en Supabase como en el paso 7 de Render.
+
+Úsalo solo si es un piloto personal. Si es herramienta de la empresa, las reglas de Vercel piden el plan Pro.
+
+#### Lo que sigue siendo gratis (y lo que no)
+
+| Pieza | En producción gratis |
+| --- | --- |
+| App (Render) | Sí, con arranque en frío |
+| Base de datos (Supabase Free) | Sí. **Ojo**: un proyecto Free se pausa si nadie lo usa ~7 días. Entra de vez en cuando o pásalo a Pro ($25/mes) cuando sea crítico |
+| IA (Gemini) | Sí, con cupos diarios |
+| Google Sheets | Sí |
+| Dominio propio (`hub.tuempresa.com`) | El dominio se paga (~10–15 $/año). El SSL en Render/Vercel es gratis |
+
 ## Flujo de datos
 
 1. **Importar**: Administración → Importar desde Sheets. Selecciona pestaña, mapea columnas (título, resumen, contenido, tags) y ejecuta. Es idempotente: reimportar solo procesa filas nuevas o cambiadas (checksum por fila). Las columnas sin mapear se conservan como campos del elemento.
