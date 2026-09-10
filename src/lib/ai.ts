@@ -49,13 +49,11 @@ export function embeddingModel() {
  * Provider options for embedding calls. The chunks table uses vector(1536):
  * Gemini's default is 3072 dims, so we request 1536 (Matryoshka truncation).
  */
-export function embeddingProviderOptions(): Record<
-  string,
-  Record<string, unknown>
-> {
-  return aiProvider === "google"
-    ? { google: { outputDimensionality: 1536 } }
-    : {};
+export function embeddingProviderOptions() {
+  if (aiProvider === "google") {
+    return { google: { outputDimensionality: 1536 } };
+  }
+  return undefined;
 }
 
 export function speechModel() {
