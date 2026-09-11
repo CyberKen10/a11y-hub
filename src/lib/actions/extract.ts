@@ -7,18 +7,14 @@ import { createClient } from "@/lib/supabase/server";
 import { chatModel, chatProviderOptions } from "@/lib/ai";
 import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
-import {
-  composerFieldsFor,
-  fillBlankApproachMetadata,
-  withAllComposerMetadata,
-} from "@/lib/approaches";
+import { composerFieldsFor } from "@/lib/approaches";
 import {
   BUG_TYPE_OPTIONS,
   COMPANY_STATUS_OPTIONS,
   optionValuesList,
   PLATFORM_OPTIONS,
 } from "@/lib/approach-options";
-import { parseWcagSuccessCriteria } from "@/lib/wcag";
+import { hydrateExtractedItem } from "@/lib/extract-hydrate";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
 export interface ExistingMatch {
@@ -108,24 +104,10 @@ Reglas:
     });
 
     const typeRow = (types ?? []).find((t) => t.slug === object.type_slug);
-    let metadata = withAllComposerMetadata(
-      object.type_slug,
-      object.metadata,
+    const proposal = hydrateExtractedItem(
+      object,
       (typeRow?.fields ?? []) as KnowledgeFieldDef[]
     );
-    if (object.type_slug === "approaches") {
-      metadata = fillBlankApproachMetadata(metadata, {
-        title: object.title,
-        summary: object.summary,
-        content: object.content,
-      });
-    }
-    const scs = parseWcagSuccessCriteria(metadata.CP);
-    if (scs.length > 0) {
-      metadata.wcag_refs = scs.join(", ");
-    }
-
-    const proposal: ExtractionResult = { ...object, metadata };
 
     // Detect a likely existing item to update instead of duplicating.
     const { data: match } = await supabase

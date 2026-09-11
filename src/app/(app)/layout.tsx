@@ -7,6 +7,7 @@ import { CommandMenu } from "@/components/shell/command-menu";
 import { ThemeToggle } from "@/components/shell/theme-toggle";
 import { UserMenu } from "@/components/shell/user-menu";
 import { ComposerButton } from "@/components/composer/composer-button";
+import { MeetingNotesButton } from "@/components/composer/meeting-notes-button";
 import { canEdit } from "@/lib/auth";
 import { BrandLogo } from "@/components/shell/brand-logo";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
@@ -57,7 +58,12 @@ export default async function AppLayout({
           </Link>
           <CommandMenu types={navTypes} />
           <div className="ml-auto flex shrink-0 items-center gap-0.5 md:gap-1">
-            {canEdit(profile.role) && <ComposerButton types={navTypes} />}
+            {canEdit(profile.role) && (
+              <>
+                <MeetingNotesButton types={navTypes} />
+                <ComposerButton types={navTypes} />
+              </>
+            )}
             <ThemeToggle />
             <UserMenu profile={profile} />
           </div>

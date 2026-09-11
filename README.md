@@ -155,7 +155,8 @@ No vuelvas a importar la wiki de Approaches desde Sheets: el Excel ya es esa bas
 ### Paso 7 — Probar todo
 
 - **Chat**: entra en *Chat con la información*, pregunta algo de tu contenido; debe responder con citas `[1]` que enlazan a las fichas. Prueba el micrófono y el botón *Escuchar*.
-- **Añadir con IA**: botón *Añadir con IA* en la barra superior → dicta o escribe "Quiero añadir un approach nuevo llamado X que consiste en…" → revisa la propuesta → **Confirmar y publicar** → verifica que aparece la fila nueva en la pestaña `Hub · Approaches` de tu Sheet.
+- **Añadir con IA**: botón *Añadir con IA* en la barra superior → dicta o escribe un approach → revisa → **Confirmar y publicar**.
+- **Notas de reunión**: pega la transcripción de Gemini (o un `.txt`/`.vtt`) → la IA parte en acuerdos (approach, metodología, etc.) → revisas cada ficha y publicas o descartas una a una. Cuenta como una propuesta IA en el tope diario.
 
 ### Problemas comunes
 

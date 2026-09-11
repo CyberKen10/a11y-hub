@@ -91,6 +91,30 @@ export type ExtractionResult = Omit<
   metadata: Record<string, string>;
 };
 
+export const meetingAgreementSchema = extractionSchema.extend({
+  decision: z
+    .string()
+    .describe(
+      "El acuerdo o decisión de la reunión en una frase, sin rodeos."
+    ),
+});
+
+export const meetingExtractionSchema = z.object({
+  agreements: z
+    .array(meetingAgreementSchema)
+    .max(10)
+    .describe(
+      "Hasta 10 acuerdos de conocimiento distintos. Omite charla, logística y repeticiones."
+    ),
+});
+
+export type MeetingAgreementDraft = Omit<
+  z.infer<typeof meetingAgreementSchema>,
+  "metadata"
+> & {
+  metadata: Record<string, string>;
+};
+
 export function slugify(value: string): string {
   return value
     .toLowerCase()
