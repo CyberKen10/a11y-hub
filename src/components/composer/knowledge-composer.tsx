@@ -8,7 +8,9 @@ import { extractProposal, type ExistingMatch } from "@/lib/actions/extract";
 import { saveItem } from "@/lib/actions/items";
 import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { ExtractionResult } from "@/lib/schemas";
-import type { KnowledgeType } from "@/lib/types";
+import type { KnowledgeFieldDef, KnowledgeType } from "@/lib/types";
+import { composerFieldsFor, withAllComposerMetadata } from "@/lib/approaches";
+import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import { MicButton } from "@/components/chat/mic-button";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,7 +41,7 @@ export function KnowledgeComposer({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  types: Pick<KnowledgeType, "slug" | "name" | "icon">[];
+  types: Pick<KnowledgeType, "slug" | "name" | "icon" | "fields">[];
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -54,6 +56,16 @@ export function KnowledgeComposer({
     () => (slug: string) => types.find((t) => t.slug === slug)?.name ?? slug,
     [types]
   );
+
+  const fieldDefs: KnowledgeFieldDef[] = useMemo(() => {
+    if (!proposal) return [];
+    const type = types.find((t) => t.slug === proposal.type_slug);
+    return composerFieldsFor(proposal.type_slug, type?.fields);
+  }, [proposal, types]);
+
+  function typeFields(slug: string) {
+    return types.find((t) => t.slug === slug)?.fields;
+  }
 
   function reset() {
     setStep("input");
@@ -72,7 +84,15 @@ export function KnowledgeComposer({
     startTransition(async () => {
       const result = await extractProposal(rawText);
       if (result.ok) {
-        setProposal(result.proposal);
+        const padded: ExtractionResult = {
+          ...result.proposal,
+          metadata: withAllComposerMetadata(
+            result.proposal.type_slug,
+            result.proposal.metadata,
+            typeFields(result.proposal.type_slug)
+          ),
+        };
+        setProposal(padded);
         setExisting(result.existing);
         setUpdateExisting(false);
         setStep("review");
@@ -86,13 +106,21 @@ export function KnowledgeComposer({
   function save(status: "draft" | "published") {
     if (!proposal) return;
     startTransition(async () => {
+      const metadata: Record<string, unknown> = { ...proposal.metadata };
+      const scs = parseWcagSuccessCriteria(metadata.CP ?? metadata.wcag_refs);
+      if (scs.length > 0) {
+        metadata.wcag_scs = scs;
+        if (!String(metadata.wcag_refs ?? "").trim()) {
+          metadata.wcag_refs = scs.join(", ");
+        }
+      }
       const result = await saveItem({
         id: updateExisting && existing ? existing.id : undefined,
         type_slug: proposal.type_slug,
         title: proposal.title,
         summary: proposal.summary,
         content: proposal.content,
-        metadata: proposal.metadata,
+        metadata,
         tags: proposal.tags,
         sources: proposal.sources.map((s) => ({
           label: s.label,
@@ -145,7 +173,7 @@ export function KnowledgeComposer({
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={10}
-                placeholder="p. ej. Quiero añadir un approach nuevo llamado 'Shift-left accessibility' que consiste en…"
+                placeholder="p. ej. Approach para 1.4.3 Contrast: el texto pequeño necesita 4.5:1. En Android…"
               />
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -228,7 +256,15 @@ export function KnowledgeComposer({
                 <Select
                   value={proposal.type_slug}
                   onValueChange={(v) => {
-                    if (isActiveTypeSlug(v)) patch({ type_slug: v });
+                    if (!isActiveTypeSlug(v)) return;
+                    patch({
+                      type_slug: v,
+                      metadata: withAllComposerMetadata(
+                        v,
+                        proposal.metadata,
+                        typeFields(v)
+                      ),
+                    });
                   }}
                 >
                   <SelectTrigger id="composer-type">
@@ -290,28 +326,53 @@ export function KnowledgeComposer({
               />
             </div>
 
-            {Object.keys(proposal.metadata).length > 0 && (
+            {fieldDefs.length > 0 && (
               <fieldset className="space-y-3 rounded-lg border p-3">
                 <legend className="px-1 text-sm font-semibold">
-                  Campos específicos detectados
+                  Campos de {typeName(proposal.type_slug)}
                 </legend>
-                {Object.entries(proposal.metadata).map(([key, value]) => (
-                  <div key={key} className="space-y-1.5">
-                    <Label htmlFor={`composer-meta-${key}`}>{key}</Label>
-                    <Input
-                      id={`composer-meta-${key}`}
-                      value={value}
-                      onChange={(e) =>
-                        patch({
-                          metadata: {
-                            ...proposal.metadata,
-                            [key]: e.target.value,
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                ))}
+                {fieldDefs.map((field) => {
+                  const id = `composer-meta-${field.key}`;
+                  const value = proposal.metadata[field.key] ?? "";
+                  const onChange = (v: string) =>
+                    patch({
+                      metadata: { ...proposal.metadata, [field.key]: v },
+                    });
+                  return (
+                    <div key={field.key} className="space-y-1.5">
+                      <Label htmlFor={id}>{field.label}</Label>
+                      {field.kind === "textarea" ? (
+                        <Textarea
+                          id={id}
+                          value={value}
+                          onChange={(e) => onChange(e.target.value)}
+                          rows={3}
+                        />
+                      ) : (
+                        <Input
+                          id={id}
+                          value={value}
+                          onChange={(e) => onChange(e.target.value)}
+                          placeholder={field.help}
+                          aria-describedby={
+                            field.help ? `${id}-help` : undefined
+                          }
+                        />
+                      )}
+                      {field.help && (
+                        <p id={`${id}-help`} className="text-xs text-muted-foreground">
+                          {field.help}
+                          {field.kind === "list" ? " Valores separados por coma." : ""}
+                        </p>
+                      )}
+                      {!field.help && field.kind === "list" && (
+                        <p className="text-xs text-muted-foreground">
+                          Valores separados por coma.
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </fieldset>
             )}
 

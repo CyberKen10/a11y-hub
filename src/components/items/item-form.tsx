@@ -6,6 +6,8 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { saveItem } from "@/lib/actions/items";
 import { isActiveTypeSlug, type ActiveTypeSlug } from "@/lib/knowledge-sections";
+import { composerFieldsFor } from "@/lib/approaches";
+import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import type { KnowledgeItemInput } from "@/lib/schemas";
 import type { KnowledgeFieldDef, KnowledgeType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -65,12 +67,23 @@ export function ItemForm({
     () => types.find((t) => t.slug === typeSlug),
     [types, typeSlug]
   );
-  const fieldDefs: KnowledgeFieldDef[] = currentType?.fields ?? [];
+  const fieldDefs: KnowledgeFieldDef[] = composerFieldsFor(
+    typeSlug,
+    currentType?.fields
+  );
 
   function submit(status: "draft" | "published") {
     if (!isActiveTypeSlug(typeSlug)) {
       toast.error("Selecciona un apartado válido.");
       return;
+    }
+    const scs = parseWcagSuccessCriteria(metadata.CP ?? metadata.wcag_refs);
+    const nextMetadata: Record<string, unknown> = { ...metadata };
+    if (scs.length > 0) {
+      nextMetadata.wcag_scs = scs;
+      if (!String(nextMetadata.wcag_refs ?? "").trim()) {
+        nextMetadata.wcag_refs = scs.join(", ");
+      }
     }
     const payload: KnowledgeItemInput = {
       id: initial.id,
@@ -78,7 +91,7 @@ export function ItemForm({
       title: title.trim(),
       summary: summary.trim(),
       content,
-      metadata,
+      metadata: nextMetadata,
       tags: tags
         .split(",")
         .map((t) => t.trim())

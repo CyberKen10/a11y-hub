@@ -7,6 +7,7 @@ import {
   listApprovers,
   mergePreservedApproval,
   queryPrefersPending,
+  withAllComposerMetadata,
 } from "@/lib/approaches";
 
 const fiveWiki = ["Yen", "Yudi", "Yise", "Diane", "Yune"];
@@ -120,5 +121,16 @@ describe("queryPrefersPending", () => {
   it("detects questions about unapproved approaches", () => {
     expect(queryPrefersPending("approaches sin aprobar")).toBe(true);
     expect(queryPrefersPending("cómo se anuncia required")).toBe(false);
+  });
+});
+
+describe("withAllComposerMetadata", () => {
+  it("always includes SC WCAG and the rest of approach fields", () => {
+    const meta = withAllComposerMetadata("approaches", { CP: "1.4.3", Team: "A11y" });
+    expect(meta.CP).toBe("1.4.3");
+    expect(meta.Team).toBe("A11y");
+    expect(meta).toHaveProperty("when_to_use", "");
+    expect(meta).toHaveProperty("Platform", "");
+    expect(meta).toHaveProperty("Comments", "");
   });
 });

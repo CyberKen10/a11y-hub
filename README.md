@@ -35,6 +35,7 @@ Necesitas 3 cuentas, las tres con capa gratuita: [Supabase](https://supabase.com
    - Abre el archivo [`supabase/migrations/20260910000000_init.sql`](supabase/migrations/20260910000000_init.sql) de este proyecto, copia **todo** su contenido y pégalo en el editor.
    - Pulsa **Run** (abajo a la derecha). Debe decir "Success. No rows returned".
    - Si el proyecto **ya existía** con los apartados antiguos, ejecuta después [`supabase/migrations/20260910010000_remove_unused_sections.sql`](supabase/migrations/20260910010000_remove_unused_sections.sql) para quitar Recursos, Glosario, Investigación, Casos de estudio, Patrones y Estándares.
+   - Ejecuta también [`supabase/migrations/20260911000000_ai_usage_daily.sql`](supabase/migrations/20260911000000_ai_usage_daily.sql) (tope diario de IA por persona, para que nadie se gaste el cupo gratis de Gemini del equipo).
 5. Copia las 3 claves que necesitarás en el Paso 4. En **Project Settings → API** (a veces se llama **API Keys**):
    - **Project URL** — solo esto, sin rutas extra: `https://xxxxx.supabase.co` → `NEXT_PUBLIC_SUPABASE_URL`
    - **anon public** o **publishable** (`eyJ…` o `sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -108,6 +109,7 @@ GOOGLE_SHEET_ID=1AbC...                                   # Paso 3.7
 Notas:
 - `GOOGLE_PRIVATE_KEY`: copia el valor de `private_key` del JSON **tal cual**, entre comillas dobles; los `\n` literales son correctos, la app los convierte.
 - Los modelos Gemini (`GEMINI_CHAT_MODEL`, etc.) son opcionales; el default es `gemini-3.6-flash` (el 2.5 ya no admite claves nuevas).
+- Cada persona tiene un tope diario de IA (20 chats, 8 dictados, 8 lecturas, 6 propuestas). Se reinicia a medianoche UTC. Ajusta `AI_USER_DAILY_*` si hace falta. Requiere el SQL `supabase/migrations/20260911000000_ai_usage_daily.sql`.
 - `.env.local` está en `.gitignore`: nunca se sube al repositorio.
 
 ### Paso 5 — Arrancar y crear tu cuenta de administrador
@@ -164,6 +166,7 @@ No vuelvas a importar la wiki de Approaches desde Sheets: el Excel ya es esa bas
 | El chat responde "No encuentro esa información" a todo | El contenido no está publicado o faltan trabajos de indexación: procesa pendientes en Sincronización. |
 | No llega el correo de confirmación | Revisa spam; en Supabase **Authentication → Logs** puedes ver el envío. |
 | Error 401 / "API key" en el chat | Falta `GOOGLE_GENERATIVE_AI_API_KEY` o la clave es inválida. |
+| "Has llegado al límite … por hoy" | Tope diario por persona. Espera a medianoche UTC o sube `AI_USER_DAILY_*`. |
 
 ### Paso 8 — Publicar en internet (gratis)
 

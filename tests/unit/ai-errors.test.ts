@@ -40,4 +40,14 @@ describe("ai-errors", () => {
     expect(message.toLowerCase()).toContain("html");
     expect(message).toContain("npm run dev");
   });
+
+  it("does not confuse the per-person daily cap with Gemini 429", () => {
+    const message = publicAiError(
+      "quota",
+      "Has llegado al límite de 20 preguntas de chat por hoy (20/20). Se reinicia a medianoche UTC, para que una persona no se gaste el cupo gratis de Gemini de todo el equipo."
+    );
+    expect(message).toContain("[cupo diario]");
+    expect(message).toContain("por hoy");
+    expect(message).not.toContain("Espera un minuto");
+  });
 });

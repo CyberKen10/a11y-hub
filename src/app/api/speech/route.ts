@@ -2,6 +2,7 @@ import { generateSpeech } from "ai";
 import { z } from "zod";
 import { speechModel, ttsVoice } from "@/lib/ai";
 import { publicAiError } from "@/lib/ai-errors";
+import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 60;
@@ -21,6 +22,11 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json({ error: "Texto inválido." }, { status: 400 });
+  }
+
+  const quota = await consumeAiQuota(user.id, "speech");
+  if (!quota.ok) {
+    return Response.json({ error: quota.message }, { status: 429 });
   }
 
   // Strip Markdown noise and citation markers for a natural read-aloud.

@@ -2,6 +2,7 @@ export type ChatStage =
   | "auth"
   | "request"
   | "config"
+  | "quota"
   | "embed"
   | "search"
   | "generate"
@@ -13,6 +14,7 @@ const STAGE_LABEL: Record<ChatStage, string> = {
   auth: "sesión",
   request: "petición",
   config: "configuración",
+  quota: "cupo diario",
   embed: "embeddings",
   search: "búsqueda",
   generate: "Gemini (respuesta)",
@@ -45,6 +47,9 @@ function rawMessage(error: unknown): string {
 
 function hintFor(message: string): string | null {
   const m = message.toLowerCase();
+  if (m.includes("por hoy") && m.includes("medianoche utc")) {
+    return null;
+  }
   if (
     m.includes("no longer available to new users") ||
     m.includes("models/gemini-2.5")

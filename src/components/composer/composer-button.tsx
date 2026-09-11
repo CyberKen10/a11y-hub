@@ -10,7 +10,7 @@ import type { KnowledgeType } from "@/lib/types";
 export function ComposerButton({
   types,
 }: {
-  types: Pick<KnowledgeType, "slug" | "name" | "icon">[];
+  types: Pick<KnowledgeType, "slug" | "name" | "icon" | "fields">[];
 }) {
   const [open, setOpen] = useState(false);
 

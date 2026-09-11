@@ -14,6 +14,7 @@ import {
   aiConfigSummary,
 } from "@/lib/ai";
 import { publicAiError } from "@/lib/ai-errors";
+import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
 import { CHAT_TOP_DOCS, retrieve } from "@/lib/rag/retrieval";
 import type { RetrievedSource } from "@/lib/types";
@@ -93,6 +94,15 @@ export async function POST(request: Request) {
   const question = lastUserText(messages).slice(0, 4000);
   if (!question.trim()) {
     return fail("request", "El último mensaje no tiene texto.", 400);
+  }
+
+  try {
+    const quota = await consumeAiQuota(userId, "chat");
+    if (!quota.ok) {
+      return fail("quota", quota.message, 429);
+    }
+  } catch (error) {
+    return fail("quota", error, 429);
   }
 
   console.info("[chat · inicio]", {

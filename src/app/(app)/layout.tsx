@@ -21,13 +21,13 @@ export default async function AppLayout({
   const supabase = await createClient();
   const { data: types } = await supabase
     .from("knowledge_types")
-    .select("slug, name, icon")
+    .select("slug, name, icon, fields")
     .in("slug", ACTIVE_TYPE_SLUG_LIST)
     .order("sort_order");
 
   const navTypes = (types ?? []) as Pick<
     KnowledgeType,
-    "slug" | "name" | "icon"
+    "slug" | "name" | "icon" | "fields"
   >[];
 
   return (

@@ -1,4 +1,5 @@
 import { formatWcagLine } from "@/lib/wcag";
+import type { KnowledgeFieldDef } from "@/lib/types";
 
 export type ApprovalState = "approved" | "pending" | "discarded";
 
@@ -37,6 +38,50 @@ export const WIKI_FICHA_FIELDS = [
   { key: "Reference link", label: "Reference link" },
   { key: "Origen", label: "Pestaña wiki" },
 ] as const;
+
+/** Fields a person fills when creating/editing an approach (IA + formulario). */
+export const APPROACH_COMPOSER_FIELDS: KnowledgeFieldDef[] = [
+  {
+    key: "CP",
+    label: "SC WCAG",
+    kind: "text",
+    help: "Criterios de éxito, p. ej. 1.4.3 o 1.1.1, 2.4.4",
+  },
+  { key: "when_to_use", label: "Cuándo usarlo", kind: "textarea" },
+  { key: "pros", label: "Ventajas", kind: "list" },
+  { key: "cons", label: "Limitaciones", kind: "list" },
+  { key: "Bug Type", label: "Bug Type", kind: "text" },
+  { key: "Platform", label: "Platform", kind: "text" },
+  { key: "Team", label: "Team", kind: "text" },
+  { key: "UTest", label: "UTest", kind: "text" },
+  { key: "Crownspeak", label: "Crownspeak", kind: "text" },
+  { key: "Barcelo", label: "Barcelo", kind: "text" },
+  { key: "Pros.", label: "Pros.", kind: "text" },
+  { key: "Comments", label: "Comments", kind: "textarea" },
+];
+
+export function composerFieldsFor(
+  slug: string,
+  typeFields?: KnowledgeFieldDef[] | null
+): KnowledgeFieldDef[] {
+  if (slug === "approaches") return APPROACH_COMPOSER_FIELDS;
+  return typeFields ?? [];
+}
+
+export function withAllComposerMetadata(
+  slug: string,
+  metadata: Record<string, unknown> | null | undefined,
+  typeFields?: KnowledgeFieldDef[] | null
+): Record<string, string> {
+  const next: Record<string, string> = {};
+  const raw = metadata ?? {};
+  for (const field of composerFieldsFor(slug, typeFields)) {
+    const value = raw[field.key];
+    next[field.key] =
+      value == null ? "" : Array.isArray(value) ? value.map(String).join(", ") : String(value);
+  }
+  return next;
+}
 
 /** Keys stored for hub logic; not dumped as generic metadata. */
 export const INTERNAL_META_KEYS = [

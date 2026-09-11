@@ -72,7 +72,7 @@ export function chatModel() {
 /** Gemini 3 uses thinkingLevel; budget 0 rompe el chat en 3.x. */
 export function chatProviderOptions() {
   if (aiProvider === "google") {
-    return { google: { thinkingConfig: { thinkingLevel: "minimal" as const } } };
+    return { google: { thinkingConfig: { thinkingLevel: "medium" as const } } };
   }
   return undefined;
 }
