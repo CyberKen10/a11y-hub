@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, FileWarning, MessageSquare, PlusCircle } from "lucide-react";
+import {
+  Compass,
+  FileText,
+  FileWarning,
+  MessageSquare,
+  PlusCircle,
+  Workflow,
+  Wrench,
+  type LucideIcon,
+} from "lucide-react";
 import { requireProfile, canEdit } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -10,7 +19,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType } from "@/lib/types";
+
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  approaches: Compass,
+  metodologias: Workflow,
+  herramientas: Wrench,
+  plantillas: FileText,
+};
 
 export default async function DashboardPage() {
   const profile = await requireProfile();
@@ -21,16 +38,19 @@ export default async function DashboardPage() {
       supabase
         .from("knowledge_types")
         .select("id, slug, name, knowledge_items(count)")
+        .in("slug", ACTIVE_TYPE_SLUG_LIST)
         .order("sort_order"),
       supabase
         .from("knowledge_items")
-        .select("id, title, status, updated_at, knowledge_types(slug, name, icon)")
+        .select("id, title, status, updated_at, knowledge_types!inner(slug, name, icon)")
+        .in("knowledge_types.slug", ACTIVE_TYPE_SLUG_LIST)
         .neq("status", "archived")
         .order("updated_at", { ascending: false })
         .limit(6),
       supabase
         .from("knowledge_items")
-        .select("id, title, updated_at, knowledge_types(slug, name, icon)")
+        .select("id, title, updated_at, knowledge_types!inner(slug, name, icon)")
+        .in("knowledge_types.slug", ACTIVE_TYPE_SLUG_LIST)
         .eq("status", "draft")
         .eq("owner_id", profile.id)
         .order("updated_at", { ascending: false })
@@ -53,11 +73,11 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-6xl space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Hola, {profile.full_name?.split(" ")[0] ?? "equipo"}
+          <h1 className="tracking-tight">
+            Hola de nuevo, {profile.full_name?.split(" ")[0] ?? "equipo"}
           </h1>
-          <p className="text-muted-foreground">
-            Tu hub de conocimiento de accesibilidad.
+          <p className="mt-1 text-lg text-muted-foreground">
+            Aquí está tu hub de conocimiento de accesibilidad.
           </p>
         </div>
         <div className="flex gap-2">
@@ -96,31 +116,29 @@ export default async function DashboardPage() {
         </Card>
       )}
 
-      <section aria-labelledby="apartados-heading" className="space-y-3">
-        <h2 id="apartados-heading" className="text-lg font-semibold">
+      <section aria-labelledby="apartados-heading" className="space-y-4">
+        <h2 id="apartados-heading" className="font-bold">
           Apartados
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {(types ?? []).map((t) => {
             const count =
               (t.knowledge_items as unknown as { count: number }[])?.[0]
                 ?.count ?? 0;
+            const Icon = TYPE_ICONS[t.slug] ?? FileText;
             return (
               <Link
                 key={t.slug}
                 href={`/library/${t.slug}`}
-                className="group rounded-xl border bg-card p-4 transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring"
+                className="group rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)] transition-shadow hover:shadow-[0_12px_32px_rgb(27_67_50_/_10%)] focus-visible:outline-2 focus-visible:outline-ring"
               >
-                <div className="flex items-center justify-between">
-                  <p className="font-medium">{t.name}</p>
-                  <ArrowRight
-                    className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {count} elemento{count === 1 ? "" : "s"}
+                <span className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary">
+                  <Icon className="size-5" aria-hidden="true" />
+                </span>
+                <p className="mt-5 font-heading text-4xl font-bold tracking-tight">
+                  {count}
                 </p>
+                <p className="mt-1 text-sm text-muted-foreground">{t.name}</p>
               </Link>
             );
           })}
@@ -128,13 +146,16 @@ export default async function DashboardPage() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section aria-labelledby="recientes-heading" className="space-y-3">
-          <h2 id="recientes-heading" className="text-lg font-semibold">
+        <section
+          aria-labelledby="recientes-heading"
+          className="rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)]"
+        >
+          <h2 id="recientes-heading" className="font-bold">
             Actualizado recientemente
           </h2>
-          <ul className="space-y-2">
+          <ul className="mt-4 space-y-1">
             {recentItems.length === 0 && (
-              <li className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+              <li className="rounded-xl bg-secondary p-6 text-center text-sm text-muted-foreground">
                 Aún no hay contenido. Importa tu Google Sheet desde
                 Administración o crea el primer elemento.
               </li>
@@ -143,7 +164,7 @@ export default async function DashboardPage() {
               <li key={item.id}>
                 <Link
                   href={`/items/${item.id}`}
-                  className="flex items-center gap-3 rounded-lg border bg-card px-4 py-3 transition-colors hover:bg-accent"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-secondary"
                 >
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {item.title}
@@ -160,13 +181,16 @@ export default async function DashboardPage() {
           </ul>
         </section>
 
-        <section aria-labelledby="borradores-heading" className="space-y-3">
-          <h2 id="borradores-heading" className="text-lg font-semibold">
+        <section
+          aria-labelledby="borradores-heading"
+          className="rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)]"
+        >
+          <h2 id="borradores-heading" className="font-bold">
             Mis borradores
           </h2>
-          <ul className="space-y-2">
+          <ul className="mt-4 space-y-1">
             {draftItems.length === 0 && (
-              <li className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+              <li className="rounded-xl bg-secondary p-6 text-center text-sm text-muted-foreground">
                 No tienes borradores pendientes.
               </li>
             )}
@@ -174,7 +198,7 @@ export default async function DashboardPage() {
               <li key={item.id}>
                 <Link
                   href={`/items/${item.id}`}
-                  className="flex items-center gap-3 rounded-lg border bg-card px-4 py-3 transition-colors hover:bg-accent"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-secondary"
                 >
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {item.title}

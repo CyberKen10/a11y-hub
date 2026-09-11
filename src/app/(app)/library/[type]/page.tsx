@@ -7,6 +7,7 @@ import { ItemCard } from "@/components/items/item-card";
 import { LibraryFilters } from "@/components/items/library-filters";
 import { PaginationNav } from "@/components/items/pagination-nav";
 import { Button } from "@/components/ui/button";
+import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType, KnowledgeType } from "@/lib/types";
 
 const PAGE_SIZE = 24;
@@ -16,10 +17,11 @@ export default async function TypePage({
   searchParams,
 }: {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ q?: string; estado?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; estado?: string; page?: string; aprobacion?: string }>;
 }) {
   const { type: typeSlug } = await params;
-  const { q, estado, page: pageRaw } = await searchParams;
+  if (!isActiveTypeSlug(typeSlug)) notFound();
+  const { q, estado, page: pageRaw, aprobacion } = await searchParams;
   const page = Math.max(1, Number.parseInt(pageRaw ?? "1", 10) || 1);
   const profile = await requireProfile();
   const supabase = await createClient();
@@ -47,6 +49,14 @@ export default async function TypePage({
   } else {
     query = query.neq("status", "archived");
   }
+  if (
+    typeSlug === "approaches" &&
+    (aprobacion === "approved" ||
+      aprobacion === "pending" ||
+      aprobacion === "discarded")
+  ) {
+    query = query.eq("metadata->>approval_state", aprobacion);
+  }
 
   const from = (page - 1) * PAGE_SIZE;
   const { data, count } = await query.range(from, from + PAGE_SIZE - 1);
@@ -56,6 +66,7 @@ export default async function TypePage({
   const qs = new URLSearchParams();
   if (q?.trim()) qs.set("q", q.trim());
   if (estado) qs.set("estado", estado);
+  if (aprobacion) qs.set("aprobacion", aprobacion);
   const hrefForPage = (next: number) => {
     const params = new URLSearchParams(qs);
     if (next > 1) params.set("page", String(next));
@@ -67,7 +78,7 @@ export default async function TypePage({
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{type.name}</h1>
+          <h1 className="tracking-tight">{type.name}</h1>
           {type.description && (
             <p className="max-w-2xl text-muted-foreground">{type.description}</p>
           )}
@@ -90,7 +101,7 @@ export default async function TypePage({
         </div>
       </div>
 
-      <LibraryFilters />
+      <LibraryFilters showApproval={type.slug === "approaches"} />
 
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">

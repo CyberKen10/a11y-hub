@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ACTIVE_TYPE_SLUGS } from "@/lib/knowledge-sections";
 
 export const itemStatusSchema = z.enum(["draft", "published", "archived"]);
 
@@ -10,7 +11,7 @@ export const sourceRefSchema = z.object({
 /** Input accepted when creating or updating a knowledge item. */
 export const knowledgeItemInputSchema = z.object({
   id: z.string().uuid().optional(),
-  type_slug: z.string().min(1),
+  type_slug: z.enum(ACTIVE_TYPE_SLUGS),
   title: z.string().min(3, "El título debe tener al menos 3 caracteres.").max(300),
   summary: z.string().max(1000).optional().default(""),
   content: z.string().min(1, "El contenido no puede estar vacío.").max(100_000),
@@ -28,7 +29,7 @@ export type KnowledgeItemInput = z.infer<typeof knowledgeItemInputSchema>;
  */
 export const extractionSchema = z.object({
   type_slug: z
-    .string()
+    .enum(ACTIVE_TYPE_SLUGS)
     .describe(
       "Slug del apartado más adecuado para este contenido, elegido de la lista provista."
     ),

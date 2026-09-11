@@ -134,6 +134,9 @@ export interface RetrievedSource {
   heading: string | null;
   snippet: string;
   updated_at: string | null;
+  approval_state?: "approved" | "pending" | "discarded" | null;
+  approval_label?: string | null;
+  ficha?: string | null;
 }
 
 export type SyncJobStatus = "pending" | "running" | "done" | "failed";

@@ -12,7 +12,7 @@ export function Markdown({
   return (
     <div
       className={cn(
-        "prose prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-24",
+        "prose prose-lg prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-heading prose-headings:font-bold prose-strong:font-bold prose-p:text-base",
         className
       )}
     >

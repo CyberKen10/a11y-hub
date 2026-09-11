@@ -13,6 +13,15 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ApproachFicha, ApprovalBadge } from "@/components/items/approach-ficha";
+import {
+  INTERNAL_META_KEYS,
+  WIKI_FICHA_FIELDS,
+  getApprovalState,
+  getApproverCount,
+  looksLikeApproach,
+} from "@/lib/approaches";
+import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type {
   KnowledgeFieldDef,
   KnowledgeVersion,
@@ -57,6 +66,11 @@ export default async function ItemPage({
     .single();
 
   if (!item) notFound();
+
+  const itemTypeSlug = (
+    item.knowledge_types as unknown as { slug?: string } | null
+  )?.slug;
+  if (!isActiveTypeSlug(itemTypeSlug)) notFound();
 
   const { data: versionsData } = await supabase
     .from("knowledge_versions")
@@ -132,6 +146,16 @@ export default async function ItemPage({
           <Badge variant={item.status === "published" ? "default" : "outline"}>
             {STATUS_LABEL[item.status]}
           </Badge>
+          {looksLikeApproach(metadata, type?.slug) && (
+            <ApprovalBadge
+              state={getApprovalState(metadata)}
+              count={
+                getApprovalState(metadata) === "discarded"
+                  ? undefined
+                  : getApproverCount(metadata)
+              }
+            />
+          )}
           <span className="text-sm text-muted-foreground">
             Actualizado{" "}
             {new Intl.DateTimeFormat("es", {
@@ -140,7 +164,7 @@ export default async function ItemPage({
             }).format(new Date(item.updated_at))}
           </span>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">{item.title}</h1>
+        <h1 className="tracking-tight">{item.title}</h1>
         {item.summary && (
           <p className="text-lg text-muted-foreground">{item.summary}</p>
         )}
@@ -164,13 +188,28 @@ export default async function ItemPage({
 
       <Separator />
 
+      {looksLikeApproach(metadata, type?.slug) && (
+        <>
+          <ApproachFicha
+            itemId={item.id}
+            metadata={metadata}
+            canApprove
+            currentUserId={profile.id}
+          />
+          <Separator />
+        </>
+      )}
+
       <Markdown>{item.content}</Markdown>
 
       {(() => {
-        // Defined type fields first (with their label), then any extra
-        // metadata (e.g. columns imported from the spreadsheet).
+        // Defined type fields first (with their label), then leftover metadata.
         const fieldDefs = type?.fields ?? [];
-        const covered = new Set(fieldDefs.map((f) => f.key));
+        const covered = new Set([
+          ...fieldDefs.map((f) => f.key),
+          ...WIKI_FICHA_FIELDS.map((f) => f.key),
+          ...INTERNAL_META_KEYS,
+        ]);
         const entries: { key: string; label: string; value: unknown }[] = [
           ...fieldDefs
             .filter((f) => metadata[f.key] != null && metadata[f.key] !== "")
@@ -182,7 +221,7 @@ export default async function ItemPage({
         if (entries.length === 0) return null;
         return (
           <section aria-labelledby="campos-heading" className="space-y-3">
-            <h2 id="campos-heading" className="text-lg font-semibold">
+            <h2 id="campos-heading" className="font-bold">
               Campos específicos
             </h2>
             <dl className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2">
@@ -205,7 +244,7 @@ export default async function ItemPage({
 
       {sources.length > 0 && (
         <section aria-labelledby="fuentes-heading" className="space-y-3">
-          <h2 id="fuentes-heading" className="text-lg font-semibold">
+          <h2 id="fuentes-heading" className="font-bold">
             Fuentes
           </h2>
           <ul className="space-y-1.5">
@@ -233,7 +272,7 @@ export default async function ItemPage({
 
       {(relationsData ?? []).length > 0 && (
         <section aria-labelledby="relaciones-heading" className="space-y-3">
-          <h2 id="relaciones-heading" className="text-lg font-semibold">
+          <h2 id="relaciones-heading" className="font-bold">
             Relacionado
           </h2>
           <ul className="space-y-1.5">
@@ -270,7 +309,7 @@ export default async function ItemPage({
       <Separator />
 
       <section aria-labelledby="versiones-heading" className="space-y-3">
-        <h2 id="versiones-heading" className="text-lg font-semibold">
+        <h2 id="versiones-heading" className="font-bold">
           Historial de versiones
         </h2>
         <VersionList itemId={item.id} versions={versions} canRestore={editable} />

@@ -12,12 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function LibraryFilters() {
+export function LibraryFilters({ showApproval = false }: { showApproval?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [q, setQ] = useState(searchParams.get("q") ?? "");
   const estado = searchParams.get("estado") ?? "activos";
+  const aprobacion = searchParams.get("aprobacion") ?? "todas";
 
   // Debounced search-as-you-type.
   useEffect(() => {
@@ -36,6 +37,14 @@ export function LibraryFilters() {
     const params = new URLSearchParams(searchParams.toString());
     if (value === "activos") params.delete("estado");
     else params.set("estado", value);
+    params.delete("page");
+    router.replace(`${pathname}?${params.toString()}`);
+  }
+
+  function onAprobacionChange(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "todas") params.delete("aprobacion");
+    else params.set("aprobacion", value);
     params.delete("page");
     router.replace(`${pathname}?${params.toString()}`);
   }
@@ -66,6 +75,22 @@ export function LibraryFilters() {
           </SelectContent>
         </Select>
       </div>
+      {showApproval && (
+        <div className="space-y-1.5">
+          <Label htmlFor="library-approval">Aprobación</Label>
+          <Select value={aprobacion} onValueChange={onAprobacionChange}>
+            <SelectTrigger id="library-approval" className="w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todas">Todas</SelectItem>
+              <SelectItem value="approved">Aprobados</SelectItem>
+              <SelectItem value="pending">Sin aprobar</SelectItem>
+              <SelectItem value="discarded">Descartados</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
     </div>
   );
 }

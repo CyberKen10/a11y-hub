@@ -8,6 +8,7 @@ import { listSheetTabs, readTab } from "@/lib/google/sheets";
 import { runPendingJobs, processJob } from "@/lib/sync/jobs";
 import { audit } from "@/lib/audit";
 import { isSheetsConfigured } from "@/lib/env";
+import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 
 export interface ImportMapping {
   /** Column header used as title (required). */
@@ -94,6 +95,10 @@ export async function runImport(
 ): Promise<{ ok: true; summary: ImportSummary } | { ok: false; error: string }> {
   const profile = await requireProfile("admin");
   const admin = createAdminClient();
+
+  if (!isActiveTypeSlug(config.typeSlug)) {
+    return { ok: false, error: "Apartado de destino no disponible." };
+  }
 
   const { data: type } = await admin
     .from("knowledge_types")

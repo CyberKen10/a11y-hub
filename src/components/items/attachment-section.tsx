@@ -50,7 +50,7 @@ export function AttachmentSection({
 
   return (
     <section aria-labelledby="adjuntos-heading" className="space-y-3">
-      <h2 id="adjuntos-heading" className="text-lg font-semibold">
+      <h2 id="adjuntos-heading" className="font-bold">
         Adjuntos
       </h2>
 

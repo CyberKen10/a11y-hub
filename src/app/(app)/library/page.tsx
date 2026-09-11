@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { ItemCard } from "@/components/items/item-card";
 import { LibraryFilters } from "@/components/items/library-filters";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Biblioteca" };
@@ -9,14 +10,15 @@ export const metadata: Metadata = { title: "Biblioteca" };
 export default async function LibraryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; estado?: string }>;
+  searchParams: Promise<{ q?: string; estado?: string; aprobacion?: string }>;
 }) {
-  const { q, estado } = await searchParams;
+  const { q, estado, aprobacion } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
     .from("knowledge_items")
-    .select("id, title, summary, status, updated_at, metadata, knowledge_types(slug, name, icon)")
+    .select("id, title, summary, status, updated_at, metadata, knowledge_types!inner(slug, name, icon)")
+    .in("knowledge_types.slug", ACTIVE_TYPE_SLUG_LIST)
     .order("updated_at", { ascending: false })
     .limit(60);
 
@@ -26,6 +28,13 @@ export default async function LibraryPage({
   } else {
     query = query.neq("status", "archived");
   }
+  if (
+    aprobacion === "approved" ||
+    aprobacion === "pending" ||
+    aprobacion === "discarded"
+  ) {
+    query = query.eq("metadata->>approval_state", aprobacion);
+  }
 
   const { data } = await query;
   const items = (data ?? []) as unknown as KnowledgeItemWithType[];
@@ -33,13 +42,13 @@ export default async function LibraryPage({
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Biblioteca</h1>
+        <h1 className="tracking-tight">Biblioteca</h1>
         <p className="text-muted-foreground">
           Todo el conocimiento del hub en un solo lugar.
         </p>
       </div>
 
-      <LibraryFilters />
+      <LibraryFilters showApproval />
 
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">

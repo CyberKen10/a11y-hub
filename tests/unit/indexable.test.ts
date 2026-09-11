@@ -52,4 +52,26 @@ describe("buildIndexableText", () => {
     expect(text).toContain("## Platform\nAndroid");
     expect(text).toContain("## Aproach to be followed (Spanish)\nSolo un campo…");
   });
+
+  it("does not index hub approval internals", () => {
+    const text = buildIndexableText(
+      {
+        summary: null,
+        content: "Approach principal.",
+        metadata: {
+          Team: "Valid Bug",
+          approval_state: "approved",
+          hub_approval: {
+            state: "approved",
+            approved_by_id: "u1",
+            approved_by_name: "Kendry",
+          },
+        },
+      },
+      fields
+    );
+    expect(text).toContain("## Team\nValid Bug");
+    expect(text).not.toContain("hub_approval");
+    expect(text).not.toContain("approval_state");
+  });
 });

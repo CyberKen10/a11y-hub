@@ -2,7 +2,7 @@
 
 Plataforma interna de conocimiento
 
-- **Hub de contenido** organizado por apartados (Approaches, Metodologías, Estándares, Patrones, Herramientas, Casos de estudio, Investigación, Plantillas, Glosario, Recursos).
+- **Hub de contenido** organizado por apartados (Approaches, Metodologías, Herramientas, Plantillas).
 - **Chat RAG con citas**: pregunta en lenguaje natural (texto o voz) y recibe respuestas basadas únicamente en el conocimiento publicado, con fuentes verificables y lectura en voz alta.
 - **Creación asistida por IA**: añade approaches, metodologías, etc. escribiendo un prompt o dictando por voz; la IA propone la estructura y una persona revisa y confirma antes de publicar.
 - **Google Sheets como espejo**: la base de datos (Supabase/PostgreSQL) es la fuente de verdad; cada publicación se refleja en pestañas `Hub · <tipo>` del Sheet. La importación inicial lee las pestañas originales sin modificarlas.
@@ -30,10 +30,11 @@ Necesitas 3 cuentas, las tres con capa gratuita: [Supabase](https://supabase.com
    - **Database password**: genera una y guárdala (no la necesitarás a diario, pero no la pierdas).
    - **Region**: la más cercana a tu equipo.
 3. Espera 1–2 minutos a que el proyecto termine de crearse.
-4. Ejecuta la migración (crea todas las tablas, la seguridad y los 10 apartados):
+4. Ejecuta la migración (crea todas las tablas, la seguridad y los 4 apartados):
    - En el menú lateral de Supabase, abre **SQL Editor** → **New query**.
    - Abre el archivo [`supabase/migrations/20260910000000_init.sql`](supabase/migrations/20260910000000_init.sql) de este proyecto, copia **todo** su contenido y pégalo en el editor.
    - Pulsa **Run** (abajo a la derecha). Debe decir "Success. No rows returned".
+   - Si el proyecto **ya existía** con los apartados antiguos, ejecuta después [`supabase/migrations/20260910010000_remove_unused_sections.sql`](supabase/migrations/20260910010000_remove_unused_sections.sql) para quitar Recursos, Glosario, Investigación, Casos de estudio, Patrones y Estándares.
 5. Copia las 3 claves que necesitarás en el Paso 4. En **Project Settings → API** (a veces se llama **API Keys**):
    - **Project URL** — solo esto, sin rutas extra: `https://xxxxx.supabase.co` → `NEXT_PUBLIC_SUPABASE_URL`
    - **anon public** o **publishable** (`eyJ…` o `sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_ANON_KEY`

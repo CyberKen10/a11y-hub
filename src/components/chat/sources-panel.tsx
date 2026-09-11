@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { ApprovalBadge } from "@/components/items/approach-ficha";
 import { cn } from "@/lib/utils";
 import type { RetrievedSource } from "@/lib/types";
 
 /** Citations used by an assistant answer, linked to the source items. */
 export function SourcesPanel({ sources }: { sources: RetrievedSource[] }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   if (sources.length === 0) return null;
 
@@ -20,7 +21,8 @@ export function SourcesPanel({ sources }: { sources: RetrievedSource[] }) {
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        Fuentes utilizadas ({sources.length})
+        Referencias · {sources.length} documento{sources.length === 1 ? "" : "s"} más
+        relevante{sources.length === 1 ? "" : "s"}
         <ChevronDown
           className={cn("size-4 transition-transform", open && "rotate-180")}
           aria-hidden="true"
@@ -46,7 +48,18 @@ export function SourcesPanel({ sources }: { sources: RetrievedSource[] }) {
                 {s.heading && (
                   <span className="text-muted-foreground"> — {s.heading}</span>
                 )}
+                {s.approval_state && (
+                  <ApprovalBadge
+                    state={s.approval_state}
+                    className="ml-2 align-middle"
+                  />
+                )}
               </p>
+              {s.ficha && (
+                <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                  {s.ficha}
+                </p>
+              )}
               <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
                 {s.snippet}
               </p>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ItemForm } from "@/components/items/item-form";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Nuevo contenido" };
@@ -18,6 +19,7 @@ export default async function NewItemPage({
   const { data: types } = await supabase
     .from("knowledge_types")
     .select("slug, name, fields")
+    .in("slug", ACTIVE_TYPE_SLUG_LIST)
     .order("sort_order");
 
   const typeList = (types ?? []) as Pick<
@@ -28,7 +30,7 @@ export default async function NewItemPage({
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="tracking-tight">
           Nuevo contenido
         </h1>
         <p className="text-muted-foreground">

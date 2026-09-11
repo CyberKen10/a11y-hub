@@ -5,6 +5,7 @@ import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { chatModel } from "@/lib/ai";
 import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
 export interface ExistingMatch {
@@ -40,6 +41,7 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
   const { data: types } = await supabase
     .from("knowledge_types")
     .select("slug, name, description, fields")
+    .in("slug", ACTIVE_TYPE_SLUG_LIST)
     .order("sort_order");
 
   const typeCatalog = (types ?? [])

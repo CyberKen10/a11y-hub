@@ -54,10 +54,10 @@ function NavLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-base transition-colors",
         active
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          ? "bg-sidebar-accent font-bold text-primary"
+          : "font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
       )}
     >
       <Icon className="size-4 shrink-0" aria-hidden="true" />
@@ -74,7 +74,7 @@ export function NavLinks({
   role: UserRole;
 }) {
   return (
-    <nav aria-label="Navegación principal" className="flex flex-col gap-6 p-4">
+    <nav aria-label="Navegación principal" className="flex flex-col gap-8 px-4 pb-6">
       <div className="flex flex-col gap-1">
         <NavLink href="/" label="Inicio" icon={Home} exact />
         <NavLink href="/chat" label="Chat con la información" icon={MessageSquare} />
@@ -82,7 +82,7 @@ export function NavLinks({
       </div>
 
       <div>
-        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
           Apartados
         </p>
         <div className="flex flex-col gap-1">
@@ -99,7 +99,7 @@ export function NavLinks({
 
       {role === "admin" && (
         <div>
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Gestión
           </p>
           <div className="flex flex-col gap-1">

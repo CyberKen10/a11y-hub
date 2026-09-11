@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ChatClient } from "@/components/chat/chat-client";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Chat" };
@@ -13,6 +14,7 @@ export default async function ChatPage() {
   const { data: types } = await supabase
     .from("knowledge_types")
     .select("slug, name")
+    .in("slug", ACTIVE_TYPE_SLUG_LIST)
     .order("sort_order");
 
   return (

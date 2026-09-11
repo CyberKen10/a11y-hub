@@ -28,7 +28,7 @@ export default async function AuditPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Auditoría</h1>
+        <h1 className="tracking-tight">Auditoría</h1>
         <p className="text-muted-foreground">
           Últimas 200 acciones registradas en la plataforma.
         </p>

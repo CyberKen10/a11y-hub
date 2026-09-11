@@ -23,6 +23,9 @@ const HEADER_ALIASES = {
   utest: ["utest"],
   crownspeak: ["crownspeak"],
   barcelo: ["barcelo"],
+  pros: ["pros.", "pros"],
+  comments: ["comments"],
+  reference: ["reference link"],
 };
 
 const META_LABEL = {
@@ -35,7 +38,37 @@ const META_LABEL = {
   utest: "UTest",
   crownspeak: "Crownspeak",
   barcelo: "Barcelo",
+  pros: "Pros.",
+  comments: "Comments",
+  reference: "Reference link",
 };
+
+const COMPANY_KEYS = new Set(["team", "utest", "crownspeak", "barcelo", "pros"]);
+
+const SKIP_REVIEWER_HEADER = new Set([
+  "id",
+  "status",
+  "cp",
+  "bug type",
+  "platform",
+  "bug description / topic",
+  "topic",
+  "approach to be followed",
+  "aproach to be followed (spanish)",
+  "approach to be followed (spanish)",
+  "approach (esp)",
+  "where it applies",
+  "where it does not apply",
+  "team",
+  "utest",
+  "crownspeak",
+  "barcelo",
+  "pros.",
+  "pros",
+  "comments",
+  "reference link",
+  "message to team in channel (formula)",
+]);
 
 const TAB_TAG = {
   Approaches: "Approaches",
@@ -57,18 +90,31 @@ function headerIndex(headers, aliases) {
   return -1;
 }
 
-function mapStatus(raw) {
-  const s = raw.toLowerCase();
-  if (!s || s === "approved" || s === "published" || s === "done") {
-    return "published";
-  }
-  if (s.includes("archiv") || s === "obsolete" || s === "rejected") {
-    return "archived";
-  }
-  if (s === "draft" || s.includes("review") || s === "pending" || s === "wip") {
-    return "draft";
-  }
-  return "published";
+/** Más de 4 personas (5 votos distintos) para marcar Aprobado. */
+const APPROVAL_QUORUM = 5;
+
+function approvalStateFromWiki(raw, reviewers) {
+  const s = String(raw ?? "").toLowerCase();
+  if (s === "discarded" || s === "rejected" || s === "obsolete") return "discarded";
+  return reviewers.length >= APPROVAL_QUORUM ? "approved" : "pending";
+}
+
+function collectReviewers(headers, row) {
+  const names = [];
+  headers.forEach((header, i) => {
+    const key = norm(header).toLowerCase();
+    if (!key || SKIP_REVIEWER_HEADER.has(key) || key.includes("formula")) return;
+    const value = norm(row[i]).toLowerCase();
+    if (value === "true" || value === "yes" || value === "1") {
+      names.push(norm(header));
+    }
+  });
+  return names;
+}
+
+function firstUrl(value) {
+  const match = String(value ?? "").match(/https?:\/\/\S+/i);
+  return match ? match[0] : "";
 }
 
 function isBannerRow(title, approach, approachEs, wikiId) {
@@ -146,11 +192,14 @@ function parseTable(sheet, tabName) {
     const metadata = {};
     for (const key of Object.keys(META_LABEL)) {
       const value = get(key);
-      if (value && value.toLowerCase() !== "n/a") {
-        metadata[META_LABEL[key]] = value;
-      }
+      if (!value) continue;
+      if (!COMPANY_KEYS.has(key) && value.toLowerCase() === "n/a") continue;
+      metadata[META_LABEL[key]] = value;
     }
     metadata.Origen = tabName;
+    const reviewers = collectReviewers(headers, row);
+    if (reviewers.length > 0) metadata.wiki_reviewers = reviewers;
+    metadata.approval_state = approvalStateFromWiki(get("status"), reviewers);
 
     const body = [
       approach ? `## Approach\n${approach}` : "",
@@ -174,9 +223,12 @@ function parseTable(sheet, tabName) {
         get("platform"),
         get("cp"),
       ]),
-      status: mapStatus(get("status")),
+      status: "published",
       source_sheet_tab: `${WIKI_SOURCE_PREFIX}${tabName}`,
       source_sheet_row: i + 1,
+      sources: firstUrl(get("reference"))
+        ? [{ label: "Referencia", url: firstUrl(get("reference")) }]
+        : [],
     });
   }
   return items;
@@ -207,7 +259,8 @@ export function parseGrouping(sheet, tabName) {
     utest: headerIndex(headers, ["utest"]),
     crownspeak: headerIndex(headers, ["crownspeak"]),
     barcelo: headerIndex(headers, ["barcelo"]),
-    comments: headerIndex(headers, ["comments", "pros."]),
+    pros: headerIndex(headers, ["pros.", "pros"]),
+    comments: headerIndex(headers, ["comments"]),
     reference: headerIndex(headers, ["reference link"]),
   };
   if (col.topic < 0) return [];
@@ -225,13 +278,16 @@ export function parseGrouping(sheet, tabName) {
     if (!applies && !notApplies && !spanish && !comments) continue;
 
     const wikiId = `GRP-${i + 1}`;
-    const metadata = { wiki_id: wikiId, Origen: tabName };
-    for (const key of ["team", "utest", "crownspeak", "barcelo"]) {
+    const metadata = {
+      wiki_id: wikiId,
+      Origen: tabName,
+      approval_state: "pending",
+    };
+    for (const key of ["team", "utest", "crownspeak", "barcelo", "pros"]) {
       const value = get(key);
-      if (value && value.toLowerCase() !== "n/a") {
-        metadata[META_LABEL[key]] = value;
-      }
+      if (value) metadata[META_LABEL[key]] = value;
     }
+    if (comments) metadata.Comments = comments;
 
     const body = [
       applies ? `## Dónde aplica\n${applies}` : "",
@@ -278,13 +334,17 @@ if (isMain) {
   const { file, items } = loadApproachWikiItems();
   const byTab = {};
   const byStatus = {};
+  const byApproval = {};
   for (const item of items) {
     byTab[item.source_sheet_tab] = (byTab[item.source_sheet_tab] ?? 0) + 1;
     byStatus[item.status] = (byStatus[item.status] ?? 0) + 1;
+    const approval = item.metadata?.approval_state ?? "pending";
+    byApproval[approval] = (byApproval[approval] ?? 0) + 1;
   }
   console.log("file", file);
   console.log("items", items.length);
   console.log("byTab", byTab);
   console.log("byStatus", byStatus);
+  console.log("byApproval", byApproval);
   console.log("sample", JSON.stringify(items[0], null, 2));
 }

@@ -61,7 +61,7 @@ export default async function AdminPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Administración</h1>
+        <h1 className="tracking-tight">Administración</h1>
         <p className="text-muted-foreground">
           {items.count ?? 0} elementos · {users.count ?? 0} usuarios ·{" "}
           {failed.count ?? 0} sincronizaciones fallidas

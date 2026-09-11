@@ -231,12 +231,41 @@ export async function seedApproachWiki(supabase, options = {}) {
     const hit = existing.byTabRow.get(
       `${item.source_sheet_tab}::${item.source_sheet_row}`
     );
+    const existingMeta = hit?.metadata ?? {};
+    const metadata = { ...item.metadata, wiki_id: item.wiki_id };
+    const hubApprovals = [];
+    if (Array.isArray(existingMeta.hub_approvals)) {
+      hubApprovals.push(...existingMeta.hub_approvals);
+    } else if (existingMeta.hub_approval?.approved_by_id) {
+      hubApprovals.push(existingMeta.hub_approval);
+    }
+    if (hubApprovals.length > 0) metadata.hub_approvals = hubApprovals;
+    const reviewerCount = Array.isArray(metadata.wiki_reviewers)
+      ? new Set(
+          [...metadata.wiki_reviewers, ...hubApprovals.map((h) => h.approved_by_name)]
+            .map((n) => String(n ?? "").trim().toLowerCase())
+            .filter(Boolean)
+        ).size
+      : new Set(
+          hubApprovals
+            .map((h) => String(h.approved_by_name ?? "").trim().toLowerCase())
+            .filter(Boolean)
+        ).size;
+    const discarded = ["discarded", "rejected", "obsolete"].includes(
+      String(metadata.Status ?? "").toLowerCase()
+    );
+    metadata.approval_state = discarded
+      ? "discarded"
+      : reviewerCount >= 5
+        ? "approved"
+        : "pending";
+
     const fields = {
       type_id: type.id,
       title: item.title,
       summary: item.summary || null,
       content: item.content,
-      metadata: { ...item.metadata, wiki_id: item.wiki_id },
+      metadata,
       status: item.status,
       source_sheet_tab: item.source_sheet_tab,
       source_sheet_row: item.source_sheet_row,

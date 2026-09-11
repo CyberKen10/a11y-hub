@@ -156,7 +156,7 @@ export function ImportWizard({
     <div className="space-y-8">
       {/* Paso 1: conectar */}
       <section aria-labelledby="paso1" className="space-y-3">
-        <h2 id="paso1" className="text-lg font-semibold">
+        <h2 id="paso1" className="font-bold">
           1. Conectar con el Sheet
         </h2>
         {tabs === null ? (
@@ -185,7 +185,7 @@ export function ImportWizard({
       {/* Paso 2: fila de encabezados + previsualización */}
       {sampleRows.length > 0 && (
         <section aria-labelledby="paso2" className="space-y-4">
-          <h2 id="paso2" className="text-lg font-semibold">
+          <h2 id="paso2" className="font-bold">
             2. Indicar la fila de encabezados y revisar
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -257,7 +257,7 @@ export function ImportWizard({
       {/* Paso 3: mapear columnas */}
       {headers.length > 0 && (
         <section aria-labelledby="paso3" className="space-y-4">
-          <h2 id="paso3" className="text-lg font-semibold">
+          <h2 id="paso3" className="font-bold">
             3. Mapear columnas
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -305,7 +305,7 @@ export function ImportWizard({
       {/* Paso 4: ejecutar */}
       {headers.length > 0 && (
         <section aria-labelledby="paso4" className="space-y-3">
-          <h2 id="paso4" className="text-lg font-semibold">
+          <h2 id="paso4" className="font-bold">
             4. Ejecutar importación
           </h2>
           <p className="text-sm text-muted-foreground">

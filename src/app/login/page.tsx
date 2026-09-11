@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <main
       id="contenido"
-      className="flex min-h-svh items-center justify-center bg-muted/30 p-6"
+      className="flex min-h-svh items-center justify-center bg-background p-6"
     >
       <div className="w-full max-w-md space-y-8">
         <div className="space-y-2 text-center">
@@ -17,7 +17,7 @@ export default function LoginPage() {
           >
             A
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">A11y Hub</h1>
+          <h1 className="tracking-tight">A11y Hub</h1>
           <p className="text-sm text-muted-foreground">
             Hub interno de conocimiento de accesibilidad
           </p>

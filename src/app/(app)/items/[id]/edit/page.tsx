@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ItemForm } from "@/components/items/item-form";
+import { ACTIVE_TYPE_SLUG_LIST, isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { KnowledgeType, SourceRef, Tag } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Editar contenido" };
@@ -17,7 +18,11 @@ export default async function EditItemPage({
   const supabase = await createClient();
 
   const [{ data: types }, { data: item }] = await Promise.all([
-    supabase.from("knowledge_types").select("slug, name, fields").order("sort_order"),
+    supabase
+      .from("knowledge_types")
+      .select("slug, name, fields")
+      .in("slug", ACTIVE_TYPE_SLUG_LIST)
+      .order("sort_order"),
     supabase
       .from("knowledge_items")
       .select(
@@ -28,6 +33,11 @@ export default async function EditItemPage({
   ]);
 
   if (!item) notFound();
+
+  const itemTypeSlug = (
+    item.knowledge_types as unknown as { slug?: string } | null
+  )?.slug;
+  if (!isActiveTypeSlug(itemTypeSlug)) notFound();
 
   const typeList = (types ?? []) as Pick<
     KnowledgeType,
@@ -43,7 +53,7 @@ export default async function EditItemPage({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">
+      <h1 className="tracking-tight">
         Editar: {item.title}
       </h1>
       <ItemForm

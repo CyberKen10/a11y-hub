@@ -5,6 +5,7 @@ import { isSheetsConfigured } from "@/lib/env";
 import { ImportWizard } from "@/components/admin/import-wizard";
 import { WikiApproachesImport } from "@/components/admin/wiki-approaches-import";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Importar conocimiento" };
@@ -16,12 +17,13 @@ export default async function ImportPage() {
   const { data: types } = await supabase
     .from("knowledge_types")
     .select("slug, name")
+    .in("slug", ACTIVE_TYPE_SLUG_LIST)
     .order("sort_order");
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="tracking-tight">
           Importar conocimiento
         </h1>
         <p className="text-muted-foreground">

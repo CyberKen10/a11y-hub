@@ -14,6 +14,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
 interface SearchHit {
@@ -52,7 +53,8 @@ export function CommandMenu({
     const handle = setTimeout(async () => {
       const { data } = await supabase
         .from("knowledge_items")
-        .select("id, title, knowledge_types(name)")
+        .select("id, title, knowledge_types!inner(name, slug)")
+        .in("knowledge_types.slug", ACTIVE_TYPE_SLUG_LIST)
         .ilike("title", `%${query.trim()}%`)
         .neq("status", "archived")
         .limit(8);
@@ -81,7 +83,7 @@ export function CommandMenu({
     <>
       <Button
         variant="outline"
-        className="w-full max-w-xs justify-start gap-2 text-muted-foreground sm:w-64"
+        className="w-full max-w-xs justify-start gap-2 rounded-full border-transparent bg-secondary text-muted-foreground sm:w-72"
         onClick={() => setOpen(true)}
       >
         <Search className="size-4" aria-hidden="true" />
