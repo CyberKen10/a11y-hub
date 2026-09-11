@@ -185,7 +185,7 @@ export function ChatClient({
       )}
 
       <div
-        className="min-h-0 flex-1 space-y-6 overflow-y-auto rounded-2xl border border-white/20 bg-white p-3 text-card-foreground md:rounded-3xl md:p-4"
+        className="min-h-0 flex-1 space-y-6 overflow-y-auto rounded-2xl border bg-card p-3 text-card-foreground md:rounded-3xl md:p-4"
         role="log"
         aria-label="Conversación"
         aria-live="polite"

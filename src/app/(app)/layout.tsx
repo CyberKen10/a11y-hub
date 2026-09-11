@@ -45,8 +45,8 @@ export default async function AppLayout({
         <NavLinks types={navTypes} role={profile.role} />
       </aside>
 
-      <div className="flex h-svh min-h-0 min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex items-center gap-1.5 bg-card/90 px-2 py-2.5 shadow-[0_1px_0_rgb(27_67_50_/_6%)] backdrop-blur md:gap-2 md:px-8 md:py-4">
+      <div className="flex h-svh min-h-0 min-w-0 flex-1 flex-col bg-card">
+        <header className="sticky top-0 z-40 flex items-center gap-1.5 bg-card px-2 py-2.5 shadow-[0_1px_0_rgb(27_67_50_/_6%)] md:gap-2 md:px-8 md:py-4">
           <MobileNav types={navTypes} role={profile.role} />
           <Link
             href="/"
@@ -64,7 +64,7 @@ export default async function AppLayout({
         </header>
         <main
           id="contenido"
-          className="mx-2 mb-0 mt-0 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-t-[1.25rem] rounded-b-none bg-primary p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-white shadow-[0_8px_28px_rgb(27_67_50_/_12%)] md:mx-6 md:mt-4 md:rounded-t-[2rem] md:p-8"
+          className="mb-0 mt-0 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-t-[1.25rem] rounded-b-none bg-panel p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-foreground md:rounded-t-[2rem] md:p-8"
         >
           {children}
         </main>
