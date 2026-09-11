@@ -4,15 +4,16 @@ import { ItemCard } from "@/components/items/item-card";
 import { LibraryFilters } from "@/components/items/library-filters";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType } from "@/lib/types";
+import { collectWcagFilterOptions, wcagScFilterClause } from "@/lib/wcag";
 
 export const metadata: Metadata = { title: "Biblioteca" };
 
 export default async function LibraryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; estado?: string; aprobacion?: string }>;
+  searchParams: Promise<{ q?: string; estado?: string; aprobacion?: string; sc?: string }>;
 }) {
-  const { q, estado, aprobacion } = await searchParams;
+  const { q, estado, aprobacion, sc } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
@@ -35,12 +36,21 @@ export default async function LibraryPage({
   ) {
     query = query.eq("metadata->>approval_state", aprobacion);
   }
+  const scClause = wcagScFilterClause(sc ?? "");
+  if (scClause) query = query.or(scClause);
 
-  const { data } = await query;
+  const [{ data }, { data: wcagRows }] = await Promise.all([
+    query,
+    supabase
+      .from("knowledge_items")
+      .select("metadata, knowledge_types!inner(slug)")
+      .eq("knowledge_types.slug", "approaches"),
+  ]);
   const items = (data ?? []) as unknown as KnowledgeItemWithType[];
+  const wcagOptions = collectWcagFilterOptions(wcagRows ?? []);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-5 md:space-y-6">
       <div>
         <h1 className="tracking-tight">Biblioteca</h1>
         <p className="text-muted-foreground">
@@ -48,7 +58,7 @@ export default async function LibraryPage({
         </p>
       </div>
 
-      <LibraryFilters showApproval />
+      <LibraryFilters showApproval wcagOptions={wcagOptions} />
 
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">

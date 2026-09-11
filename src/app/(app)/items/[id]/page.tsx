@@ -21,6 +21,7 @@ import {
   getApproverCount,
   looksLikeApproach,
 } from "@/lib/approaches";
+import { WcagScBadges } from "@/components/items/wcag-badges";
 import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type {
   KnowledgeFieldDef,
@@ -39,7 +40,7 @@ const META_LABEL: Record<string, string> = {
   wiki_id: "ID Wiki",
   Origen: "Pestaña wiki",
   Status: "Status",
-  CP: "CP",
+  CP: "SC WCAG",
   "Bug Type": "Bug Type",
   Platform: "Platform",
   Team: "Team",
@@ -120,7 +121,7 @@ export default async function ItemPage({
   const editable = canEdit(profile.role);
 
   return (
-    <article className="mx-auto max-w-4xl space-y-6">
+    <article className="mx-auto max-w-4xl space-y-5 md:space-y-6">
       <nav aria-label="Miga de pan" className="text-sm text-muted-foreground">
         <ol className="flex flex-wrap items-center gap-1">
           <li>
@@ -147,14 +148,17 @@ export default async function ItemPage({
             {STATUS_LABEL[item.status]}
           </Badge>
           {looksLikeApproach(metadata, type?.slug) && (
-            <ApprovalBadge
-              state={getApprovalState(metadata)}
-              count={
-                getApprovalState(metadata) === "discarded"
-                  ? undefined
-                  : getApproverCount(metadata)
-              }
-            />
+            <>
+              <WcagScBadges metadata={metadata} />
+              <ApprovalBadge
+                state={getApprovalState(metadata)}
+                count={
+                  getApprovalState(metadata) === "discarded"
+                    ? undefined
+                    : getApproverCount(metadata)
+                }
+              />
+            </>
           )}
           <span className="text-sm text-muted-foreground">
             Actualizado{" "}
@@ -164,9 +168,9 @@ export default async function ItemPage({
             }).format(new Date(item.updated_at))}
           </span>
         </div>
-        <h1 className="tracking-tight">{item.title}</h1>
+        <h1 className="break-words tracking-tight">{item.title}</h1>
         {item.summary && (
-          <p className="text-lg text-muted-foreground">{item.summary}</p>
+          <p className="text-sm text-muted-foreground md:text-lg">{item.summary}</p>
         )}
         {tags.length > 0 && (
           <ul className="flex flex-wrap gap-1.5" aria-label="Etiquetas">

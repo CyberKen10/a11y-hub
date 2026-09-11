@@ -21,13 +21,13 @@ export function PaginationNav({
   return (
     <nav
       aria-label="Paginación"
-      className="flex flex-wrap items-center justify-between gap-3"
+      className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
     >
       <p className="text-sm text-muted-foreground">
         Mostrando {start}–{end} de {total}
       </p>
       {pageCount > 1 && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2 sm:justify-end">
           {page <= 1 ? (
             <Button variant="outline" size="sm" disabled>
               <ChevronLeft aria-hidden="true" />

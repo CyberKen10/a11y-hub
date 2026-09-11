@@ -70,25 +70,25 @@ export default async function DashboardPage() {
   const draftItems = (drafts ?? []) as unknown as KnowledgeItemWithType[];
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+    <div className="mx-auto max-w-6xl space-y-6 md:space-y-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-4">
+        <div className="min-w-0">
           <h1 className="tracking-tight">
             Hola de nuevo, {profile.full_name?.split(" ")[0] ?? "equipo"}
           </h1>
-          <p className="mt-1 text-lg text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground md:text-lg">
             Aquí está tu hub de conocimiento de accesibilidad.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button asChild>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/chat">
               <MessageSquare aria-hidden="true" />
               Preguntar al hub
             </Link>
           </Button>
           {canEdit(profile.role) && (
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="w-full sm:w-auto">
               <Link href="/items/new">
                 <PlusCircle aria-hidden="true" />
                 Nuevo contenido
@@ -130,12 +130,12 @@ export default async function DashboardPage() {
               <Link
                 key={t.slug}
                 href={`/library/${t.slug}`}
-                className="group rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)] transition-shadow hover:shadow-[0_12px_32px_rgb(27_67_50_/_10%)] focus-visible:outline-2 focus-visible:outline-ring"
+                className="group rounded-2xl bg-card p-4 text-card-foreground shadow-[0_8px_28px_rgb(27_67_50_/_6%)] transition-shadow hover:shadow-[0_12px_32px_rgb(27_67_50_/_10%)] focus-visible:outline-2 focus-visible:outline-ring md:p-5"
               >
                 <span className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary">
                   <Icon className="size-5" aria-hidden="true" />
                 </span>
-                <p className="mt-5 font-heading text-4xl font-bold tracking-tight">
+                <p className="mt-5 font-heading text-3xl font-bold tracking-tight">
                   {count}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">{t.name}</p>
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <section
           aria-labelledby="recientes-heading"
-          className="rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)]"
+          className="rounded-2xl bg-card p-4 text-card-foreground shadow-[0_8px_28px_rgb(27_67_50_/_6%)] md:p-5"
         >
           <h2 id="recientes-heading" className="font-bold">
             Actualizado recientemente
@@ -164,16 +164,18 @@ export default async function DashboardPage() {
               <li key={item.id}>
                 <Link
                   href={`/items/${item.id}`}
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-secondary"
+                  className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-2.5 transition-colors hover:bg-secondary sm:gap-3 sm:px-3 sm:py-3"
                 >
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {item.title}
                   </span>
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="shrink-0">
                     {item.knowledge_types?.name ?? "—"}
                   </Badge>
                   {item.status === "draft" && (
-                    <Badge variant="outline">Borrador</Badge>
+                    <Badge variant="outline" className="shrink-0">
+                      Borrador
+                    </Badge>
                   )}
                 </Link>
               </li>
@@ -183,7 +185,7 @@ export default async function DashboardPage() {
 
         <section
           aria-labelledby="borradores-heading"
-          className="rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)]"
+          className="rounded-2xl bg-card p-4 text-card-foreground shadow-[0_8px_28px_rgb(27_67_50_/_6%)] md:p-5"
         >
           <h2 id="borradores-heading" className="font-bold">
             Mis borradores
@@ -198,12 +200,12 @@ export default async function DashboardPage() {
               <li key={item.id}>
                 <Link
                   href={`/items/${item.id}`}
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-secondary"
+                  className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-2.5 transition-colors hover:bg-secondary sm:gap-3 sm:px-3 sm:py-3"
                 >
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {item.title}
                   </span>
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="shrink-0">
                     {item.knowledge_types?.name ?? "—"}
                   </Badge>
                 </Link>

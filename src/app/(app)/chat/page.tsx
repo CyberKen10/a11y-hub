@@ -18,7 +18,7 @@ export default async function ChatPage() {
     .order("sort_order");
 
   return (
-    <div className="h-[calc(100svh-8.5rem)]">
+    <div className="h-full min-h-0">
       <Suspense>
         <ChatClient
           types={(types ?? []) as Pick<KnowledgeType, "slug" | "name">[]}

@@ -9,7 +9,7 @@ export const WIKI_SOURCE_PREFIX = "Wiki Approaches · ";
 const HEADER_ALIASES = {
   id: ["id"],
   status: ["status"],
-  cp: ["cp"],
+  cp: ["cp", "sc", "wcag", "wcag sc", "sc wcag", "success criterion"],
   bugType: ["bug type"],
   platform: ["platform"],
   topic: ["bug description / topic", "topic"],
@@ -49,6 +49,11 @@ const SKIP_REVIEWER_HEADER = new Set([
   "id",
   "status",
   "cp",
+  "sc",
+  "wcag",
+  "wcag sc",
+  "sc wcag",
+  "success criterion",
   "bug type",
   "platform",
   "bug description / topic",
@@ -121,6 +126,11 @@ function isBannerRow(title, approach, approachEs, wikiId) {
   if (!wikiId && title && !approach && !approachEs) return true;
   const t = title.toLowerCase();
   return t.startsWith("from ") || t === "topic";
+}
+
+function parseWcagScs(value) {
+  const matches = String(value ?? "").match(/\d{1,2}\.\d{1,2}\.\d{1,2}/g);
+  return [...new Set(matches ?? [])];
 }
 
 function uniqueTags(values) {
@@ -200,6 +210,8 @@ function parseTable(sheet, tabName) {
     const reviewers = collectReviewers(headers, row);
     if (reviewers.length > 0) metadata.wiki_reviewers = reviewers;
     metadata.approval_state = approvalStateFromWiki(get("status"), reviewers);
+    const wcagScs = parseWcagScs(get("cp"));
+    if (wcagScs.length > 0) metadata.wcag_scs = wcagScs;
 
     const body = [
       approach ? `## Approach\n${approach}` : "",

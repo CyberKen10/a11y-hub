@@ -144,12 +144,12 @@ export function ChatClient({
       : types.find((t) => t.slug === scope)?.name ?? scope;
 
   return (
-    <div className="mx-auto flex h-full max-w-3xl flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-1.5">
+    <div className="mx-auto flex h-full min-h-0 max-w-3xl flex-col gap-3 md:gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        <div className="w-full space-y-1.5 sm:w-auto">
           <Label htmlFor="chat-scope">Alcance de la búsqueda</Label>
           <Select value={scope} onValueChange={setScope}>
-            <SelectTrigger id="chat-scope" className="w-64">
+            <SelectTrigger id="chat-scope" className="w-full sm:w-64">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -162,7 +162,7 @@ export function ChatClient({
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" onClick={newConversation}>
+        <Button variant="outline" className="w-full sm:w-auto" onClick={newConversation}>
           <MessageSquarePlus aria-hidden="true" />
           Nueva conversación
         </Button>
@@ -185,7 +185,7 @@ export function ChatClient({
       )}
 
       <div
-        className="flex-1 space-y-6 overflow-y-auto rounded-xl border bg-card/50 p-4"
+        className="min-h-0 flex-1 space-y-6 overflow-y-auto rounded-2xl border border-white/20 bg-white p-3 text-card-foreground md:rounded-3xl md:p-4"
         role="log"
         aria-label="Conversación"
         aria-live="polite"
@@ -215,7 +215,7 @@ export function ChatClient({
               }
             >
               {message.role === "user" ? (
-                <div className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-4 py-2.5 text-primary-foreground">
+                <div className="ml-auto w-fit max-w-[92%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-primary-foreground sm:max-w-[85%] sm:px-4 sm:py-2.5">
                   <p className="whitespace-pre-wrap">{text}</p>
                 </div>
               ) : (

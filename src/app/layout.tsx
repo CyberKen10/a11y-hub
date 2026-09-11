@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   },
   description:
     "Hub interno de conocimiento de accesibilidad: approaches, metodologías y chat con la información.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/logo-a11y.png", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", type: "image/png" }],
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

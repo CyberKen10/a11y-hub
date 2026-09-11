@@ -126,7 +126,7 @@ export function KnowledgeComposer({
         if (!o) reset();
       }}
     >
-      <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[min(90svh,100%)] w-[calc(100%-1rem)] overflow-y-auto sm:w-full sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Añadir conocimiento con IA</DialogTitle>
           <DialogDescription>

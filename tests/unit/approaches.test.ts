@@ -106,7 +106,9 @@ describe("formatSourceFicha", () => {
       wiki_reviewers: ["Yen", "Yudi"],
       Team: "Valid Bug",
       UTest: "N/A",
+      CP: "1.4.3 Contrast (Minimum)",
     });
+    expect(text).toContain("SC WCAG: 1.4.3");
     expect(text).toContain("Estado: Sin aprobar (2 de 5)");
     expect(text).toContain("Ya aprobaron: Yen, Yudi");
     expect(text).toContain("Team: Valid Bug");

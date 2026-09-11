@@ -1,3 +1,5 @@
+import { formatWcagLine } from "@/lib/wcag";
+
 export type ApprovalState = "approved" | "pending" | "discarded";
 
 export interface HubApproval {
@@ -27,7 +29,7 @@ export const COMPANY_FIELDS = [
 export const WIKI_FICHA_FIELDS = [
   { key: "wiki_id", label: "ID" },
   { key: "Status", label: "Status wiki" },
-  { key: "CP", label: "CP" },
+  { key: "CP", label: "SC WCAG" },
   { key: "Bug Type", label: "Bug Type" },
   { key: "Platform", label: "Platform" },
   ...COMPANY_FIELDS,
@@ -42,6 +44,7 @@ export const INTERNAL_META_KEYS = [
   "hub_approval",
   "hub_approvals",
   "wiki_reviewers",
+  "wcag_scs",
 ] as const;
 
 /** “Más de 4 personas”: se marca Aprobado al llegar a 5 votos distintos. */
@@ -237,7 +240,11 @@ export function formatCompanyLine(
 export function formatSourceFicha(
   metadata: Record<string, unknown> | null | undefined
 ): string {
-  return [formatApprovalLine(metadata), formatCompanyLine(metadata)]
+  return [
+    formatWcagLine(metadata),
+    formatApprovalLine(metadata),
+    formatCompanyLine(metadata),
+  ]
     .filter(Boolean)
     .join("\n");
 }

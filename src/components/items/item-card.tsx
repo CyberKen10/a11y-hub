@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ApprovalBadge } from "@/components/items/approach-ficha";
+import { WcagScBadges } from "@/components/items/wcag-badges";
 import {
   COMPANY_FIELDS,
   getApprovalState,
@@ -7,6 +8,7 @@ import {
   looksLikeApproach,
 } from "@/lib/approaches";
 import { Badge } from "@/components/ui/badge";
+import { getItemWcagSuccessCriteria, getRawWcagCp } from "@/lib/wcag";
 import type { KnowledgeItemWithType } from "@/lib/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -18,6 +20,10 @@ const STATUS_LABEL: Record<string, string> = {
 export function ItemCard({ item }: { item: KnowledgeItemWithType }) {
   const metadata = (item.metadata ?? {}) as Record<string, unknown>;
   const isApproach = looksLikeApproach(metadata, item.knowledge_types?.slug);
+  const showWcag =
+    isApproach ||
+    getItemWcagSuccessCriteria(metadata).length > 0 ||
+    Boolean(getRawWcagCp(metadata));
   const companyBits = COMPANY_FIELDS.map(({ key, label }) => {
     const value = metadata[key];
     if (value == null || String(value).trim() === "") return null;
@@ -27,11 +33,14 @@ export function ItemCard({ item }: { item: KnowledgeItemWithType }) {
   return (
     <Link
       href={`/items/${item.id}`}
-      className="flex h-full flex-col gap-2 rounded-2xl bg-card p-5 shadow-[0_8px_28px_rgb(27_67_50_/_6%)] transition-shadow hover:shadow-[0_12px_32px_rgb(27_67_50_/_10%)] focus-visible:outline-2 focus-visible:outline-ring"
+      className="flex h-full min-w-0 flex-col gap-2 rounded-2xl bg-card p-4 text-card-foreground shadow-[0_8px_28px_rgb(27_67_50_/_6%)] transition-shadow hover:shadow-[0_12px_32px_rgb(27_67_50_/_10%)] focus-visible:outline-2 focus-visible:outline-ring md:p-5"
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="leading-snug">{item.title}</h3>
-        <div className="flex shrink-0 flex-col items-end gap-1">
+      {showWcag && (
+        <WcagScBadges metadata={metadata} emptyLabel={isApproach ? "Sin SC" : null} />
+      )}
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <h3 className="min-w-0 break-words leading-snug">{item.title}</h3>
+        <div className="flex flex-wrap gap-1 sm:shrink-0 sm:flex-col sm:items-end">
           {typeof item.metadata?.wiki_id === "string" && (
             <Badge variant="outline" className="font-mono text-[0.7rem]">
               {item.metadata.wiki_id}

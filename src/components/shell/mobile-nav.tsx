@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { BrandLogo } from "@/components/shell/brand-logo";
 import { NavLinks } from "@/components/shell/nav-links";
 import type { KnowledgeType, UserRole } from "@/lib/types";
 
@@ -42,9 +43,12 @@ export function MobileNav({
           <Menu aria-hidden="true" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-72 overflow-y-auto p-0">
+      <SheetContent side="left" className="w-[min(18rem,calc(100vw-1.5rem))] overflow-y-auto p-0">
         <SheetHeader className="border-b px-4 py-3">
-          <SheetTitle>A11y Hub</SheetTitle>
+          <SheetTitle className="flex items-center gap-2">
+            <BrandLogo size={28} />
+            A11y Hub
+          </SheetTitle>
         </SheetHeader>
         <NavLinks types={types} role={role} />
       </SheetContent>

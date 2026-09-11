@@ -129,14 +129,14 @@
   }
   html {
     @apply font-sans;
-    font-size: 18px;
+    font-size: 16px;
   }
   body {
     @apply bg-background font-sans text-foreground;
     font-family: var(--font-sans);
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 500;
-    line-height: 1.65;
+    line-height: 1.6;
   }
   h1,
   h2,
@@ -150,13 +150,18 @@
     line-height: 1.25;
   }
   h1 {
-    font-size: 2.35rem;
+    font-size: 1.45rem;
+  }
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 1.85rem;
+    }
   }
   h2 {
-    font-size: 1.55rem;
+    font-size: 1.35rem;
   }
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
   }
   label,
   legend,
@@ -180,5 +185,60 @@
   textarea,
   select {
     font-family: inherit;
+  }
+  #contenido {
+    color: #ffffff;
+  }
+  #contenido .text-muted-foreground {
+    color: rgb(255 255 255 / 80%);
+  }
+  #contenido .prose {
+    --tw-prose-body: #ffffff;
+    --tw-prose-headings: #ffffff;
+    --tw-prose-bold: #ffffff;
+    --tw-prose-links: #eaf4f0;
+    --tw-prose-quotes: #eaf4f0;
+    --tw-prose-counters: #eaf4f0;
+    --tw-prose-bullets: #eaf4f0;
+  }
+  #contenido [data-slot="card"],
+  #contenido .bg-card,
+  #contenido [data-slot="input"],
+  #contenido [data-slot="textarea"],
+  #contenido [data-slot="select-trigger"],
+  #contenido [role="log"] {
+    color: var(--card-foreground);
+  }
+  #contenido [data-slot="card"] .text-muted-foreground,
+  #contenido .bg-card .text-muted-foreground,
+  #contenido [data-slot="input"],
+  #contenido [data-slot="textarea"],
+  #contenido [data-slot="select-trigger"],
+  #contenido [role="log"] .text-muted-foreground,
+  #contenido [role="log"] .prose {
+    --tw-prose-body: var(--card-foreground);
+    --tw-prose-headings: var(--card-foreground);
+    --tw-prose-bold: var(--card-foreground);
+    --tw-prose-links: var(--primary);
+    color: inherit;
+  }
+  #contenido [data-slot="card"] .text-muted-foreground,
+  #contenido .bg-card .text-muted-foreground,
+  #contenido [role="log"] .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+  #contenido [data-slot="button"][data-variant="default"] {
+    background: #ffffff;
+    color: #2d6a4f;
+  }
+  #contenido [data-slot="button"][data-variant="outline"],
+  #contenido [data-slot="button"][data-variant="ghost"] {
+    border-color: rgb(255 255 255 / 45%);
+    color: #ffffff;
+  }
+  #contenido [data-slot="button"][data-variant="outline"]:hover,
+  #contenido [data-slot="button"][data-variant="ghost"]:hover {
+    background: rgb(255 255 255 / 12%);
+    color: #ffffff;
   }
 }
