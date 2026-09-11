@@ -12,7 +12,7 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-md space-y-8">
         <div className="space-y-2 text-center">
-          <BrandLogo size={56} className="mx-auto" />
+          <BrandLogo size={36} className="mx-auto" />
           <h1 className="tracking-tight">A11y Hub</h1>
           <p className="text-sm text-muted-foreground">
             Hub interno de conocimiento de accesibilidad

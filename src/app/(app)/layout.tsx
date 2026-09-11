@@ -38,7 +38,7 @@ export default async function AppLayout({
             href="/"
             className="flex items-center gap-3 font-heading text-xl font-bold tracking-tight"
           >
-            <BrandLogo size={40} />
+            <BrandLogo size={26} />
             A11y Hub
           </Link>
         </div>
@@ -52,7 +52,7 @@ export default async function AppLayout({
             href="/"
             className="flex shrink-0 items-center gap-2 font-heading text-base font-bold tracking-tight md:hidden"
           >
-            <BrandLogo size={28} />
+            <BrandLogo size={20} />
             <span className="max-[380px]:sr-only">A11y Hub</span>
           </Link>
           <CommandMenu types={navTypes} />

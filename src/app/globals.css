@@ -242,3 +242,14 @@
     color: #ffffff;
   }
 }
+
+.brand-logo {
+  display: inline-block;
+  background-color: #111111;
+  mask: url("/logo-a11y.png") center / contain no-repeat;
+  -webkit-mask: url("/logo-a11y.png") center / contain no-repeat;
+}
+
+.dark .brand-logo {
+  background-color: #52b788;
+}

@@ -46,7 +46,7 @@ export function MobileNav({
       <SheetContent side="left" className="w-[min(18rem,calc(100vw-1.5rem))] overflow-y-auto p-0">
         <SheetHeader className="border-b px-4 py-3">
           <SheetTitle className="flex items-center gap-2">
-            <BrandLogo size={28} />
+            <BrandLogo size={20} />
             A11y Hub
           </SheetTitle>
         </SheetHeader>
