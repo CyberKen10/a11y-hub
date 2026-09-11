@@ -99,8 +99,6 @@ AI_PROVIDER=google                                        # gratis por defecto
 GOOGLE_GENERATIVE_AI_API_KEY=AIza...                      # Paso 2
 # OPENAI_API_KEY=sk-...                                   # solo si cambias a AI_PROVIDER=openai
 
-ALLOWED_EMAIL_DOMAINS=tuempresa.com                       # dominio de correo permitido (vacío = cualquiera)
-
 GOOGLE_SERVICE_ACCOUNT_EMAIL=a11y-hub-sheets@....iam.gserviceaccount.com   # Paso 3.5
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"  # Paso 3.5, en UNA línea con \n
 GOOGLE_SHEET_ID=1AbC...                                   # Paso 3.7
@@ -114,15 +112,17 @@ Notas:
 
 ### Paso 5 — Arrancar y crear tu cuenta de administrador
 
+La app no tiene alta pública. Las cuentas se crean en Supabase.
+
 ```bash
 npm install
 npm run dev
 ```
 
-1. Abre [http://localhost:3000](http://localhost:3000) → te redirige al login.
-2. Pestaña **Crear cuenta** → registra tu correo (del dominio permitido) y contraseña.
-3. Revisa tu bandeja de entrada y pulsa el enlace de confirmación de Supabase.
-4. Inicia sesión. **Como eres el primer usuario, ya eres administrador.** Los siguientes entran como lectores y tú les subes el rol en **Administración → Usuarios**.
+1. En Supabase: **Authentication → Providers → Email** → desactiva **Allow new users to sign up** (sigue pudiendo crear usuarios tú desde el panel).
+2. **Authentication → Users → Add user**: correo, contraseña y marca **Auto Confirm User**.
+3. El primer usuario recibe rol **admin** en `profiles` (el resto entra como lector).
+4. Abre [http://localhost:3000](http://localhost:3000) e inicia sesión. Los roles se cambian en **Administración → Usuarios**.
 
 ### Paso 6 — Cargar la Wiki Approaches (Excel)
 
@@ -195,7 +195,7 @@ Supabase, Gemini y Google Sheets ya son gratis. Lo que falta es **un sitio web**
 7. En Supabase → **Authentication → URL Configuration**:
    - **Site URL**: esa URL de Render
    - **Redirect URLs**: añade `https://a11y-hub.onrender.com/auth/confirm` (usa tu URL real)
-8. Entra a esa URL, crea la cuenta admin y sigue el Paso 6 (importar el Sheet).
+8. Crea el usuario admin en Supabase (Authentication → Users) e inicia sesión. Luego sigue el Paso 6 (importar el Sheet).
 
 Si nadie entra en ~15 minutos, Render apaga el servidor. La siguiente persona espera medio minuto: es el precio de $0. Para un hub interno de pocas personas al día suele ser aceptable.
 

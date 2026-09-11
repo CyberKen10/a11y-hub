@@ -31,8 +31,9 @@ export default async function UsersPage() {
           Usuarios y roles
         </h1>
         <p className="text-muted-foreground">
-          Lector: consulta y chatea. Editor: crea y edita contenido.
-          Administrador: gestiona todo.
+          Las cuentas se crean en Supabase (Authentication → Users → Add user).
+          Aquí solo cambias el rol. Lector: consulta y chatea. Editor: crea y
+          edita contenido. Administrador: gestiona todo.
         </p>
       </div>
 

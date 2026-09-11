@@ -20,7 +20,7 @@ create table public.profiles (
   created_at timestamptz not null default now()
 );
 
--- First user to sign up becomes admin; everyone else starts as reader.
+-- First auth user becomes admin; everyone else starts as reader.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

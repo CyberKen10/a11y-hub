@@ -25,19 +25,10 @@ import {
 } from "@/lib/approach-options";
 import { hydrateExtractedItem } from "@/lib/extract-hydrate";
 import { transcriptToNotes } from "@/lib/transcript";
-import type { ExistingMatch } from "@/lib/actions/extract";
+import type { ExistingMatch, MeetingAgreement } from "@/lib/extract-types";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
-export const maxDuration = 60;
-
-export interface MeetingAgreement {
-  id: string;
-  decision: string;
-  proposal: ExtractionResult;
-  existing: ExistingMatch | null;
-}
-
-export type MeetingExtractResponse =
+type MeetingExtractResponse =
   | { ok: true; agreements: MeetingAgreement[] }
   | { ok: false; error: string };
 

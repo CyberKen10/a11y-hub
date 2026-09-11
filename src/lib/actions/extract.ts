@@ -21,22 +21,13 @@ import {
   PLATFORM_OPTIONS,
 } from "@/lib/approach-options";
 import { hydrateExtractedItem } from "@/lib/extract-hydrate";
+import type { ExistingMatch } from "@/lib/extract-types";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
-export const maxDuration = 60;
-
-export interface ExistingMatch {
-  id: string;
-  title: string;
-  summary: string | null;
-  content: string;
-}
-
-export type ExtractResponse =
+type ExtractResponse =
   | {
       ok: true;
       proposal: ExtractionResult;
-      /** Similar existing item, so the user can update instead of duplicate. */
       existing: ExistingMatch | null;
     }
   | { ok: false; error: string };

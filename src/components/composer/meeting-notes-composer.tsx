@@ -3,13 +3,14 @@
 import { useRef, useState, useTransition } from "react";
 import { ArrowLeft, CircleAlert, Loader2, NotebookPen } from "lucide-react";
 import { toast } from "sonner";
-import { extractMeetingNotes, type MeetingAgreement } from "@/lib/actions/meeting";
+import { extractMeetingNotes } from "@/lib/actions/meeting";
 import { saveItem } from "@/lib/actions/items";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import { withAllComposerMetadata } from "@/lib/approaches";
 import { transcriptToNotes } from "@/lib/transcript";
 import { formatClientActionError } from "@/lib/ai-errors";
 import type { ExtractionResult } from "@/lib/schemas";
+import type { MeetingAgreement } from "@/lib/extract-types";
 import type { KnowledgeType } from "@/lib/types";
 import { ProposalEditor } from "@/components/composer/proposal-editor";
 import { Badge } from "@/components/ui/badge";

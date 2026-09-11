@@ -19,7 +19,7 @@ flowchart LR
 
 | Tabla | Propósito |
 | --- | --- |
-| `profiles` | Usuario + rol (`admin`, `editor`, `reader`). El primer registro es admin. |
+| `profiles` | Usuario + rol (`admin`, `editor`, `reader`). El primer usuario creado en Auth es admin. |
 | `knowledge_types` | Apartados con definición de campos específicos (JSONB `fields`). |
 | `knowledge_items` | Contenido unificado: título, resumen, contenido Markdown, `metadata` JSONB validada por tipo, estado, origen del Sheet y posición del espejo. |
 | `knowledge_versions` | Snapshot completo en cada guardado; restaurable. |

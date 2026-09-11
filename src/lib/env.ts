@@ -30,10 +30,6 @@ export const env = {
   openaiApiKey: process.env.OPENAI_API_KEY,
   /** Optional: only required when using Gemini (the default). */
   googleGenerativeAiApiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-  allowedEmailDomains: (process.env.ALLOWED_EMAIL_DOMAINS ?? "")
-    .split(",")
-    .map((d) => d.trim().toLowerCase())
-    .filter(Boolean),
   google: {
     serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     privateKey: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),

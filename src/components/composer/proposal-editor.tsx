@@ -4,7 +4,7 @@ import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { ExtractionResult } from "@/lib/schemas";
 import type { KnowledgeType } from "@/lib/types";
 import { composerFieldsFor, withAllComposerMetadata } from "@/lib/approaches";
-import type { ExistingMatch } from "@/lib/actions/extract";
+import type { ExistingMatch } from "@/lib/extract-types";
 import { KnowledgeFieldControl } from "@/components/items/knowledge-field-control";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";

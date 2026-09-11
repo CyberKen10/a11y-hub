@@ -8,9 +8,7 @@
 | Editor | Además: crear/editar/publicar/archivar contenido, subir adjuntos, usar "Añadir con IA". |
 | Administrador | Además: importar de Sheets, panel de sincronización, usuarios/roles, auditoría, eliminar. |
 
-El primer usuario registrado se convierte en admin automáticamente. Los siguientes entran como lectores y un admin les sube el rol en **Administración → Usuarios**.
-
-Para restringir el alta a tu dominio corporativo define `ALLOWED_EMAIL_DOMAINS=tuempresa.com`.
+Las cuentas se crean en **Supabase → Authentication → Users → Add user** (Auto Confirm). El primer usuario recibe rol admin; el resto entra como lector y un admin le sube el rol en **Administración → Usuarios**. Desactiva **Allow new users to sign up** en Authentication → Providers → Email para que nadie se dé de alta solo.
 
 ## Importación de Approaches (Excel Wiki)
 
