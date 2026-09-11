@@ -262,7 +262,7 @@ export function ChatClient({
         {status === "submitted" && (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            Buscando en el hub y llamando al modelo…
+            Buscando en el hub…
           </p>
         )}
         <div ref={bottomRef} />

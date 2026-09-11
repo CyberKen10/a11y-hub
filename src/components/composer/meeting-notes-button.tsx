@@ -17,8 +17,8 @@ export function MeetingNotesButton({
     <>
       <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
         <NotebookPen aria-hidden="true" />
-        <span className="hidden sm:inline">Notas de reunión</span>
-        <span className="sr-only sm:hidden">Notas de reunión</span>
+        <span className="hidden sm:inline">Acuerdos</span>
+        <span className="sr-only sm:hidden">Acuerdos de reunión</span>
       </Button>
       <MeetingNotesComposer open={open} onOpenChange={setOpen} types={types} />
     </>

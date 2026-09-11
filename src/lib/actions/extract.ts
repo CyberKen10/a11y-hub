@@ -4,7 +4,13 @@ import { generateObject } from "ai";
 import { requireProfile } from "@/lib/auth";
 import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
-import { chatModel, chatProviderOptions } from "@/lib/ai";
+import {
+  assertAiConfigured,
+  chatModel,
+  chatModelId,
+  chatProviderOptions,
+} from "@/lib/ai";
+import { publicAiError, type ChatStage } from "@/lib/ai-errors";
 import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import { composerFieldsFor } from "@/lib/approaches";
@@ -16,6 +22,8 @@ import {
 } from "@/lib/approach-options";
 import { hydrateExtractedItem } from "@/lib/extract-hydrate";
 import type { KnowledgeFieldDef } from "@/lib/types";
+
+export const maxDuration = 60;
 
 export interface ExistingMatch {
   id: string;
@@ -33,6 +41,12 @@ export type ExtractResponse =
     }
   | { ok: false; error: string };
 
+function fail(stage: ChatStage, error: unknown): ExtractResponse {
+  const message = publicAiError(stage, error);
+  console.error(`[ficha · ${stage}]`, message);
+  return { ok: false, error: message };
+}
+
 /**
  * Converts free text (typed or voice-transcribed) into a structured
  * knowledge-item proposal. The result is ALWAYS reviewed and confirmed by a
@@ -41,24 +55,50 @@ export type ExtractResponse =
 export async function extractProposal(rawText: string): Promise<ExtractResponse> {
   const profile = await requireProfile("editor");
 
+  try {
+    assertAiConfigured();
+  } catch (error) {
+    return fail("config", error);
+  }
+
   const text = rawText.trim().slice(0, 20_000);
   if (text.length < 10) {
-    return { ok: false, error: "El texto es demasiado corto para analizarlo." };
+    return fail("request", "Añade un poco más de texto.");
   }
 
-  const quota = await consumeAiQuota(profile.id, "extract");
-  if (!quota.ok) {
-    return { ok: false, error: quota.message };
+  try {
+    const quota = await consumeAiQuota(profile.id, "extract");
+    if (!quota.ok) return fail("quota", quota.message);
+  } catch (error) {
+    return fail("quota", error);
   }
 
-  const supabase = await createClient();
-  const { data: types } = await supabase
-    .from("knowledge_types")
-    .select("slug, name, description, fields")
-    .in("slug", ACTIVE_TYPE_SLUG_LIST)
-    .order("sort_order");
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  let types: {
+    slug: string;
+    name: string;
+    description: string | null;
+    fields: unknown;
+  }[] = [];
+  try {
+    supabase = await createClient();
+    const { data, error } = await supabase
+      .from("knowledge_types")
+      .select("slug, name, description, fields")
+      .in("slug", ACTIVE_TYPE_SLUG_LIST)
+      .order("sort_order");
+    if (error) throw error;
+    types = data ?? [];
+    if (types.length === 0) {
+      throw new Error(
+        "No hay apartados activos (approaches, metodologías, herramientas, plantillas)."
+      );
+    }
+  } catch (error) {
+    return fail("catalog", error);
+  }
 
-  const typeCatalog = (types ?? [])
+  const typeCatalog = types
     .map((t) => {
       const defs = composerFieldsFor(
         t.slug,
@@ -73,8 +113,14 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
     })
     .join("\n");
 
+  console.info("[ficha · inicio]", {
+    chars: text.length,
+    model: chatModelId(),
+  });
+
+  let object: ExtractionResult;
   try {
-    const { object } = await generateObject({
+    const result = await generateObject({
       model: chatModel(),
       schema: extractionSchema,
       providerOptions: chatProviderOptions(),
@@ -102,28 +148,31 @@ Reglas:
 7. La persona revisará la propuesta antes de guardar: prioriza una ficha completa y revisable, no campos en blanco.`,
       prompt: text,
     });
+    object = result.object;
+  } catch (error) {
+    return fail("extract", error);
+  }
 
-    const typeRow = (types ?? []).find((t) => t.slug === object.type_slug);
+  try {
+    const typeRow = types.find((t) => t.slug === object.type_slug);
     const proposal = hydrateExtractedItem(
       object,
       (typeRow?.fields ?? []) as KnowledgeFieldDef[]
     );
 
-    // Detect a likely existing item to update instead of duplicating.
-    const { data: match } = await supabase
+    const { data: match, error: matchError } = await supabase
       .from("knowledge_items")
       .select("id, title, summary, content")
       .ilike("title", `%${object.title.slice(0, 60)}%`)
       .neq("status", "archived")
       .limit(1)
       .maybeSingle<ExistingMatch>();
+    if (matchError) {
+      console.warn("[ficha · hydrate]", matchError.message);
+    }
 
     return { ok: true, proposal, existing: match ?? null };
   } catch (error) {
-    console.error("[extract] failed", error);
-    return {
-      ok: false,
-      error: "No se pudo analizar el texto. Inténtalo de nuevo.",
-    };
+    return fail("hydrate", error);
   }
 }

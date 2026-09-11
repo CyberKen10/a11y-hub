@@ -6,7 +6,7 @@ describe("aiQuotaDeniedMessage", () => {
     const text = aiQuotaDeniedMessage("chat", 20, 20);
     expect(text).toContain("20 preguntas de chat");
     expect(text).toContain("20/20");
-    expect(text).toContain("cupo gratis");
+    expect(text).toContain("medianoche UTC");
   });
 });
 

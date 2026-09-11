@@ -129,7 +129,7 @@ export const APPROACH_COMPOSER_FIELDS: KnowledgeFieldDef[] = [
     key: "Comments",
     label: "Comments",
     kind: "textarea",
-    help: "Notas y qué se infirió frente a lo dictado.",
+    help: "Notas internas de la ficha.",
   },
 ];
 
@@ -238,7 +238,7 @@ export function fillBlankApproachMetadata(
   );
   take(
     "cons",
-    "Hay que validarlo en el producto real; el dictado puede omitir excepciones de plataforma o de cliente."
+    "Hay que validarlo en el producto real; el contexto de origen puede omitir excepciones de plataforma o de cliente."
   );
   take("Bug Type", inferBugType(blob));
   take("Platform", inferPlatform(blob));
@@ -252,10 +252,10 @@ export function fillBlankApproachMetadata(
   if (!existingComments) {
     next.Comments =
       filled.length > 0
-        ? `IA interpretó campos que no venían en el dictado (${filled.join(", ")}). Revisa SC WCAG y clientes antes de publicar.`
-        : `Propuesta a partir del dictado “${topic}”. Revisa SC WCAG y clientes antes de publicar.`;
-  } else   if (filled.length > 0) {
-    next.Comments = `${existingComments}\n\nIA completó también: ${filled.join(", ")}.`;
+        ? `Campos completados a partir del contexto (${filled.join(", ")}). Revisa SC WCAG y clientes antes de publicar.`
+        : `Ficha de “${topic}”. Revisa SC WCAG y clientes antes de publicar.`;
+  } else if (filled.length > 0) {
+    next.Comments = `${existingComments}\n\nTambién se completaron: ${filled.join(", ")}.`;
   }
 
   return normalizeApproachMetadata(next);

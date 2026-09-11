@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { ArrowLeft, Loader2, NotebookPen } from "lucide-react";
+import { ArrowLeft, CircleAlert, Loader2, NotebookPen } from "lucide-react";
 import { toast } from "sonner";
 import { extractMeetingNotes, type MeetingAgreement } from "@/lib/actions/meeting";
 import { saveItem } from "@/lib/actions/items";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import { withAllComposerMetadata } from "@/lib/approaches";
 import { transcriptToNotes } from "@/lib/transcript";
+import { formatClientActionError } from "@/lib/ai-errors";
 import type { ExtractionResult } from "@/lib/schemas";
 import type { KnowledgeType } from "@/lib/types";
 import { ProposalEditor } from "@/components/composer/proposal-editor";
@@ -20,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -45,6 +47,7 @@ export function MeetingNotesComposer({
   const fileRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<Step>("input");
   const [rawText, setRawText] = useState("");
+  const [errorText, setErrorText] = useState<string | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [updateExisting, setUpdateExisting] = useState(false);
@@ -60,46 +63,54 @@ export function MeetingNotesComposer({
   function reset() {
     setStep("input");
     setRawText("");
+    setErrorText(null);
     setRows([]);
     setActiveId(null);
     setUpdateExisting(false);
   }
 
+  function showError(message: string) {
+    setErrorText(message);
+    toast.error(message, { duration: 12000 });
+    setStep("input");
+  }
+
   function analyze() {
     if (rawText.trim().length < 40) {
-      toast.error("Pega las notas de la reunión (al menos un párrafo).");
+      showError("Pega los acuerdos de la reunión.");
       return;
     }
+    setErrorText(null);
     setStep("analyzing");
     startTransition(async () => {
-      const result = await extractMeetingNotes(rawText);
-      if (!result.ok) {
-        toast.error(result.error);
-        setStep("input");
-        return;
-      }
-      if (result.agreements.length === 0) {
-        toast.error(
-          "No encontré acuerdos de conocimiento. Revisa el texto o añade más contexto."
+      try {
+        const result = await extractMeetingNotes(rawText);
+        if (!result.ok) {
+          showError(result.error);
+          return;
+        }
+        if (result.agreements.length === 0) {
+          showError("No hay acuerdos para convertir en fichas.");
+          return;
+        }
+        setRows(
+          result.agreements.map((a) => ({
+            ...a,
+            proposal: {
+              ...a.proposal,
+              metadata: withAllComposerMetadata(
+                a.proposal.type_slug,
+                a.proposal.metadata,
+                types.find((t) => t.slug === a.proposal.type_slug)?.fields
+              ),
+            },
+            status: "pending" as const,
+          }))
         );
-        setStep("input");
-        return;
+        setStep("list");
+      } catch (error) {
+        showError(formatClientActionError("meeting", error));
       }
-      setRows(
-        result.agreements.map((a) => ({
-          ...a,
-          proposal: {
-            ...a.proposal,
-            metadata: withAllComposerMetadata(
-              a.proposal.type_slug,
-              a.proposal.metadata,
-              types.find((t) => t.slug === a.proposal.type_slug)?.fields
-            ),
-          },
-          status: "pending",
-        }))
-      );
-      setStep("list");
     });
   }
 
@@ -162,7 +173,7 @@ export function MeetingNotesComposer({
         return;
       }
       toast.success(
-        status === "published" ? "Publicado en el hub." : "Guardado como borrador."
+        status === "published" ? "Publicado." : "Borrador guardado."
       );
       setRows((list) =>
         list.map((row) =>
@@ -187,23 +198,32 @@ export function MeetingNotesComposer({
     >
       <DialogContent className="max-h-[min(90svh,100%)] w-[calc(100%-1rem)] overflow-y-auto sm:w-full sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Notas de reunión</DialogTitle>
+          <DialogTitle>Acuerdos de reunión</DialogTitle>
           <DialogDescription>
-            Pega el texto que transcribió Gemini. La IA lo parte en acuerdos y
-            arma una ficha por cada uno; tú decides cuáles subir.
+            Pega los acuerdos. Se crea una ficha por cada uno; publica solo las
+            que quieras.
           </DialogDescription>
         </DialogHeader>
 
         {step === "input" && (
           <div className="space-y-4">
+            {errorText && (
+              <Alert variant="destructive">
+                <CircleAlert />
+                <AlertTitle>No se pudieron organizar los acuerdos</AlertTitle>
+                <AlertDescription>
+                  <p className="whitespace-pre-wrap">{errorText}</p>
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-1.5">
-              <Label htmlFor="meeting-notes">Texto de la reunión</Label>
+              <Label htmlFor="meeting-notes">Acuerdos</Label>
               <Textarea
                 id="meeting-notes"
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={14}
-                placeholder="Pega aquí la transcripción o las notas (también vale un .txt / .vtt)."
+                placeholder="Pega los acuerdos de la reunión."
               />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -225,7 +245,7 @@ export function MeetingNotesComposer({
               </div>
               <Button onClick={analyze} disabled={pending}>
                 <NotebookPen aria-hidden="true" />
-                Extraer acuerdos
+                Organizar acuerdos
               </Button>
             </div>
           </div>
@@ -235,7 +255,7 @@ export function MeetingNotesComposer({
           <div className="flex flex-col items-center gap-3 py-12" role="status">
             <Loader2 className="size-8 animate-spin" aria-hidden="true" />
             <p className="text-sm text-muted-foreground">
-              Partiendo la reunión en acuerdos y fichas…
+              Organizando las fichas…
             </p>
           </div>
         )}
@@ -244,8 +264,7 @@ export function MeetingNotesComposer({
           <div className="space-y-4">
             <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
               {rows.length} acuerdo{rows.length === 1 ? "" : "s"}. Pendientes:{" "}
-              {pendingCount}. Subidos: {savedCount}. Nada entra al hub hasta que
-              confirmes cada ficha.
+              {pendingCount}. Publicados: {savedCount}.
             </p>
             <ul className="space-y-2">
               {rows.map((row, index) => (
@@ -259,7 +278,7 @@ export function MeetingNotesComposer({
                     </span>
                     <Badge variant="outline">{typeName(row.proposal.type_slug)}</Badge>
                     {row.status === "saved" && (
-                      <Badge>Subido</Badge>
+                      <Badge>Publicado</Badge>
                     )}
                     {row.status === "skipped" && (
                       <Badge variant="secondary">Descartado</Badge>

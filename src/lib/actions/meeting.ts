@@ -4,7 +4,13 @@ import { generateObject } from "ai";
 import { requireProfile } from "@/lib/auth";
 import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
-import { chatModel, chatProviderOptions } from "@/lib/ai";
+import {
+  assertAiConfigured,
+  chatModel,
+  chatModelId,
+  chatProviderOptions,
+} from "@/lib/ai";
+import { publicAiError, type ChatStage } from "@/lib/ai-errors";
 import {
   meetingExtractionSchema,
   type ExtractionResult,
@@ -22,6 +28,8 @@ import { transcriptToNotes } from "@/lib/transcript";
 import type { ExistingMatch } from "@/lib/actions/extract";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
+export const maxDuration = 60;
+
 export interface MeetingAgreement {
   id: string;
   decision: string;
@@ -35,6 +43,12 @@ export type MeetingExtractResponse =
 
 const MAX_CHARS = 40_000;
 
+function fail(stage: ChatStage, error: unknown): MeetingExtractResponse {
+  const message = publicAiError(stage, error);
+  console.error(`[acuerdos · ${stage}]`, message);
+  return { ok: false, error: message };
+}
+
 /**
  * Splits meeting notes into knowledge fichas. Nothing is saved until a person
  * confirms each one.
@@ -43,27 +57,56 @@ export async function extractMeetingNotes(
   rawText: string
 ): Promise<MeetingExtractResponse> {
   const profile = await requireProfile("editor");
-  const text = transcriptToNotes(rawText).slice(0, MAX_CHARS);
+
+  try {
+    assertAiConfigured();
+  } catch (error) {
+    return fail("config", error);
+  }
+
+  let text: string;
+  try {
+    text = transcriptToNotes(rawText).slice(0, MAX_CHARS);
+  } catch (error) {
+    return fail("request", error);
+  }
   if (text.length < 40) {
-    return {
-      ok: false,
-      error: "Pega un poco más de texto de la reunión (al menos unas frases).",
-    };
+    return fail("request", "Pega los acuerdos de la reunión.");
   }
 
-  const quota = await consumeAiQuota(profile.id, "extract");
-  if (!quota.ok) {
-    return { ok: false, error: quota.message };
+  try {
+    const quota = await consumeAiQuota(profile.id, "extract");
+    if (!quota.ok) return fail("quota", quota.message);
+  } catch (error) {
+    return fail("quota", error);
   }
 
-  const supabase = await createClient();
-  const { data: types } = await supabase
-    .from("knowledge_types")
-    .select("slug, name, description, fields")
-    .in("slug", ACTIVE_TYPE_SLUG_LIST)
-    .order("sort_order");
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  let types: {
+    slug: string;
+    name: string;
+    description: string | null;
+    fields: unknown;
+  }[] = [];
+  try {
+    supabase = await createClient();
+    const { data, error } = await supabase
+      .from("knowledge_types")
+      .select("slug, name, description, fields")
+      .in("slug", ACTIVE_TYPE_SLUG_LIST)
+      .order("sort_order");
+    if (error) throw error;
+    types = data ?? [];
+    if (types.length === 0) {
+      throw new Error(
+        "No hay apartados activos (approaches, metodologías, herramientas, plantillas)."
+      );
+    }
+  } catch (error) {
+    return fail("catalog", error);
+  }
 
-  const typeCatalog = (types ?? [])
+  const typeCatalog = types
     .map((t) => {
       const defs = composerFieldsFor(
         t.slug,
@@ -78,8 +121,14 @@ export async function extractMeetingNotes(
     })
     .join("\n");
 
+  console.info("[acuerdos · inicio]", {
+    chars: text.length,
+    model: chatModelId(),
+  });
+
+  let object: { agreements?: Array<ExtractionResult & { decision: string }> };
   try {
-    const { object } = await generateObject({
+    const result = await generateObject({
       model: chatModel(),
       schema: meetingExtractionSchema,
       providerOptions: chatProviderOptions(),
@@ -110,24 +159,32 @@ Para cada acuerdo:
 Si no hay ningún acuerdo de conocimiento, devuelve agreements: [].`,
       prompt: text,
     });
+    object = result.object;
+  } catch (error) {
+    return fail("meeting", error);
+  }
 
+  try {
     const agreements: MeetingAgreement[] = [];
     for (const row of object.agreements ?? []) {
-      const typeRow = (types ?? []).find((t) => t.slug === row.type_slug);
+      const typeRow = types.find((t) => t.slug === row.type_slug);
       const proposal = hydrateExtractedItem(
         row,
         (typeRow?.fields ?? []) as KnowledgeFieldDef[]
       );
       if (!proposal.sources.length) {
-        proposal.sources = [{ label: "Notas de reunión", url: null }];
+        proposal.sources = [{ label: "Reunión", url: null }];
       }
-      const { data: match } = await supabase
+      const { data: match, error: matchError } = await supabase
         .from("knowledge_items")
         .select("id, title, summary, content")
         .ilike("title", `%${row.title.slice(0, 60)}%`)
         .neq("status", "archived")
         .limit(1)
         .maybeSingle<ExistingMatch>();
+      if (matchError) {
+        console.warn("[acuerdos · hydrate]", matchError.message);
+      }
       agreements.push({
         id: crypto.randomUUID(),
         decision: row.decision,
@@ -138,10 +195,6 @@ Si no hay ningún acuerdo de conocimiento, devuelve agreements: [].`,
 
     return { ok: true, agreements };
   } catch (error) {
-    console.error("[meeting-extract] failed", error);
-    return {
-      ok: false,
-      error: "No se pudieron extraer los acuerdos. Inténtalo de nuevo.",
-    };
+    return fail("hydrate", error);
   }
 }

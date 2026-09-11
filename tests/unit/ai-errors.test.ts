@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatClientActionError,
   formatClientChatError,
   publicAiError,
   sanitizeAiError,
@@ -44,10 +45,46 @@ describe("ai-errors", () => {
   it("does not confuse the per-person daily cap with Gemini 429", () => {
     const message = publicAiError(
       "quota",
-      "Has llegado al límite de 20 preguntas de chat por hoy (20/20). Se reinicia a medianoche UTC, para que una persona no se gaste el cupo gratis de Gemini de todo el equipo."
+      "Has llegado al límite de 20 preguntas de chat por hoy (20/20). Se reinicia a medianoche UTC."
     );
     expect(message).toContain("[cupo diario]");
     expect(message).toContain("por hoy");
     expect(message).not.toContain("Espera un minuto");
+  });
+
+  it("names the meeting layer and explains a schema miss", () => {
+    const error = Object.assign(
+      new Error("No object generated: response did not match schema."),
+      {
+        finishReason: "stop",
+        cause: {
+          issues: [
+            {
+              path: ["agreements", 0, "type_slug"],
+              message: "Invalid enum value",
+            },
+          ],
+        },
+      }
+    );
+    const message = publicAiError("meeting", error);
+    expect(message).toContain("[organizar acuerdos]");
+    expect(message).toContain("formato");
+    expect(message).toContain("type_slug");
+  });
+
+  it("explains a timeout on the meeting layer", () => {
+    const message = publicAiError("meeting", new Error("fetch failed: timeout"));
+    expect(message).toContain("[organizar acuerdos]");
+    expect(message).toContain("tiempo");
+  });
+
+  it("explains a cut-off server action on the client", () => {
+    const message = formatClientActionError(
+      "meeting",
+      new Error("An error occurred in the Server Action.")
+    );
+    expect(message).toContain("[organizar acuerdos]");
+    expect(message).toContain("Se cortó la petición");
   });
 });

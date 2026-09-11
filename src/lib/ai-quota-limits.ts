@@ -4,7 +4,7 @@ const KIND_LABEL: Record<AiQuotaKind, string> = {
   chat: "preguntas de chat",
   transcribe: "dictados",
   speech: "lecturas en voz alta",
-  extract: "propuestas con IA",
+  extract: "usos de Añadir o Acuerdos",
 };
 
 const DEFAULT_LIMITS: Record<AiQuotaKind, number> = {
@@ -34,5 +34,5 @@ export function aiQuotaDeniedMessage(
   used: number,
   limit: number
 ): string {
-  return `Has llegado al límite de ${limit} ${KIND_LABEL[kind]} por hoy (${used}/${limit}). Se reinicia a medianoche UTC, para que una persona no se gaste el cupo gratis de Gemini de todo el equipo.`;
+  return `Has llegado al límite de ${limit} ${KIND_LABEL[kind]} por hoy (${used}/${limit}). Se reinicia a medianoche UTC.`;
 }

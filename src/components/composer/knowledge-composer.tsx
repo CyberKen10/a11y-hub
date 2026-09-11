@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, CircleAlert, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { extractProposal, type ExistingMatch } from "@/lib/actions/extract";
 import { saveItem } from "@/lib/actions/items";
+import { formatClientActionError } from "@/lib/ai-errors";
 import type { ExtractionResult } from "@/lib/schemas";
 import type { KnowledgeType } from "@/lib/types";
 import { withAllComposerMetadata } from "@/lib/approaches";
@@ -20,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -38,6 +40,7 @@ export function KnowledgeComposer({
   const [pending, startTransition] = useTransition();
   const [step, setStep] = useState<Step>("input");
   const [rawText, setRawText] = useState("");
+  const [errorText, setErrorText] = useState<string | null>(null);
   const [proposal, setProposal] = useState<ExtractionResult | null>(null);
   const [existing, setExisting] = useState<ExistingMatch | null>(null);
   const [updateExisting, setUpdateExisting] = useState(false);
@@ -49,35 +52,46 @@ export function KnowledgeComposer({
   function reset() {
     setStep("input");
     setRawText("");
+    setErrorText(null);
     setProposal(null);
     setExisting(null);
     setUpdateExisting(false);
   }
 
+  function showError(message: string) {
+    setErrorText(message);
+    toast.error(message, { duration: 12000 });
+    setStep("input");
+  }
+
   function analyze() {
     if (rawText.trim().length < 10) {
-      toast.error("Escribe o dicta un poco más de contexto.");
+      showError("Añade un poco más de texto.");
       return;
     }
+    setErrorText(null);
     setStep("analyzing");
     startTransition(async () => {
-      const result = await extractProposal(rawText);
-      if (result.ok) {
-        const padded: ExtractionResult = {
-          ...result.proposal,
-          metadata: withAllComposerMetadata(
-            result.proposal.type_slug,
-            result.proposal.metadata,
-            typeFields(result.proposal.type_slug)
-          ),
-        };
-        setProposal(padded);
-        setExisting(result.existing);
-        setUpdateExisting(false);
-        setStep("review");
-      } else {
-        toast.error(result.error);
-        setStep("input");
+      try {
+        const result = await extractProposal(rawText);
+        if (result.ok) {
+          const padded: ExtractionResult = {
+            ...result.proposal,
+            metadata: withAllComposerMetadata(
+              result.proposal.type_slug,
+              result.proposal.metadata,
+              typeFields(result.proposal.type_slug)
+            ),
+          };
+          setProposal(padded);
+          setExisting(result.existing);
+          setUpdateExisting(false);
+          setStep("review");
+        } else {
+          showError(result.error);
+        }
+      } catch (error) {
+        showError(formatClientActionError("extract", error));
       }
     });
   }
@@ -135,16 +149,23 @@ export function KnowledgeComposer({
     >
       <DialogContent className="max-h-[min(90svh,100%)] w-[calc(100%-1rem)] overflow-y-auto sm:w-full sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Añadir conocimiento con IA</DialogTitle>
+          <DialogTitle>Añadir contenido</DialogTitle>
           <DialogDescription>
-            Describe el approach escribiendo o dictando. La IA completa toda la
-            ficha (aunque falten datos) y tú revisas y confirmas antes de
-            guardar.
+            Describe el contenido. Revisa la ficha antes de guardar.
           </DialogDescription>
         </DialogHeader>
 
         {step === "input" && (
           <div className="space-y-4">
+            {errorText && (
+              <Alert variant="destructive">
+                <CircleAlert />
+                <AlertTitle>No se pudo crear la ficha</AlertTitle>
+                <AlertDescription>
+                  <p className="whitespace-pre-wrap">{errorText}</p>
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-1.5">
               <Label htmlFor="composer-text">Describe el contenido</Label>
               <Textarea
@@ -152,7 +173,7 @@ export function KnowledgeComposer({
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={10}
-                placeholder="p. ej. Approach para un botón sin nombre accesible en Android. La IA completa la ficha (SC, plataforma, clientes) aunque no lo dictes todo."
+                placeholder="p. ej. Approach para un botón sin nombre accesible en Android."
               />
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -162,8 +183,8 @@ export function KnowledgeComposer({
                 }
               />
               <Button onClick={analyze} disabled={pending}>
-                <Sparkles aria-hidden="true" />
-                Analizar con IA
+                <Plus aria-hidden="true" />
+                Crear ficha
               </Button>
             </div>
           </div>
@@ -176,7 +197,7 @@ export function KnowledgeComposer({
           >
             <Loader2 className="size-8 animate-spin" aria-hidden="true" />
             <p className="text-sm text-muted-foreground">
-              Analizando y estructurando el contenido…
+              Preparando la ficha…
             </p>
           </div>
         )}
@@ -184,9 +205,7 @@ export function KnowledgeComposer({
         {step === "review" && proposal && (
           <div className="space-y-4">
             <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
-              Propuesta completa. La IA rellena todos los campos; lo que no
-              viniera en el dictado lo interpreta. Revisa sobre todo SC WCAG,
-              plataforma y clientes, ajusta y confirma.
+              Revisa la ficha, ajusta lo que haga falta y confirma.
             </p>
             <ProposalEditor
               proposal={proposal}

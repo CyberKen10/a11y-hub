@@ -34,8 +34,7 @@ export default async function NewItemPage({
           Nuevo contenido
         </h1>
         <p className="text-muted-foreground">
-          También puedes crearlo dictando o escribiendo un prompt con el botón
-          “Añadir con IA” de la barra superior.
+          También puedes usar Añadir o Acuerdos en la barra superior.
         </p>
       </div>
       <ItemForm
