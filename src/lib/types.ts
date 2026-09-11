@@ -25,9 +25,10 @@ export interface KnowledgeType {
 export interface KnowledgeFieldDef {
   key: string;
   label: string;
-  kind: "text" | "textarea" | "url" | "list";
+  kind: "text" | "textarea" | "url" | "list" | "select" | "multiselect";
   required?: boolean;
   help?: string;
+  options?: { value: string; label: string }[];
 }
 
 export interface KnowledgeItem {

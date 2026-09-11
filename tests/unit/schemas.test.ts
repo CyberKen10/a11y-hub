@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { knowledgeItemInputSchema, slugify } from "@/lib/schemas";
+import {
+  approachComposerMetadataSchema,
+  knowledgeItemInputSchema,
+  slugify,
+} from "@/lib/schemas";
 
 describe("knowledgeItemInputSchema", () => {
   const base = {
@@ -46,6 +50,29 @@ describe("knowledgeItemInputSchema", () => {
       status: "pendiente",
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("approachComposerMetadataSchema", () => {
+  it("requires every approach ficha key", () => {
+    const result = approachComposerMetadataSchema.safeParse({ CP: "1.4.3" });
+    expect(result.success).toBe(false);
+
+    const ok = approachComposerMetadataSchema.parse({
+      CP: "1.4.3",
+      when_to_use: "En botones de bajo contraste.",
+      pros: "Reporte alineado a WCAG",
+      cons: "Validar en el producto",
+      "Bug Type": "SR",
+      Platform: "Web",
+      Team: "Valid Bug",
+      UTest: "N/A",
+      Crownspeak: "Valid Bug",
+      Barcelo: "N/A",
+      "Pros.": "Valid Bug",
+      Comments: "Inferido salvo el contraste dictado.",
+    });
+    expect(ok.CP).toBe("1.4.3");
   });
 });
 

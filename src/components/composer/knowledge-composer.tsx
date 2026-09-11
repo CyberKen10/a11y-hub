@@ -8,9 +8,10 @@ import { extractProposal, type ExistingMatch } from "@/lib/actions/extract";
 import { saveItem } from "@/lib/actions/items";
 import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { ExtractionResult } from "@/lib/schemas";
-import type { KnowledgeFieldDef, KnowledgeType } from "@/lib/types";
+import type { KnowledgeType } from "@/lib/types";
 import { composerFieldsFor, withAllComposerMetadata } from "@/lib/approaches";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
+import { KnowledgeFieldControl } from "@/components/items/knowledge-field-control";
 import { MicButton } from "@/components/chat/mic-button";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -57,7 +58,7 @@ export function KnowledgeComposer({
     [types]
   );
 
-  const fieldDefs: KnowledgeFieldDef[] = useMemo(() => {
+  const fieldDefs = useMemo(() => {
     if (!proposal) return [];
     const type = types.find((t) => t.slug === proposal.type_slug);
     return composerFieldsFor(proposal.type_slug, type?.fields);
@@ -158,9 +159,9 @@ export function KnowledgeComposer({
         <DialogHeader>
           <DialogTitle>Añadir conocimiento con IA</DialogTitle>
           <DialogDescription>
-            Describe el approach, metodología u otro contenido escribiendo o
-            dictando. La IA propone la estructura y tú revisas y confirmas
-            antes de guardar.
+            Describe el approach escribiendo o dictando. La IA completa toda la
+            ficha (aunque falten datos) y tú revisas y confirmas antes de
+            guardar.
           </DialogDescription>
         </DialogHeader>
 
@@ -173,7 +174,7 @@ export function KnowledgeComposer({
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 rows={10}
-                placeholder="p. ej. Approach para 1.4.3 Contrast: el texto pequeño necesita 4.5:1. En Android…"
+                placeholder="p. ej. Approach para un botón sin nombre accesible en Android. La IA completa la ficha (SC, plataforma, clientes) aunque no lo dictes todo."
               />
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -205,7 +206,9 @@ export function KnowledgeComposer({
         {step === "review" && proposal && (
           <div className="space-y-4">
             <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
-              Propuesta generada. Revisa, ajusta lo que necesites y confirma.
+              Propuesta completa. La IA rellena todos los campos; lo que no
+              viniera en el dictado lo interpreta. Revisa sobre todo SC WCAG,
+              plataforma y clientes, ajusta y confirma.
             </p>
 
             {existing && (
@@ -331,48 +334,19 @@ export function KnowledgeComposer({
                 <legend className="px-1 text-sm font-semibold">
                   Campos de {typeName(proposal.type_slug)}
                 </legend>
-                {fieldDefs.map((field) => {
-                  const id = `composer-meta-${field.key}`;
-                  const value = proposal.metadata[field.key] ?? "";
-                  const onChange = (v: string) =>
-                    patch({
-                      metadata: { ...proposal.metadata, [field.key]: v },
-                    });
-                  return (
-                    <div key={field.key} className="space-y-1.5">
-                      <Label htmlFor={id}>{field.label}</Label>
-                      {field.kind === "textarea" ? (
-                        <Textarea
-                          id={id}
-                          value={value}
-                          onChange={(e) => onChange(e.target.value)}
-                          rows={3}
-                        />
-                      ) : (
-                        <Input
-                          id={id}
-                          value={value}
-                          onChange={(e) => onChange(e.target.value)}
-                          placeholder={field.help}
-                          aria-describedby={
-                            field.help ? `${id}-help` : undefined
-                          }
-                        />
-                      )}
-                      {field.help && (
-                        <p id={`${id}-help`} className="text-xs text-muted-foreground">
-                          {field.help}
-                          {field.kind === "list" ? " Valores separados por coma." : ""}
-                        </p>
-                      )}
-                      {!field.help && field.kind === "list" && (
-                        <p className="text-xs text-muted-foreground">
-                          Valores separados por coma.
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
+                {fieldDefs.map((field) => (
+                  <KnowledgeFieldControl
+                    key={field.key}
+                    field={field}
+                    id={`composer-meta-${field.key}`}
+                    value={proposal.metadata[field.key] ?? ""}
+                    onChange={(v) =>
+                      patch({
+                        metadata: { ...proposal.metadata, [field.key]: v },
+                      })
+                    }
+                  />
+                ))}
               </fieldset>
             )}
 

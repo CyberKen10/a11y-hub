@@ -1,5 +1,15 @@
 import { formatWcagLine } from "@/lib/wcag";
 import type { KnowledgeFieldDef } from "@/lib/types";
+import {
+  BUG_TYPE_OPTIONS,
+  COMPANY_STATUS_OPTIONS,
+  inferCompanySeverity,
+  normalizeApproachMetadata,
+  normalizeBugType,
+  normalizePlatform,
+  PLATFORM_OPTIONS,
+} from "@/lib/approach-options";
+import { WCAG_SC_SELECT_OPTIONS } from "@/lib/wcag-catalog";
 
 export type ApprovalState = "approved" | "pending" | "discarded";
 
@@ -44,20 +54,83 @@ export const APPROACH_COMPOSER_FIELDS: KnowledgeFieldDef[] = [
   {
     key: "CP",
     label: "SC WCAG",
-    kind: "text",
-    help: "Criterios de éxito, p. ej. 1.4.3 o 1.1.1, 2.4.4",
+    kind: "multiselect",
+    options: WCAG_SC_SELECT_OPTIONS,
+    help: "Elige uno o más criterios de éxito WCAG 2.2.",
   },
-  { key: "when_to_use", label: "Cuándo usarlo", kind: "textarea" },
-  { key: "pros", label: "Ventajas", kind: "list" },
-  { key: "cons", label: "Limitaciones", kind: "list" },
-  { key: "Bug Type", label: "Bug Type", kind: "text" },
-  { key: "Platform", label: "Platform", kind: "text" },
-  { key: "Team", label: "Team", kind: "text" },
-  { key: "UTest", label: "UTest", kind: "text" },
-  { key: "Crownspeak", label: "Crownspeak", kind: "text" },
-  { key: "Barcelo", label: "Barcelo", kind: "text" },
-  { key: "Pros.", label: "Pros.", kind: "text" },
-  { key: "Comments", label: "Comments", kind: "textarea" },
+  {
+    key: "when_to_use",
+    label: "Cuándo usarlo",
+    kind: "textarea",
+    help: "Situación en la que aplica este approach.",
+  },
+  {
+    key: "pros",
+    label: "Ventajas",
+    kind: "list",
+    help: "Beneficios de seguir este approach.",
+  },
+  {
+    key: "cons",
+    label: "Limitaciones",
+    kind: "list",
+    help: "Excepciones, riesgos o cuando no aplica.",
+  },
+  {
+    key: "Bug Type",
+    label: "Bug Type",
+    kind: "select",
+    options: [...BUG_TYPE_OPTIONS],
+    help: "Tipo de hallazgo, como en la wiki.",
+  },
+  {
+    key: "Platform",
+    label: "Platform",
+    kind: "select",
+    options: [...PLATFORM_OPTIONS],
+    help: "Dónde se reproduce el issue.",
+  },
+  {
+    key: "Team",
+    label: "Team",
+    kind: "select",
+    options: [...COMPANY_STATUS_OPTIONS],
+    help: "Aplicabilidad y severidad (Low → Critical) para Team.",
+  },
+  {
+    key: "UTest",
+    label: "UTest",
+    kind: "select",
+    options: [...COMPANY_STATUS_OPTIONS],
+    help: "Aplicabilidad y severidad (Low → Critical) para UTest.",
+  },
+  {
+    key: "Crownspeak",
+    label: "Crownspeak",
+    kind: "select",
+    options: [...COMPANY_STATUS_OPTIONS],
+    help: "Aplicabilidad y severidad (Low → Critical) para Crownspeak.",
+  },
+  {
+    key: "Barcelo",
+    label: "Barcelo",
+    kind: "select",
+    options: [...COMPANY_STATUS_OPTIONS],
+    help: "Aplicabilidad y severidad (Low → Critical) para Barcelo.",
+  },
+  {
+    key: "Pros.",
+    label: "Pros.",
+    kind: "select",
+    options: [...COMPANY_STATUS_OPTIONS],
+    help: "Aplicabilidad y severidad (Low → Critical) para Pros.",
+  },
+  {
+    key: "Comments",
+    label: "Comments",
+    kind: "textarea",
+    help: "Notas y qué se infirió frente a lo dictado.",
+  },
 ];
 
 export function composerFieldsFor(
@@ -81,6 +154,111 @@ export function withAllComposerMetadata(
       value == null ? "" : Array.isArray(value) ? value.map(String).join(", ") : String(value);
   }
   return next;
+}
+
+function firstSentence(text: string, max = 220): string {
+  const trimmed = text.replace(/\s+/g, " ").trim();
+  if (!trimmed) return "";
+  const match = trimmed.match(/^.+?[.!?…](?:\s|$)/);
+  const sentence = (match ? match[0] : trimmed).trim();
+  return sentence.length > max ? `${sentence.slice(0, max - 1)}…` : sentence;
+}
+
+function inferWcagCp(blob: string): string {
+  const t = blob.toLowerCase();
+  const scs: string[] = [];
+  const add = (id: string) => {
+    if (!scs.includes(id)) scs.push(id);
+  };
+  if (/contraste|contrast|4\.5|3:1|color/.test(t)) add("1.4.3");
+  if (/\balt\b|imagen|image|figura|svg/.test(t)) add("1.1.1");
+  if (/teclado|keyboard|tabulaci[oó]n|\btab\b/.test(t)) add("2.1.1");
+  if (/foco|focus|visible/.test(t)) add("2.4.7");
+  if (/lector|screen reader|nvda|jaws|voiceover|talkback/.test(t)) add("4.1.2");
+  if (/etiqueta|label|nombre accesible|aria-label|4\.1\.2/.test(t)) add("4.1.2");
+  if (/encabezado|heading|\bh[1-6]\b/.test(t)) add("1.3.1");
+  if (/enlace|link purpose|prop[oó]sito del enlace/.test(t)) add("2.4.4");
+  if (/formulario|error|obligatori/.test(t)) {
+    add("3.3.1");
+    add("3.3.2");
+  }
+  if (/idioma|lang|language/.test(t)) add("3.1.1");
+  if (/subt[ií]tulo|caption|v[ií]deo|audio/.test(t)) add("1.2.2");
+  if (scs.length === 0) add("4.1.2");
+  return scs.join(", ");
+}
+
+function inferBugType(blob: string): string {
+  const value = normalizeBugType(blob);
+  return BUG_TYPE_OPTIONS.some((o) => o.value === value) ? value : "Other A11y";
+}
+
+function inferPlatform(blob: string): string {
+  const value = normalizePlatform(blob);
+  return PLATFORM_OPTIONS.some((o) => o.value === value) ? value : "Any";
+}
+
+function inferCompanyNote(blob: string): string {
+  const t = blob.toLowerCase();
+  if (/no es un bug|not a bug|falso positivo/.test(t)) return "N/A";
+  return inferCompanySeverity(blob);
+}
+
+/**
+ * Last-resort fill so an approach proposal never ships empty fields.
+ * Used after the model runs; prefers whatever the IA already wrote.
+ */
+export function fillBlankApproachMetadata(
+  metadata: Record<string, string>,
+  ctx: { title: string; summary: string; content: string }
+): Record<string, string> {
+  const blob = `${ctx.title}\n${ctx.summary}\n${ctx.content}`;
+  const next = { ...metadata };
+  const filled: string[] = [];
+  const take = (key: string, value: string) => {
+    if (String(next[key] ?? "").trim()) return;
+    next[key] = value;
+    filled.push(key);
+  };
+
+  const topic = ctx.title.trim() || "este issue";
+  const gist =
+    firstSentence(ctx.summary) ||
+    firstSentence(ctx.content) ||
+    `el problema de accesibilidad descrito en “${topic}”`;
+
+  take("CP", inferWcagCp(blob));
+  take(
+    "when_to_use",
+    `Cuando se observe ${gist} En pruebas de accesibilidad (QA, audit o ciclo de bugs) sobre “${topic}”.`
+  );
+  take(
+    "pros",
+    "Unifica cómo se reproduce y se reporta el hallazgo, alinea el reporte con WCAG y ahorra idas y vueltas con desarrollo."
+  );
+  take(
+    "cons",
+    "Hay que validarlo en el producto real; el dictado puede omitir excepciones de plataforma o de cliente."
+  );
+  take("Bug Type", inferBugType(blob));
+  take("Platform", inferPlatform(blob));
+  take("Team", inferCompanyNote(blob));
+  take("UTest", inferCompanyNote(blob));
+  take("Crownspeak", inferCompanyNote(blob));
+  take("Barcelo", inferCompanyNote(blob));
+  take("Pros.", inferCompanyNote(blob));
+
+  const existingComments = String(next.Comments ?? "").trim();
+  if (!existingComments) {
+    next.Comments =
+      filled.length > 0
+        ? `IA interpretó campos que no venían en el dictado (${filled.join(", ")}). Revisa SC WCAG y clientes antes de publicar.`
+        : `Propuesta a partir del dictado “${topic}”. Revisa SC WCAG y clientes antes de publicar.`;
+  } else   if (filled.length > 0) {
+    next.Comments = `${existingComments}\n\nIA completó también: ${filled.join(", ")}.`;
+  }
+
+  return normalizeApproachMetadata(next);
 }
 
 /** Keys stored for hub logic; not dumped as generic metadata. */

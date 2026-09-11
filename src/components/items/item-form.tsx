@@ -7,9 +7,11 @@ import { toast } from "sonner";
 import { saveItem } from "@/lib/actions/items";
 import { isActiveTypeSlug, type ActiveTypeSlug } from "@/lib/knowledge-sections";
 import { composerFieldsFor } from "@/lib/approaches";
+import { normalizeApproachMetadata } from "@/lib/approach-options";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import type { KnowledgeItemInput } from "@/lib/schemas";
-import type { KnowledgeFieldDef, KnowledgeType } from "@/lib/types";
+import type { KnowledgeType } from "@/lib/types";
+import { KnowledgeFieldControl } from "@/components/items/knowledge-field-control";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,14 +53,17 @@ export function ItemForm({
   const [summary, setSummary] = useState(initial.summary);
   const [content, setContent] = useState(initial.content);
   const [tags, setTags] = useState(initial.tags.join(", "));
-  const [metadata, setMetadata] = useState<Record<string, string>>(
-    Object.fromEntries(
+  const [metadata, setMetadata] = useState<Record<string, string>>(() => {
+    const raw = Object.fromEntries(
       Object.entries(initial.metadata).map(([k, v]) => [
         k,
         Array.isArray(v) ? (v as unknown[]).map(String).join(", ") : String(v ?? ""),
       ])
-    )
-  );
+    );
+    return initial.type_slug === "approaches"
+      ? normalizeApproachMetadata(raw)
+      : raw;
+  });
   const [sources, setSources] = useState(
     initial.sources.map((s) => ({ label: s.label, url: s.url ?? "" }))
   );
@@ -67,7 +72,7 @@ export function ItemForm({
     () => types.find((t) => t.slug === typeSlug),
     [types, typeSlug]
   );
-  const fieldDefs: KnowledgeFieldDef[] = composerFieldsFor(
+  const fieldDefs = composerFieldsFor(
     typeSlug,
     currentType?.fields
   );
@@ -199,40 +204,17 @@ export function ItemForm({
           <legend className="px-1 text-sm font-semibold">
             Campos de {currentType?.name}
           </legend>
-          {fieldDefs.map((field) => {
-            const id = `field-${field.key}`;
-            const value = metadata[field.key] ?? "";
-            const onChange = (v: string) =>
-              setMetadata((m) => ({ ...m, [field.key]: v }));
-            return (
-              <div key={field.key} className="space-y-1.5">
-                <Label htmlFor={id}>{field.label}</Label>
-                {field.kind === "textarea" ? (
-                  <Textarea
-                    id={id}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    rows={3}
-                  />
-                ) : (
-                  <Input
-                    id={id}
-                    type={field.kind === "url" ? "url" : "text"}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    aria-describedby={
-                      field.kind === "list" ? `${id}-help` : undefined
-                    }
-                  />
-                )}
-                {field.kind === "list" && (
-                  <p id={`${id}-help`} className="text-xs text-muted-foreground">
-                    Valores separados por coma.
-                  </p>
-                )}
-              </div>
-            );
-          })}
+          {fieldDefs.map((field) => (
+            <KnowledgeFieldControl
+              key={field.key}
+              field={field}
+              id={`field-${field.key}`}
+              value={metadata[field.key] ?? ""}
+              onChange={(v) =>
+                setMetadata((m) => ({ ...m, [field.key]: v }))
+              }
+            />
+          ))}
         </fieldset>
       )}
 

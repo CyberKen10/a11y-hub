@@ -9,8 +9,15 @@ import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import {
   composerFieldsFor,
+  fillBlankApproachMetadata,
   withAllComposerMetadata,
 } from "@/lib/approaches";
+import {
+  BUG_TYPE_OPTIONS,
+  COMPANY_STATUS_OPTIONS,
+  optionValuesList,
+  PLATFORM_OPTIONS,
+} from "@/lib/approach-options";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
@@ -75,25 +82,44 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
       model: chatModel(),
       schema: extractionSchema,
       providerOptions: chatProviderOptions(),
-      system: `Eres un asistente que estructura conocimiento para el hub interno de una empresa de accesibilidad digital.
-Apartados disponibles (elige el slug más adecuado):
+      system: `Eres una persona experta en accesibilidad digital (QA/audit) que redacta fichas de approach para el hub interno.
+Apartados disponibles (elige el slug más adecuado; si hablan de un bug, approach o WCAG, usa "approaches"):
 ${typeCatalog}
 
 Reglas:
-- Conserva TODA la información aportada por la persona; no inventes datos ni completes con conocimiento externo.
-- Redacta en español claro con Markdown (usa encabezados ## para secciones si hay suficiente contenido).
-- El texto puede venir de un dictado por voz: corrige puntuación y muletillas sin alterar el significado.
-- En metadata DEBES incluir TODAS las claves listadas para el apartado elegido. Si no hay dato, usa "".
-- Si el apartado es approaches: extrae los criterios de éxito WCAG (formato 1.4.3, 2.4.4, etc.) en la clave "CP". Si mencionan varios, sepáralos por coma. También rellena Bug Type, Platform, compañías (Team, UTest, Crownspeak, Barcelo, Pros.), Comments, when_to_use, pros y cons cuando el texto lo permita.`,
+1. El texto suele ser un DICTADO corto. No te limites a transcribirlo: INTERPRETA y completa una ficha usable.
+2. Rellena TODO: title, summary, content, tags y TODAS las claves de metadata del apartado. Prohibido dejar un campo en "".
+3. Si un dato no está en el mensaje, infiérelo con criterio profesional de accesibilidad (WCAG 2.2, lectores de pantalla, teclado, contraste, formularios, iOS/Android). En Comments di qué inferiste.
+4. Conserva lo que sí dijeron (plataforma, cliente, pasos, SC) y no lo contradigas.
+5. Redacta en español claro. El content debe ser un approach completo, no un párrafo suelto. Usa Markdown:
+   ## Problema
+   ## Cómo reproducirlo
+   ## Resultado esperado
+   ## Resultado actual
+   ## Enfoque / cómo reportarlo
+6. Approaches — metadata (usa EXACTAMENTE estos valores, nada libre):
+   - CP: ids WCAG 2.2 separados por coma, p. ej. "1.4.3, 4.1.2".
+   - Bug Type: uno de ${optionValuesList(BUG_TYPE_OPTIONS)}.
+   - Platform: uno de ${optionValuesList(PLATFORM_OPTIONS)}.
+   - Team, UTest, Crownspeak, Barcelo, Pros.: uno de ${optionValuesList(COMPANY_STATUS_OPTIONS)}. Elige severidad Low, Medium, High o Critical; no dejes "Valid Bug" suelto si puedes estimar el impacto. N/A si no aplica a ese cliente.
+   - when_to_use, pros, cons: frases concretas.
+7. La persona revisará la propuesta antes de guardar: prioriza una ficha completa y revisable, no campos en blanco.`,
       prompt: text,
     });
 
     const typeRow = (types ?? []).find((t) => t.slug === object.type_slug);
-    const metadata = withAllComposerMetadata(
+    let metadata = withAllComposerMetadata(
       object.type_slug,
       object.metadata,
       (typeRow?.fields ?? []) as KnowledgeFieldDef[]
     );
+    if (object.type_slug === "approaches") {
+      metadata = fillBlankApproachMetadata(metadata, {
+        title: object.title,
+        summary: object.summary,
+        content: object.content,
+      });
+    }
     const scs = parseWcagSuccessCriteria(metadata.CP);
     if (scs.length > 0) {
       metadata.wcag_refs = scs.join(", ");

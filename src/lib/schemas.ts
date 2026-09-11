@@ -1,5 +1,11 @@
 import { z } from "zod";
 import { ACTIVE_TYPE_SLUGS } from "@/lib/knowledge-sections";
+import {
+  BUG_TYPE_OPTIONS,
+  COMPANY_STATUS_OPTIONS,
+  optionValuesList,
+  PLATFORM_OPTIONS,
+} from "@/lib/approach-options";
 
 export const itemStatusSchema = z.enum(["draft", "published", "archived"]);
 
@@ -23,6 +29,29 @@ export const knowledgeItemInputSchema = z.object({
 
 export type KnowledgeItemInput = z.infer<typeof knowledgeItemInputSchema>;
 
+const filled = (description: string) =>
+  z.string().describe(`${description} NUNCA lo dejes vacío: si no está en el dictado, interprétalo.`);
+
+/** Approach ficha keys the model must always output. */
+export const approachComposerMetadataSchema = z.object({
+  CP: filled(
+    "Ids WCAG 2.2 separados por coma, p. ej. 1.4.3, 4.1.2. Solo códigos, sin el nombre largo."
+  ),
+  when_to_use: filled("Cuándo usar este approach, en 1–3 frases."),
+  pros: filled("Ventajas, separadas por coma o punto y coma."),
+  cons: filled("Limitaciones o excepciones, separadas por coma o punto y coma."),
+  "Bug Type": filled(`Uno de: ${optionValuesList(BUG_TYPE_OPTIONS)}.`),
+  Platform: filled(`Uno de: ${optionValuesList(PLATFORM_OPTIONS)}.`),
+  Team: filled(`Uno de: ${optionValuesList(COMPANY_STATUS_OPTIONS)}.`),
+  UTest: filled(`Uno de: ${optionValuesList(COMPANY_STATUS_OPTIONS)}.`),
+  Crownspeak: filled(`Uno de: ${optionValuesList(COMPANY_STATUS_OPTIONS)}.`),
+  Barcelo: filled(`Uno de: ${optionValuesList(COMPANY_STATUS_OPTIONS)}.`),
+  "Pros.": filled(`Uno de: ${optionValuesList(COMPANY_STATUS_OPTIONS)}.`),
+  Comments: filled(
+    "Notas: qué vino del dictado y qué inferiste. Indica con claridad lo inferido."
+  ),
+});
+
 /**
  * Structured extraction target used when the assistant converts a free-form
  * prompt or a voice transcription into a knowledge item proposal.
@@ -33,29 +62,34 @@ export const extractionSchema = z.object({
     .describe(
       "Slug del apartado más adecuado para este contenido, elegido de la lista provista."
     ),
-  title: z.string().describe("Título corto y descriptivo del elemento."),
+  title: z.string().describe("Título corto y descriptivo del elemento. Nunca vacío."),
   summary: z
     .string()
-    .describe("Resumen de 1 a 3 frases del contenido, en español."),
+    .describe(
+      "Resumen de 2 a 4 frases en español, completo aunque el dictado sea breve. Nunca vacío."
+    ),
   content: z
     .string()
     .describe(
-      "Cuerpo completo en Markdown, bien estructurado con encabezados (##) cuando aplique. Conserva toda la información aportada sin inventar datos."
+      "Cuerpo completo en Markdown con ## Problema, ## Cómo reproducirlo, ## Resultado esperado, ## Resultado actual, ## Enfoque / cómo reportarlo. Amplía e interpreta el dictado; no lo copies tal cual. Nunca vacío."
     ),
   tags: z
     .array(z.string())
-    .describe("Entre 1 y 6 etiquetas cortas en minúsculas."),
-  metadata: z
-    .record(z.string(), z.string())
-    .describe(
-      "Campos específicos del apartado (según las definiciones provistas) que se puedan completar con la información dada. Vacío si no aplica."
-    ),
+    .describe("Entre 3 y 6 etiquetas cortas en minúsculas."),
+  metadata: approachComposerMetadataSchema.describe(
+    "Ficha completa. Todas las claves son obligatorias; infiere lo que no se haya dictado."
+  ),
   sources: z
     .array(z.object({ label: z.string(), url: z.string().nullable() }))
     .describe("Fuentes mencionadas explícitamente, si las hay."),
 });
 
-export type ExtractionResult = z.infer<typeof extractionSchema>;
+export type ExtractionResult = Omit<
+  z.infer<typeof extractionSchema>,
+  "metadata"
+> & {
+  metadata: Record<string, string>;
+};
 
 export function slugify(value: string): string {
   return value
