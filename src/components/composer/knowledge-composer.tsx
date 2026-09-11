@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { extractProposal, type ExistingMatch } from "@/lib/actions/extract";
 import { saveItem } from "@/lib/actions/items";
+import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { ExtractionResult } from "@/lib/schemas";
 import type { KnowledgeType } from "@/lib/types";
 import { MicButton } from "@/components/chat/mic-button";
@@ -226,7 +227,9 @@ export function KnowledgeComposer({
                 <Label htmlFor="composer-type">Apartado</Label>
                 <Select
                   value={proposal.type_slug}
-                  onValueChange={(v) => patch({ type_slug: v })}
+                  onValueChange={(v) => {
+                    if (isActiveTypeSlug(v)) patch({ type_slug: v });
+                  }}
                 >
                   <SelectTrigger id="composer-type">
                     <SelectValue>{typeName(proposal.type_slug)}</SelectValue>

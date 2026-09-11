@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { saveItem } from "@/lib/actions/items";
+import { isActiveTypeSlug, type ActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { KnowledgeItemInput } from "@/lib/schemas";
 import type { KnowledgeFieldDef, KnowledgeType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ import {
 
 export interface ItemFormInitial {
   id?: string;
-  type_slug: string;
+  type_slug: ActiveTypeSlug | "";
   title: string;
   summary: string;
   content: string;
@@ -41,7 +42,9 @@ export function ItemForm({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  const [typeSlug, setTypeSlug] = useState(initial.type_slug);
+  const [typeSlug, setTypeSlug] = useState<ActiveTypeSlug | "">(
+    initial.type_slug
+  );
   const [title, setTitle] = useState(initial.title);
   const [summary, setSummary] = useState(initial.summary);
   const [content, setContent] = useState(initial.content);
@@ -65,6 +68,10 @@ export function ItemForm({
   const fieldDefs: KnowledgeFieldDef[] = currentType?.fields ?? [];
 
   function submit(status: "draft" | "published") {
+    if (!isActiveTypeSlug(typeSlug)) {
+      toast.error("Selecciona un apartado válido.");
+      return;
+    }
     const payload: KnowledgeItemInput = {
       id: initial.id,
       type_slug: typeSlug,
@@ -108,7 +115,12 @@ export function ItemForm({
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="item-type">Apartado</Label>
-          <Select value={typeSlug} onValueChange={setTypeSlug}>
+          <Select
+            value={typeSlug}
+            onValueChange={(v) => {
+              if (isActiveTypeSlug(v)) setTypeSlug(v);
+            }}
+          >
             <SelectTrigger id="item-type">
               <SelectValue placeholder="Selecciona un apartado" />
             </SelectTrigger>

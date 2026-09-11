@@ -60,10 +60,12 @@ export default async function EditItemPage({
         types={typeList}
         initial={{
           id: item.id,
-          type_slug:
-            (item.knowledge_types as unknown as { slug: string } | null)?.slug ??
-            typeList[0]?.slug ??
-            "",
+          type_slug: (() => {
+            const slug =
+              (item.knowledge_types as unknown as { slug?: string } | null)
+                ?.slug ?? typeList[0]?.slug;
+            return isActiveTypeSlug(slug) ? slug : "";
+          })(),
           title: item.title,
           summary: item.summary ?? "",
           content: item.content,

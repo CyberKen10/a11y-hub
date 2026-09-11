@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ItemForm } from "@/components/items/item-form";
-import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
+import { ACTIVE_TYPE_SLUG_LIST, isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Nuevo contenido" };
@@ -41,7 +41,11 @@ export default async function NewItemPage({
       <ItemForm
         types={typeList}
         initial={{
-          type_slug: type ?? typeList[0]?.slug ?? "",
+          type_slug: isActiveTypeSlug(type)
+            ? type
+            : isActiveTypeSlug(typeList[0]?.slug)
+              ? typeList[0].slug
+              : "",
           title: "",
           summary: "",
           content: "",
