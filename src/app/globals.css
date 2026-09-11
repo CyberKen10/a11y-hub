@@ -71,8 +71,8 @@
   --accent: #e2ede9;
   --accent-foreground: #1b4332;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #d5e6de;
-  --input: #d5e6de;
+  --border: #2d6a4f;
+  --input: #2d6a4f;
   --ring: #2d6a4f;
   --chart-1: #2d6a4f;
   --chart-2: #52b788;
@@ -86,7 +86,7 @@
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e2ede9;
   --sidebar-accent-foreground: #1b4332;
-  --sidebar-border: #d5e6de;
+  --sidebar-border: #2d6a4f;
   --sidebar-ring: #2d6a4f;
   --panel: #e2ede9;
 }
