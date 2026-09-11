@@ -64,7 +64,7 @@ export default async function AppLayout({
         </header>
         <main
           id="contenido"
-          className="m-2 mt-0 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-[1.25rem] bg-primary p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-white shadow-[0_8px_28px_rgb(27_67_50_/_12%)] md:m-6 md:mt-4 md:rounded-[2rem] md:p-8"
+          className="mx-2 mb-0 mt-0 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-t-[1.25rem] rounded-b-none bg-primary p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-white shadow-[0_8px_28px_rgb(27_67_50_/_12%)] md:mx-6 md:mt-4 md:rounded-t-[2rem] md:p-8"
         >
           {children}
         </main>
