@@ -3,7 +3,8 @@
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { BookOpen } from "lucide-react";
-import { importExcelUpload, type WikiSeedSummary } from "@/lib/actions/wiki";
+import type { WikiSeedSummary } from "@/lib/import/types";
+import { importExcelUpload } from "@/lib/actions/wiki";
 import { Button } from "@/components/ui/button";
 import {
   Card,

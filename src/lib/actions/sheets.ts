@@ -13,13 +13,8 @@ import {
   parseSpreadsheetId,
   shouldSkipTab,
 } from "@/lib/import/auto-map";
-import {
-  mergeSummaries,
-  upsertImportedRows,
-  type ImportSummary,
-} from "@/lib/import/upsert-rows";
-
-export type { ImportSummary };
+import type { ImportSummary } from "@/lib/import/types";
+import { mergeSummaries, upsertImportedRows } from "@/lib/import/upsert-rows";
 
 export async function importFromSheetUrl(
   url: string

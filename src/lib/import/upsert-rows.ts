@@ -3,13 +3,7 @@ import { createHash } from "node:crypto";
 import { slugify } from "@/lib/schemas";
 import { isActiveTypeSlug } from "@/lib/knowledge-sections";
 import type { createAdminClient } from "@/lib/supabase/admin";
-
-export interface ImportSummary {
-  created: number;
-  updated: number;
-  skipped: number;
-  errors: string[];
-}
+import type { ImportSummary } from "@/lib/import/types";
 
 function checksumOf(values: string[]): string {
   return createHash("sha256").update(JSON.stringify(values)).digest("hex");

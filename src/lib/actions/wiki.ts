@@ -14,16 +14,8 @@ import {
   inferTypeSlug,
   shouldSkipTab,
 } from "@/lib/import/auto-map";
-import {
-  mergeSummaries,
-  upsertImportedRows,
-  type ImportSummary,
-} from "@/lib/import/upsert-rows";
-
-export type WikiSeedSummary = ImportSummary & {
-  file: string;
-  queued: number;
-};
+import type { ImportSummary, WikiSeedSummary } from "@/lib/import/types";
+import { mergeSummaries, upsertImportedRows } from "@/lib/import/upsert-rows";
 
 const MAX_EXCEL_BYTES = 20 * 1024 * 1024;
 

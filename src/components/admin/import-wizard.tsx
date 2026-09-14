@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { importFromSheetUrl, type ImportSummary } from "@/lib/actions/sheets";
+import type { ImportSummary } from "@/lib/import/types";
+import { importFromSheetUrl } from "@/lib/actions/sheets";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
