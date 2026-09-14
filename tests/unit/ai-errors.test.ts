@@ -52,7 +52,7 @@ describe("ai-errors", () => {
     expect(message).not.toContain("Espera un minuto");
   });
 
-  it("names the meeting layer and explains a schema miss", () => {
+  it("names the extract layer and explains a schema miss", () => {
     const error = Object.assign(
       new Error("No object generated: response did not match schema."),
       {
@@ -60,31 +60,31 @@ describe("ai-errors", () => {
         cause: {
           issues: [
             {
-              path: ["agreements", 0, "type_slug"],
+              path: ["items", 0, "type_slug"],
               message: "Invalid enum value",
             },
           ],
         },
       }
     );
-    const message = publicAiError("meeting", error);
-    expect(message).toContain("[organizar acuerdos]");
+    const message = publicAiError("extract", error);
+    expect(message).toContain("[crear fichas]");
     expect(message).toContain("formato");
     expect(message).toContain("type_slug");
   });
 
-  it("explains a timeout on the meeting layer", () => {
-    const message = publicAiError("meeting", new Error("fetch failed: timeout"));
-    expect(message).toContain("[organizar acuerdos]");
+  it("explains a timeout on the extract layer", () => {
+    const message = publicAiError("extract", new Error("fetch failed: timeout"));
+    expect(message).toContain("[crear fichas]");
     expect(message).toContain("tiempo");
   });
 
   it("explains a cut-off server action on the client", () => {
     const message = formatClientActionError(
-      "meeting",
+      "extract",
       new Error("An error occurred in the Server Action.")
     );
-    expect(message).toContain("[organizar acuerdos]");
+    expect(message).toContain("[crear fichas]");
     expect(message).toContain("Se cortó la petición");
   });
 });

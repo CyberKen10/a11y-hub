@@ -4,7 +4,7 @@ const KIND_LABEL: Record<AiQuotaKind, string> = {
   chat: "preguntas de chat",
   transcribe: "dictados",
   speech: "lecturas en voz alta",
-  extract: "usos de Añadir o Acuerdos",
+  extract: "usos de Añadir",
 };
 
 const DEFAULT_LIMITS: Record<AiQuotaKind, number> = {

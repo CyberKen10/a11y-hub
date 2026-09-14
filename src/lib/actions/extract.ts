@@ -11,7 +11,10 @@ import {
   chatProviderOptions,
 } from "@/lib/ai";
 import { publicAiError, type ChatStage } from "@/lib/ai-errors";
-import { extractionSchema, type ExtractionResult } from "@/lib/schemas";
+import {
+  knowledgeItemsSchema,
+  type ExtractionResult,
+} from "@/lib/schemas";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import { composerFieldsFor } from "@/lib/approaches";
 import {
@@ -21,27 +24,25 @@ import {
   PLATFORM_OPTIONS,
 } from "@/lib/approach-options";
 import { hydrateExtractedItem } from "@/lib/extract-hydrate";
-import type { ExistingMatch } from "@/lib/extract-types";
+import { transcriptToNotes } from "@/lib/transcript";
+import type { ComposerDraft, ExistingMatch } from "@/lib/extract-types";
 import type { KnowledgeFieldDef } from "@/lib/types";
 
 type ExtractResponse =
-  | {
-      ok: true;
-      proposal: ExtractionResult;
-      existing: ExistingMatch | null;
-    }
+  | { ok: true; items: ComposerDraft[] }
   | { ok: false; error: string };
+
+const MAX_CHARS = 40_000;
 
 function fail(stage: ChatStage, error: unknown): ExtractResponse {
   const message = publicAiError(stage, error);
-  console.error(`[ficha · ${stage}]`, message);
+  console.error(`[añadir · ${stage}]`, message);
   return { ok: false, error: message };
 }
 
 /**
- * Converts free text (typed or voice-transcribed) into a structured
- * knowledge-item proposal. The result is ALWAYS reviewed and confirmed by a
- * human before being saved.
+ * Turns free text (typed, dictated or a file) into one or more fichas.
+ * Nothing is saved until a person confirms each one.
  */
 export async function extractProposal(rawText: string): Promise<ExtractResponse> {
   const profile = await requireProfile("editor");
@@ -52,7 +53,12 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
     return fail("config", error);
   }
 
-  const text = rawText.trim().slice(0, 20_000);
+  let text: string;
+  try {
+    text = transcriptToNotes(rawText).slice(0, MAX_CHARS);
+  } catch (error) {
+    return fail("request", error);
+  }
   if (text.length < 10) {
     return fail("request", "Añade un poco más de texto.");
   }
@@ -99,44 +105,52 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
         .map((f) => `${f.key} = "${f.label}" (${f.kind}${f.help ? `; ${f.help}` : ""})`)
         .join("; ");
       return `- slug: "${t.slug}" — ${t.name}: ${t.description ?? ""}${
-        fields ? `\n  Campos (incluye TODAS estas claves en metadata): ${fields}` : ""
+        fields ? `\n  Campos: ${fields}` : ""
       }`;
     })
     .join("\n");
 
-  console.info("[ficha · inicio]", {
+  console.info("[añadir · inicio]", {
     chars: text.length,
     model: chatModelId(),
   });
 
-  let object: ExtractionResult;
+  let object: { items?: Array<ExtractionResult & { decision: string }> };
   try {
     const result = await generateObject({
       model: chatModel(),
-      schema: extractionSchema,
+      schema: knowledgeItemsSchema,
       providerOptions: chatProviderOptions(),
-      system: `Eres una persona experta en accesibilidad digital (QA/audit) que redacta fichas de approach para el hub interno.
-Apartados disponibles (elige el slug más adecuado; si hablan de un bug, approach o WCAG, usa "approaches"):
+      system: `Eres una persona experta en accesibilidad digital. Recibes texto libre: un dictado, notas, acuerdos o un archivo.
+
+Tu trabajo: decidir si hay UN tema o VARIOS, y devolver una ficha por cada tema de conocimiento (máximo 10).
+
+Apartados:
 ${typeCatalog}
 
-Reglas:
-1. El texto suele ser un DICTADO corto. No te limites a transcribirlo: INTERPRETA y completa una ficha usable.
-2. Rellena TODO: title, summary, content, tags y TODAS las claves de metadata del apartado. Prohibido dejar un campo en "".
-3. Si un dato no está en el mensaje, infiérelo con criterio profesional de accesibilidad (WCAG 2.2, lectores de pantalla, teclado, contraste, formularios, iOS/Android). En Comments di qué inferiste.
-4. Conserva lo que sí dijeron (plataforma, cliente, pasos, SC) y no lo contradigas.
-5. Redacta en español claro. El content debe ser un approach completo, no un párrafo suelto. Usa Markdown:
-   ## Problema
-   ## Cómo reproducirlo
-   ## Resultado esperado
-   ## Resultado actual
-   ## Enfoque / cómo reportarlo
-6. Approaches — metadata (usa EXACTAMENTE estos valores, nada libre):
-   - CP: ids WCAG 2.2 separados por coma, p. ej. "1.4.3, 4.1.2".
-   - Bug Type: uno de ${optionValuesList(BUG_TYPE_OPTIONS)}.
-   - Platform: uno de ${optionValuesList(PLATFORM_OPTIONS)}.
-   - Team, UTest, Crownspeak, Barcelo, Pros.: uno de ${optionValuesList(COMPANY_STATUS_OPTIONS)}. Elige severidad Low, Medium, High o Critical; no dejes "Valid Bug" suelto si puedes estimar el impacto. N/A si no aplica a ese cliente.
-   - when_to_use, pros, cons: frases concretas.
-7. La persona revisará la propuesta antes de guardar: prioriza una ficha completa y revisable, no campos en blanco.`,
+Cómo partir:
+- Un solo bug, approach o idea → 1 ficha.
+- Varios bugs, acuerdos o temas distintos → 1 ficha por cada uno.
+- Mezcla (p. ej. un approach y una metodología) → ficha aparte para cada uno, con el type_slug correcto.
+
+type_slug:
+- approaches: cómo tratar un bug/issue concreto (WCAG, plataforma, si se reporta, severidad por cliente).
+- metodologias: cómo trabajan o evalúan (pasos, rituales, criterios de auditoría).
+- herramientas: decisión de usar/no usar una tool.
+- plantillas: un documento o checklist.
+
+Omite saludos, logística, fechas de calendar y repeticiones.
+
+Para cada ficha:
+- decision: una frase con el tema.
+- type_slug, title, summary, content y metadata completos, listos para revisar.
+- Si type_slug es approaches, metadata con valores EXACTOS:
+  CP (ids WCAG, p. ej. 1.4.3), Bug Type (${optionValuesList(BUG_TYPE_OPTIONS)}), Platform (${optionValuesList(PLATFORM_OPTIONS)}), Team/UTest/Crownspeak/Barcelo/Pros. (${optionValuesList(COMPANY_STATUS_OPTIONS)}). Elige Low/Medium/High/Critical; N/A si no aplica.
+- content en español, Markdown. Approaches: ## Problema, ## Cómo reproducirlo, ## Resultado esperado, ## Resultado actual, ## Enfoque / cómo reportarlo.
+- tags: 2 a 5, minúsculas.
+- Si no hay fuente URL, sources puede ir vacío.
+
+Si no hay ningún tema de conocimiento, devuelve items: [].`,
       prompt: text,
     });
     object = result.object;
@@ -145,24 +159,35 @@ Reglas:
   }
 
   try {
-    const typeRow = types.find((t) => t.slug === object.type_slug);
-    const proposal = hydrateExtractedItem(
-      object,
-      (typeRow?.fields ?? []) as KnowledgeFieldDef[]
-    );
-
-    const { data: match, error: matchError } = await supabase
-      .from("knowledge_items")
-      .select("id, title, summary, content")
-      .ilike("title", `%${object.title.slice(0, 60)}%`)
-      .neq("status", "archived")
-      .limit(1)
-      .maybeSingle<ExistingMatch>();
-    if (matchError) {
-      console.warn("[ficha · hydrate]", matchError.message);
+    const items: ComposerDraft[] = [];
+    for (const row of object.items ?? []) {
+      const typeRow = types.find((t) => t.slug === row.type_slug);
+      const proposal = hydrateExtractedItem(
+        row,
+        (typeRow?.fields ?? []) as KnowledgeFieldDef[]
+      );
+      if (!proposal.sources.length) {
+        proposal.sources = [{ label: "Añadido", url: null }];
+      }
+      const { data: match, error: matchError } = await supabase
+        .from("knowledge_items")
+        .select("id, title, summary, content")
+        .ilike("title", `%${row.title.slice(0, 60)}%`)
+        .neq("status", "archived")
+        .limit(1)
+        .maybeSingle<ExistingMatch>();
+      if (matchError) {
+        console.warn("[añadir · hydrate]", matchError.message);
+      }
+      items.push({
+        id: crypto.randomUUID(),
+        decision: row.decision,
+        proposal,
+        existing: match ?? null,
+      });
     }
 
-    return { ok: true, proposal, existing: match ?? null };
+    return { ok: true, items };
   } catch (error) {
     return fail("hydrate", error);
   }

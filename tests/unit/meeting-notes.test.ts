@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { transcriptToNotes } from "@/lib/transcript";
-import { meetingExtractionSchema } from "@/lib/schemas";
+import { knowledgeItemsSchema } from "@/lib/schemas";
 
 describe("transcriptToNotes", () => {
   it("keeps plain meeting notes", () => {
@@ -25,16 +25,14 @@ Y la metodología de auditoría semanal.`;
   });
 });
 
-describe("meetingExtractionSchema", () => {
-  it("accepts an empty agreements list", () => {
-    expect(meetingExtractionSchema.parse({ agreements: [] }).agreements).toEqual(
-      []
-    );
+describe("knowledgeItemsSchema", () => {
+  it("accepts an empty items list", () => {
+    expect(knowledgeItemsSchema.parse({ items: [] }).items).toEqual([]);
   });
 
-  it("rejects more than 10 agreements", () => {
+  it("rejects more than 10 items", () => {
     const row = {
-      decision: "Acuerdo",
+      decision: "Tema",
       type_slug: "metodologias",
       title: "Auditoría semanal",
       summary: "Resumen",
@@ -56,8 +54,8 @@ describe("meetingExtractionSchema", () => {
       },
       sources: [],
     };
-    const result = meetingExtractionSchema.safeParse({
-      agreements: Array.from({ length: 11 }, () => row),
+    const result = knowledgeItemsSchema.safeParse({
+      items: Array.from({ length: 11 }, () => row),
     });
     expect(result.success).toBe(false);
   });

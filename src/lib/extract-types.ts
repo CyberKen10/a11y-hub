@@ -7,7 +7,7 @@ export interface ExistingMatch {
   content: string;
 }
 
-export interface MeetingAgreement {
+export interface ComposerDraft {
   id: string;
   decision: string;
   proposal: ExtractionResult;

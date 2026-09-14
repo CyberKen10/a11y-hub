@@ -91,25 +91,25 @@ export type ExtractionResult = Omit<
   metadata: Record<string, string>;
 };
 
-export const meetingAgreementSchema = extractionSchema.extend({
+export const knowledgeItemDraftSchema = extractionSchema.extend({
   decision: z
     .string()
     .describe(
-      "El acuerdo o decisión de la reunión en una frase, sin rodeos."
+      "En una frase: de qué trata esta ficha y por qué es un elemento distinto."
     ),
 });
 
-export const meetingExtractionSchema = z.object({
-  agreements: z
-    .array(meetingAgreementSchema)
+export const knowledgeItemsSchema = z.object({
+  items: z
+    .array(knowledgeItemDraftSchema)
     .max(10)
     .describe(
-      "Hasta 10 acuerdos de conocimiento distintos. Omite charla, logística y repeticiones."
+      "Una ficha si el texto es un solo tema; varias si hay approaches, metodologías, herramientas o plantillas distintos. Máximo 10."
     ),
 });
 
 export type MeetingAgreementDraft = Omit<
-  z.infer<typeof meetingAgreementSchema>,
+  z.infer<typeof knowledgeItemDraftSchema>,
   "metadata"
 > & {
   metadata: Record<string, string>;

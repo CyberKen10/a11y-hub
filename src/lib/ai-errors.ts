@@ -26,8 +26,8 @@ const STAGE_LABEL: Record<ChatStage, string> = {
   transcribe: "dictado",
   speech: "lectura en voz alta",
   catalog: "apartados",
-  extract: "crear ficha",
-  meeting: "organizar acuerdos",
+  extract: "crear fichas",
+  meeting: "crear fichas",
   hydrate: "preparar fichas",
 };
 
