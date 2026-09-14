@@ -58,7 +58,7 @@ export function ItemActions({
           onClick={() =>
             changeStatus(
               "published",
-              "Publicado: indexado para el chat y espejado en Sheets."
+              "Publicado: indexado para el chat."
             )
           }
         >
@@ -108,7 +108,7 @@ export function ItemActions({
                 <DialogTitle>¿Eliminar este elemento?</DialogTitle>
                 <DialogDescription>
                   Esta acción es permanente: se borran sus versiones, chunks y
-                  relaciones. La fila del Sheet no se elimina automáticamente.
+                  relaciones. El Excel o Sheet de origen no se modifica.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>

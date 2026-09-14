@@ -6,30 +6,20 @@
 | --- | --- |
 | Lector | Ver contenido publicado, usar el chat, dar feedback. |
 | Editor | Además: crear/editar/publicar/archivar contenido, subir adjuntos, usar **Añadir**. |
-| Administrador | Además: importar de Sheets, panel de sincronización, usuarios/roles, auditoría, eliminar. |
+| Administrador | Además: importar Excel o Sheet, panel de sincronización, usuarios/roles, auditoría, eliminar. |
 
 Las cuentas se crean en **Supabase → Authentication → Users → Add user** (Auto Confirm). El primer usuario recibe rol admin; el resto entra como lector y un admin le sube el rol en **Administración → Usuarios**. Desactiva **Allow new users to sign up** en Authentication → Providers → Email para que nadie se dé de alta solo.
 
-## Importación de Approaches (Excel Wiki)
+## Importar conocimiento
 
-1. Coloca `docs/Wiki - Approaches .xlsx` en el repo (ya está).
-2. Con las claves de Supabase en `.env.local`, ejecuta `npm run seed:approaches`, o en la app **Administración → Importar conocimiento → Cargar Wiki Approaches**.
-3. Es idempotente por ID de wiki / fila. Tras cargar, procesa los trabajos `reindex` en **Administración → Sincronización** para que el chat encuentre el contenido.
+1. **Excel:** Administración → Importar conocimiento → sube un .xlsx desde el PC.
+2. **Google Sheet:** pega el enlace. Comparte el Sheet con la cuenta de servicio como Lector (`GOOGLE_SERVICE_ACCOUNT_EMAIL`).
+3. Tras cargar, procesa los pendientes en **Administración → Sincronización** para que el chat encuentre el contenido.
 
-## Importación desde Google Sheets (otras pestañas)
+## Sincronización
 
-1. **Administración → Importar desde Sheets** → conectar → elegir pestaña.
-2. Mapear columnas: título (obligatorio), resumen, contenido y tags (opcionales). El resto de columnas se conservan como campos del elemento (mismo dato que el Sheet).
-3. Elegir apartado de destino y si se publica directamente.
-4. Ejecutar. Es idempotente: puedes repetir la importación tras editar el Sheet y solo se procesan filas nuevas o cambiadas.
-
-Tras importar, la indexación y el espejo quedan como trabajos en lotes: procesa los pendientes en **Administración → Sincronización**.
-
-## Sincronización y fallos
-
-- Cada publicación dispara `reindex` (chat) y `sheet_mirror` (Sheets). Si algo falla (p. ej. cuota de Google), **el dato en la base de datos nunca se pierde**; el trabajo queda `failed` y se reintenta desde el panel (máx. 5 intentos por trabajo).
-- El dashboard avisa a los admins cuando hay sincronizaciones fallidas.
-- El espejo vive en pestañas `Hub · <tipo>` del spreadsheet. No edites esas pestañas a mano: se sobrescriben en la siguiente sincronización. La fuente oficial es la plataforma.
+- Cada publicación o importación deja trabajos de `reindex` (chat). Si fallan, el dato en el hub no se pierde; se reintenta desde el panel (máx. 5 intentos).
+- El dashboard avisa cuando hay indexaciones fallidas.
 
 ## Costes de IA
 
@@ -40,6 +30,6 @@ OpenAI es opcional (`AI_PROVIDER=openai`). Si cambias de proveedor, reindexa tod
 ## Mantenimiento
 
 - **Reindexar un elemento**: vuelve a publicarlo, o reintenta su job `reindex` en el panel.
-- **Backups**: usa los backups automáticos de Supabase; el Sheet espejo sirve como copia legible extra.
+- **Backups**: usa los backups automáticos de Supabase.
 - **Evaluación RAG**: mantén `evals/rag-eval.json` con ~10–20 preguntas reales del equipo y ejecútalo en cada cambio del pipeline.
 - **Auditoría**: Administración → Auditoría registra creaciones, ediciones, cambios de rol, importaciones y borrados.

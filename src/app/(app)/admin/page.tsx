@@ -32,14 +32,14 @@ const GROUPS: {
         icon: Sheet,
         title: "Importar conocimiento",
         description:
-          "Carga el Excel Wiki Approaches o una pestaña de Google Sheets.",
+          "Carga un Excel o un Google Sheet.",
       },
       {
         href: "/admin/sync",
         icon: RefreshCcw,
         title: "Sincronización",
         description:
-          "Estado del índice y del espejo en Sheets; reintentos.",
+          "Indexación del chat y reintentos.",
       },
     ],
   },
@@ -73,7 +73,8 @@ export default async function AdminPage() {
     supabase
       .from("sync_jobs")
       .select("id", { count: "exact", head: true })
-      .eq("status", "failed"),
+      .eq("status", "failed")
+      .eq("kind", "reindex"),
   ]);
 
   const failedCount = failed.count ?? 0;
@@ -91,7 +92,7 @@ export default async function AdminPage() {
       alert: false,
     },
     {
-      label: "Sincronizaciones fallidas",
+      label: "Indexaciones fallidas",
       value: failedCount,
       href: "/admin/sync",
       alert: failedCount > 0,

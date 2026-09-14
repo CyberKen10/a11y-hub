@@ -62,7 +62,8 @@ export default async function DashboardPage() {
     const { count } = await supabase
       .from("sync_jobs")
       .select("id", { count: "exact", head: true })
-      .eq("status", "failed");
+      .eq("status", "failed")
+      .eq("kind", "reindex");
     failedJobs = count ?? 0;
   }
 
@@ -104,7 +105,7 @@ export default async function DashboardPage() {
             <FileWarning className="size-5 text-destructive" aria-hidden="true" />
             <div>
               <CardTitle className="text-base">
-                {failedJobs} sincronización(es) con Google Sheets fallida(s)
+                {failedJobs} indexación(es) del chat fallida(s)
               </CardTitle>
               <CardDescription>
                 <Link href="/admin/sync" className="underline underline-offset-4">
@@ -156,8 +157,8 @@ export default async function DashboardPage() {
           <ul className="mt-4 space-y-1">
             {recentItems.length === 0 && (
               <li className="rounded-xl bg-secondary p-6 text-center text-sm text-muted-foreground">
-                Aún no hay contenido. Importa tu Google Sheet desde
-                Administración o crea el primer elemento.
+                Aún no hay contenido. Carga un Excel o un Google Sheet desde
+                Administración, o crea el primer elemento.
               </li>
             )}
             {recentItems.map((item) => (

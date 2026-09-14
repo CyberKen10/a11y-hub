@@ -228,8 +228,9 @@ export function KnowledgeComposer({
         <DialogHeader>
           <DialogTitle>Añadir contenido</DialogTitle>
           <DialogDescription>
-            Escribe, dicta o sube un .txt. Si hay un tema, una ficha; si hay
-            varios, una por cada uno. Publica solo las que quieras.
+            Escribe, dicta o sube un .txt. Si es un solo tema, se crea una
+            ficha; si hay varios, una para cada uno. Luego publicas solo las
+            que quieras.
           </DialogDescription>
         </DialogHeader>
 

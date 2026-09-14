@@ -33,12 +33,5 @@ export const env = {
   google: {
     serviceAccountEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     privateKey: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    sheetId: process.env.GOOGLE_SHEET_ID,
   },
 } as const;
-
-export function isSheetsConfigured(): boolean {
-  return Boolean(
-    env.google.serviceAccountEmail && env.google.privateKey && env.google.sheetId
-  );
-}

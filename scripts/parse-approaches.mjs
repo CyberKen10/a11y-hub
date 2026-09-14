@@ -327,8 +327,7 @@ export function parseGrouping(sheet, tabName) {
   return items;
 }
 
-export function loadApproachWikiItems(cwd = process.cwd()) {
-  const { file, path: filePath, workbook } = findWorkbook(cwd);
+export function itemsFromWorkbook(workbook, fileName = "upload.xlsx") {
   const tabs = ["Approaches", "PDFs Approaches", "UTest - Not a Bug Examples"];
   const items = [];
   for (const tab of tabs) {
@@ -338,7 +337,22 @@ export function loadApproachWikiItems(cwd = process.cwd()) {
   if (workbook.Sheets.Grouping) {
     items.push(...parseGrouping(workbook.Sheets.Grouping, "Grouping"));
   }
-  return { file, path: filePath, items };
+  return { file: fileName, items };
+}
+
+export function isWikiApproachesWorkbook(workbook) {
+  const names = workbook.SheetNames ?? [];
+  return names.some((name) => /approach/i.test(String(name)));
+}
+
+export function loadApproachWikiItemsFromBuffer(buffer, fileName = "upload.xlsx") {
+  const workbook = XLSX.read(buffer, { type: "buffer" });
+  return { workbook, ...itemsFromWorkbook(workbook, fileName) };
+}
+
+export function loadApproachWikiItems(cwd = process.cwd()) {
+  const { file, path: filePath, workbook } = findWorkbook(cwd);
+  return { file, path: filePath, ...itemsFromWorkbook(workbook, file) };
 }
 
 const isMain = process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url;

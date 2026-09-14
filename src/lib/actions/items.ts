@@ -25,20 +25,14 @@ export type ActionResult =
   | { ok: false; error: string };
 
 /**
- * Runs the post-mutation pipeline: reindex for RAG + Google Sheets mirror.
- * Each step is an idempotent job — failures stay queued and retryable, and
- * never roll back the database write.
+ * Runs the post-mutation pipeline: reindex for the chat.
+ * Failures stay queued and retryable, and never roll back the database write.
  */
 async function syncAfterMutation(itemId: string): Promise<void> {
   try {
     await enqueueAndRun("reindex", itemId);
   } catch (error) {
     console.error("[sync] reindex enqueue failed", error);
-  }
-  try {
-    await enqueueAndRun("sheet_mirror", itemId);
-  } catch (error) {
-    console.error("[sync] sheet mirror enqueue failed", error);
   }
 }
 

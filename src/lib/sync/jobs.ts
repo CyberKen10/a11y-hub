@@ -1,12 +1,10 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { upsertMirrorRow } from "@/lib/google/sheets";
 import { reindexItem } from "@/lib/rag/indexer";
-import { isSheetsConfigured } from "@/lib/env";
 
 const MAX_ATTEMPTS = 5;
 
-type JobKind = "sheet_mirror" | "reindex";
+type JobKind = "reindex";
 
 /** Creates a job and immediately tries to run it. Failures stay queued. */
 export async function enqueueAndRun(
@@ -21,7 +19,7 @@ export async function enqueueAndRun(
     .single();
 
   if (error || !job) {
-    throw new Error(`No se pudo crear el job de sincronización: ${error?.message}`);
+    throw new Error(`No se pudo crear el trabajo de indexación: ${error?.message}`);
   }
 
   const status = await processJob(job.id);
@@ -40,6 +38,13 @@ export async function processJob(jobId: string): Promise<string> {
 
   if (!job) return "missing";
   if (job.status === "done") return "done";
+  if (job.kind !== "reindex") {
+    await admin
+      .from("sync_jobs")
+      .update({ status: "done", last_error: null })
+      .eq("id", jobId);
+    return "done";
+  }
   if (job.attempts >= MAX_ATTEMPTS) return "failed";
 
   await admin
@@ -48,12 +53,7 @@ export async function processJob(jobId: string): Promise<string> {
     .eq("id", jobId);
 
   try {
-    if (job.kind === "reindex") {
-      await reindexItem(job.item_id!);
-    } else if (job.kind === "sheet_mirror") {
-      await mirrorItemToSheet(job.item_id!);
-    }
-
+    await reindexItem(job.item_id!);
     await admin
       .from("sync_jobs")
       .update({ status: "done", last_error: null })
@@ -69,12 +69,13 @@ export async function processJob(jobId: string): Promise<string> {
   }
 }
 
-/** Retries every pending/failed job (admin panel + dashboard action). */
+/** Retries pending/failed reindex jobs (admin panel). */
 export async function runPendingJobs(): Promise<{ processed: number }> {
   const admin = createAdminClient();
   const { data: jobs } = await admin
     .from("sync_jobs")
     .select("id")
+    .eq("kind", "reindex")
     .in("status", ["pending", "failed"])
     .lt("attempts", MAX_ATTEMPTS)
     .order("created_at")
@@ -84,56 +85,4 @@ export async function runPendingJobs(): Promise<{ processed: number }> {
     await processJob(job.id);
   }
   return { processed: jobs?.length ?? 0 };
-}
-
-/** Writes the item's mirror row into the spreadsheet and stores its position. */
-async function mirrorItemToSheet(itemId: string): Promise<void> {
-  if (!isSheetsConfigured()) {
-    throw new Error("Google Sheets no está configurado; el espejo queda pendiente.");
-  }
-
-  const admin = createAdminClient();
-  const { data: item, error } = await admin
-    .from("knowledge_items")
-    .select(
-      "id, title, summary, content, status, updated_at, mirror_tab, mirror_row, knowledge_types(name), item_tags(tags(name))"
-    )
-    .eq("id", itemId)
-    .single();
-
-  if (error || !item) {
-    throw new Error(`Elemento ${itemId} no encontrado para espejar.`);
-  }
-
-  const typeName =
-    (item.knowledge_types as unknown as { name: string } | null)?.name ??
-    "Sin tipo";
-  const tags = ((item.item_tags as unknown as { tags: { name: string } }[]) ?? [])
-    .map((t) => t.tags?.name)
-    .filter(Boolean)
-    .join(", ");
-
-  // The app maintains its own "Hub · <tipo>" tabs and never rewrites the
-  // team's original tabs (those are only read during import).
-  const tab = item.mirror_tab ?? `Hub · ${typeName}`;
-
-  const rowNumber = await upsertMirrorRow(
-    tab,
-    {
-      id: item.id,
-      typeName,
-      title: item.title,
-      summary: item.summary ?? "",
-      content: item.content,
-      tags,
-      status: item.status,
-      updatedAt: new Date(item.updated_at).toISOString(),
-    },
-    item.mirror_row
-  );
-
-  await admin
-    .from("knowledge_items")
-    .update({ mirror_tab: tab, mirror_row: rowNumber || null })
-    .eq("id", itemId);
 }

@@ -13,6 +13,7 @@ export default async function SyncPage() {
   const { data } = await supabase
     .from("sync_jobs")
     .select("*, knowledge_items(title)")
+    .eq("kind", "reindex")
     .order("updated_at", { ascending: false })
     .limit(100);
 
@@ -30,9 +31,8 @@ export default async function SyncPage() {
           Sincronización
         </h1>
         <p className="text-muted-foreground">
-          Estado de la indexación RAG y del espejo en Google Sheets. Los
-          trabajos fallidos se pueden reintentar sin pérdida de datos: la base
-          de datos siempre es la fuente oficial.
+          Estado de la indexación del chat. Los trabajos fallidos se pueden
+          reintentar: el contenido en el hub no se pierde.
         </p>
       </div>
       <SyncPanel jobs={jobs} />

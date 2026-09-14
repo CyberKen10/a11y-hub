@@ -144,7 +144,7 @@ export type SyncJobStatus = "pending" | "running" | "done" | "failed";
 
 export interface SyncJob {
   id: string;
-  kind: "sheet_mirror" | "reindex";
+  kind: "reindex" | "sheet_mirror";
   item_id: string | null;
   status: SyncJobStatus;
   attempts: number;

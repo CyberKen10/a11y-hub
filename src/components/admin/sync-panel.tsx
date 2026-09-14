@@ -28,8 +28,7 @@ const STATUS_VARIANT: Record<
 };
 
 const KIND_LABEL: Record<string, string> = {
-  sheet_mirror: "Espejo en Sheets",
-  reindex: "Indexación RAG",
+  reindex: "Indexación del chat",
 };
 
 export function SyncPanel({

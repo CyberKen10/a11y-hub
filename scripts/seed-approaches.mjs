@@ -130,7 +130,7 @@ async function insertSources(supabase, itemId, sources) {
   if (error) throw new Error(`sources: ${error.message}`);
 }
 
-async function enqueueJobs(supabase, itemIds, { reindex, mirror }) {
+async function enqueueJobs(supabase, itemIds, { reindex }) {
   let pending = new Set();
   if (reindex && itemIds.length > 0) {
     const { data } = await supabase
@@ -144,7 +144,6 @@ async function enqueueJobs(supabase, itemIds, { reindex, mirror }) {
   const rows = [];
   for (const itemId of itemIds) {
     if (reindex && !pending.has(itemId)) rows.push({ kind: "reindex", item_id: itemId });
-    if (mirror) rows.push({ kind: "sheet_mirror", item_id: itemId });
   }
   for (let i = 0; i < rows.length; i += JOB_CHUNK) {
     const chunk = rows.slice(i, i + JOB_CHUNK);
@@ -187,7 +186,6 @@ export async function seedApproachWiki(supabase, options = {}) {
   const {
     ownerId = null,
     enqueueReindex = true,
-    enqueueMirror = false,
     items: providedItems,
   } = options;
 
@@ -327,10 +325,9 @@ export async function seedApproachWiki(supabase, options = {}) {
     }
   }
 
-  if (touchedIds.length > 0 && (enqueueReindex || enqueueMirror)) {
+  if (touchedIds.length > 0 && enqueueReindex) {
     await enqueueJobs(supabase, touchedIds, {
       reindex: enqueueReindex,
-      mirror: enqueueMirror,
     });
     summary.queued = touchedIds.length;
   }
@@ -347,7 +344,9 @@ if (isMain) {
     console.error("Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en .env.local");
     process.exit(1);
   }
-  const mirror = process.argv.includes("--mirror");
+  if (process.argv.includes("--mirror")) {
+    console.warn("El flag --mirror ya no existe: el hub no escribe en Sheets.");
+  }
   const supabase = createClient(url, key, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
@@ -362,7 +361,6 @@ if (isMain) {
   const summary = await seedApproachWiki(supabase, {
     ownerId: owner?.id ?? null,
     enqueueReindex: true,
-    enqueueMirror: mirror,
   });
   const removedDupes = await dedupePendingReindex(supabase);
   console.log(JSON.stringify({ ...summary, removedDupes }, null, 2));

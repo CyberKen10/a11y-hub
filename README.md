@@ -5,7 +5,7 @@ Plataforma interna de conocimiento
 - **Hub de contenido** organizado por apartados (Approaches, Metodologías, Herramientas, Plantillas).
 - **Chat RAG con citas**: pregunta en lenguaje natural (texto o voz) y recibe respuestas basadas únicamente en el conocimiento publicado, con fuentes verificables y lectura en voz alta.
 - **Creación asistida por IA**: añade approaches, metodologías, etc. escribiendo un prompt o dictando por voz; la IA propone la estructura y una persona revisa y confirma antes de publicar.
-- **Google Sheets como espejo**: la base de datos (Supabase/PostgreSQL) es la fuente de verdad; cada publicación se refleja en pestañas `Hub · <tipo>` del Sheet. La importación inicial lee las pestañas originales sin modificarlas.
+- **Importación**: sube un Excel desde el PC o pega el enlace de un Google Sheet; las fichas entran al hub. Sincronización solo indexa el chat (RAG).
 
 ## Stack
 
@@ -63,7 +63,7 @@ Si más adelante quieres OpenAI de pago, pon `AI_PROVIDER=openai` y `OPENAI_API_
 
 ### Paso 3 — Conectar Google Sheets (cuenta de servicio)
 
-Esto permite importar tu Sheet actual y mantener el espejo automático.
+Esto permite importar un Google Sheet por enlace (solo lectura). El ID del Sheet ya no va en el entorno: lo pegas en la app.
 
 1. Entra en [console.cloud.google.com](https://console.cloud.google.com).
 2. Arriba a la izquierda, crea un proyecto nuevo (p. ej. `a11y-hub`) y selecciónalo.
@@ -74,10 +74,8 @@ Esto permite importar tu Sheet actual y mantener el espejo automático.
 5. Genera la clave:
    - Haz clic en la cuenta recién creada → pestaña **Keys** → **Add key** → **Create new key** → tipo **JSON** → se descarga un archivo `.json`.
    - De ese archivo necesitas dos valores: `client_email` (será `GOOGLE_SERVICE_ACCOUNT_EMAIL`) y `private_key` (será `GOOGLE_PRIVATE_KEY`).
-6. Comparte tu spreadsheet con la cuenta de servicio:
-   - Abre tu Google Sheet → botón **Compartir** → pega el `client_email` (algo como `a11y-hub-sheets@a11y-hub.iam.gserviceaccount.com`) → permiso **Editor** → enviar.
-7. Copia el ID del spreadsheet: es la parte larga de la URL, entre `/d/` y `/edit`:
-   `https://docs.google.com/spreadsheets/d/`**`ESTE-ES-EL-ID`**`/edit` → será `GOOGLE_SHEET_ID`.
+6. Comparte el spreadsheet con la cuenta de servicio:
+   - Abre tu Google Sheet → botón **Compartir** → pega el `client_email` (algo como `a11y-hub-sheets@a11y-hub.iam.gserviceaccount.com`) → permiso **Lector** → enviar.
 
 ### Paso 4 — Variables de entorno
 
@@ -101,7 +99,6 @@ GOOGLE_GENERATIVE_AI_API_KEY=AIza...                      # Paso 2
 
 GOOGLE_SERVICE_ACCOUNT_EMAIL=a11y-hub-sheets@....iam.gserviceaccount.com   # Paso 3.5
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"  # Paso 3.5, en UNA línea con \n
-GOOGLE_SHEET_ID=1AbC...                                   # Paso 3.7
 ```
 
 Notas:
@@ -126,7 +123,7 @@ npm run dev
 
 ### Paso 6 — Cargar la Wiki Approaches (Excel)
 
-El archivo [`docs/Wiki - Approaches .xlsx`](docs/Wiki%20-%20Approaches%20.xlsx) es la base del apartado **Approaches**. PostgreSQL queda como fuente de verdad; el Google Sheet solo se usa como espejo (`Hub · Approaches`).
+El archivo [`docs/Wiki - Approaches .xlsx`](docs/Wiki%20-%20Approaches%20.xlsx) es la base del apartado **Approaches**. PostgreSQL es la fuente de verdad.
 
 Con `.env.local` ya configurado:
 
@@ -136,21 +133,16 @@ npm run seed:approaches
 
 Es idempotente (identifica cada fila por pestaña + número de fila). El Excel tiene muchas filas vacías: entran los approaches con contenido (**262** al día de hoy: ~224 Approaches, 35 UTest, 3 Grouping; PDFs todavía está vacío). Repítelo si actualizas el Excel. Luego ve a **Administración → Sincronización** y pulsa **Procesar pendientes** para generar los embeddings del chat (el cupo gratis de Gemini es bajo: hazlo por lotes).
 
-También puedes cargarlo en la app: **Administración → Importar conocimiento → Cargar Wiki Approaches**.
+También puedes cargarlo en la app: **Administración → Importar conocimiento → Cargar Excel**.
 
 Pestañas que entran: Approaches, PDFs Approaches (solo filas con contenido), UTest – Not a Bug, Grouping. No se importan LEEME, Sources ni Change log.
 
-### Paso 6b — Importar otras pestañas desde Google Sheets (opcional)
+### Paso 6b — Importar un Excel o un Google Sheet
 
-1. En la app: **Administración → Importar conocimiento** → **Conectar y listar pestañas**.
-2. Elige una pestaña → verás una vista previa de las primeras filas.
-3. Indica la **fila de encabezados**: si la pestaña tiene un banner o título encima de la tabla, selecciona la fila donde están los nombres reales de las columnas (todo lo anterior se ignora).
-4. Mapea las columnas: cuál es el **título** (obligatoria) y, si existen, resumen, contenido y tags. Las columnas sin mapear no se pierden: quedan como campos del elemento y también se indexan para el chat.
-5. Elige el **apartado de destino** (p. ej. Approaches) y deja marcado **Publicar directamente**.
-6. Pulsa **Importar**. Repite con cada pestaña del Sheet, eligiendo su apartado.
-7. Ve a **Administración → Sincronización** y pulsa **Procesar pendientes** hasta que no queden trabajos: eso genera los embeddings (chat) y escribe el espejo en el Sheet.
-
-No vuelvas a importar la wiki de Approaches desde Sheets: el Excel ya es esa base. El espejo se escribe solo en pestañas `Hub · <tipo>`.
+1. En la app: **Administración → Importar conocimiento**.
+2. **Cargar Excel:** elige un `.xlsx` de tu PC y pulsa **Cargar Excel**.
+3. **Conectar:** pega el enlace del Google Sheet (compártelo con la cuenta de servicio como **Lector**) y pulsa **Importar Sheet**. Se leen todas las pestañas y se mapean solas; el apartado sale del nombre de la pestaña.
+4. Ve a **Administración → Sincronización** y pulsa **Procesar pendientes** hasta que no queden trabajos: eso genera los embeddings del chat.
 
 ### Paso 7 — Probar todo
 
@@ -162,8 +154,8 @@ No vuelvas a importar la wiki de Approaches desde Sheets: el Excel ya es esa bas
 
 | Síntoma | Causa probable |
 | --- | --- |
-| "Google Sheets no está configurado" | Falta alguna de las 3 variables de Google o la clave privada quedó mal pegada. |
-| El espejo falla con error de permisos | No compartiste el Sheet con el `client_email` como Editor. |
+| "Google Sheets no está configurado" | Faltan `GOOGLE_SERVICE_ACCOUNT_EMAIL` / `GOOGLE_PRIVATE_KEY` o la clave privada quedó mal pegada. |
+| El import por enlace falla con permisos | No compartiste el Sheet con el `client_email` como Lector. |
 | El chat responde "No encuentro esa información" a todo | El contenido no está publicado o faltan trabajos de indexación: procesa pendientes en Sincronización. |
 | No llega el correo de confirmación | Revisa spam; en Supabase **Authentication → Logs** puedes ver el envío. |
 | Error 401 / "API key" en el chat | Falta `GOOGLE_GENERATIVE_AI_API_KEY` o la clave es inválida. |
@@ -221,10 +213,10 @@ Si nadie entra en ~15 minutos, Render apaga el servidor. La siguiente persona es
 
 ## Flujo de datos
 
-1. **Importar**: Administración → Importar desde Sheets. Selecciona pestaña, mapea columnas (título, resumen, contenido, tags) y ejecuta. Es idempotente: reimportar solo procesa filas nuevas o cambiadas (checksum por fila). Las columnas sin mapear se conservan como campos del elemento.
-2. **Publicar**: al publicar un elemento (manual, por IA o importado) se hace chunking por encabezados, se generan embeddings y se actualiza el espejo en Sheets. Los fallos quedan como trabajos reintenables en Administración → Sincronización.
+1. **Importar**: Administración → Importar conocimiento. Sube un Excel o pega el enlace del Sheet. Es idempotente: reimportar solo procesa filas nuevas o cambiadas (checksum por fila). Las columnas extra se conservan como campos del elemento.
+2. **Publicar**: al publicar un elemento (manual, por IA o importado) se hace chunking por encabezados y se generan embeddings. Los fallos quedan como trabajos reintenables en Administración → Sincronización.
 3. **Preguntar**: el chat recupera con búsqueda híbrida (RLS aplicado), responde solo con las fuentes y cita cada afirmación `[1]`. Cada respuesta enlaza a los elementos usados y puede leerse en voz alta.
-4. **Añadir por voz/prompt**: botón "Añadir con IA" → escribe o dicta → la IA propone tipo, título, resumen, contenido, tags y campos específicos → revisas (con diff "de X a Y" si actualiza uno existente) → confirmas → se guarda, versiona, indexa y espeja.
+4. **Añadir por voz/prompt**: botón "Añadir" → escribe o dicta → la IA propone tipo, título, resumen, contenido, tags y campos específicos → revisas (con diff "de X a Y" si actualiza uno existente) → confirmas → se guarda, versiona e indexa.
 
 ## Calidad
 

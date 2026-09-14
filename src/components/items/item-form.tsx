@@ -112,7 +112,7 @@ export function ItemForm({
       if (result.ok) {
         toast.success(
           status === "published"
-            ? "Guardado y publicado: ya está disponible en el chat y en Sheets."
+            ? "Guardado y publicado: ya está disponible en el chat."
             : "Borrador guardado."
         );
         router.push(`/items/${result.id}`);

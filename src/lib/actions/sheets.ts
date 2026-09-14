@@ -1,265 +1,116 @@
 "use server";
 
-import { createHash } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { listSheetTabs, readTab } from "@/lib/google/sheets";
+import { listSheetTabs, readTab, isGoogleAuthConfigured } from "@/lib/google/sheets";
 import { runPendingJobs, processJob } from "@/lib/sync/jobs";
 import { audit } from "@/lib/audit";
-import { isSheetsConfigured } from "@/lib/env";
-import { isActiveTypeSlug } from "@/lib/knowledge-sections";
+import {
+  autoMapColumns,
+  detectHeaderRow,
+  inferTypeSlug,
+  parseSpreadsheetId,
+  shouldSkipTab,
+} from "@/lib/import/auto-map";
+import {
+  mergeSummaries,
+  upsertImportedRows,
+  type ImportSummary,
+} from "@/lib/import/upsert-rows";
 
-export interface ImportMapping {
-  /** Column header used as title (required). */
-  title: string;
-  summary?: string;
-  content?: string;
-  tags?: string;
-}
+export type { ImportSummary };
 
-export interface ImportConfig {
-  tab: string;
-  typeSlug: string;
-  mapping: ImportMapping;
-  publish: boolean;
-  /** 1-based row that contains the column headers (default 1). */
-  headerRow: number;
-}
-
-export interface ImportSummary {
-  created: number;
-  updated: number;
-  skipped: number;
-  errors: string[];
-}
-
-export async function fetchTabs(): Promise<
-  { ok: true; tabs: string[] } | { ok: false; error: string }
-> {
-  await requireProfile("admin");
-  if (!isSheetsConfigured()) {
+export async function importFromSheetUrl(
+  url: string
+): Promise<{ ok: true; summary: ImportSummary } | { ok: false; error: string }> {
+  const profile = await requireProfile("admin");
+  if (!isGoogleAuthConfigured()) {
     return {
       ok: false,
       error:
-        "Google Sheets no está configurado. Define GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY y GOOGLE_SHEET_ID.",
+        "Falta la cuenta de servicio de Google. Define GOOGLE_SERVICE_ACCOUNT_EMAIL y GOOGLE_PRIVATE_KEY, y comparte el Sheet con ese correo (Lector).",
     };
   }
+
+  const spreadsheetId = parseSpreadsheetId(url);
+  if (!spreadsheetId) {
+    return { ok: false, error: "Pega el enlace completo del Google Sheet." };
+  }
+
+  let tabs: string[];
   try {
-    const tabs = await listSheetTabs();
-    return { ok: true, tabs };
+    tabs = await listSheetTabs(spreadsheetId);
   } catch (error) {
     return {
       ok: false,
       error: error instanceof Error ? error.message : String(error),
     };
   }
-}
 
-export async function previewTab(tab: string): Promise<
-  | {
-      ok: true;
-      /** First raw rows so the admin can pick the header row. */
-      sampleRows: { rowNumber: number; values: string[] }[];
-      totalRows: number;
-    }
-  | { ok: false; error: string }
-> {
-  await requireProfile("admin");
-  try {
-    const { rows } = await readTab(tab);
-    return {
-      ok: true,
-      sampleRows: rows.slice(0, 8),
-      totalRows: rows.length,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
+  const usable = tabs.filter((tab) => !shouldSkipTab(tab));
+  if (usable.length === 0) {
+    return { ok: false, error: "Ese Sheet no tiene pestañas para importar." };
   }
-}
 
-function checksumOf(values: string[]): string {
-  return createHash("sha256").update(JSON.stringify(values)).digest("hex");
-}
-
-/**
- * Idempotent import: each source row is identified by (tab, row number).
- * Rows whose checksum has not changed are skipped; changed rows update the
- * existing item. Unmapped columns are preserved in `metadata`.
- */
-export async function runImport(
-  config: ImportConfig
-): Promise<{ ok: true; summary: ImportSummary } | { ok: false; error: string }> {
-  const profile = await requireProfile("admin");
   const admin = createAdminClient();
+  const parts: ImportSummary[] = [];
 
-  if (!isActiveTypeSlug(config.typeSlug)) {
-    return { ok: false, error: "Apartado de destino no disponible." };
-  }
-
-  const { data: type } = await admin
-    .from("knowledge_types")
-    .select("id, name")
-    .eq("slug", config.typeSlug)
-    .single();
-  if (!type) return { ok: false, error: "Apartado de destino desconocido." };
-
-  let allRows: { rowNumber: number; values: string[] }[];
-  try {
-    ({ rows: allRows } = await readTab(config.tab));
-  } catch (error) {
-    return {
-      ok: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
-
-  const headerRowNumber = Math.max(1, config.headerRow || 1);
-  const headerRowData = allRows.find((r) => r.rowNumber === headerRowNumber);
-  if (!headerRowData) {
-    return { ok: false, error: "La fila de encabezados indicada no existe." };
-  }
-  const headers = headerRowData.values.map((h) => h.trim());
-  // Data starts after the header row; banner rows above it are ignored.
-  const rows = allRows.filter((r) => r.rowNumber > headerRowNumber);
-
-  const colIndex = (name?: string) =>
-    name ? headers.findIndex((h) => h === name) : -1;
-  const titleIdx = colIndex(config.mapping.title);
-  if (titleIdx < 0) {
-    return { ok: false, error: "La columna de título no existe en la pestaña." };
-  }
-  const summaryIdx = colIndex(config.mapping.summary);
-  const contentIdx = colIndex(config.mapping.content);
-  const tagsIdx = colIndex(config.mapping.tags);
-  const mappedIdx = new Set(
-    [titleIdx, summaryIdx, contentIdx, tagsIdx].filter((i) => i >= 0)
-  );
-
-  const summary: ImportSummary = { created: 0, updated: 0, skipped: 0, errors: [] };
-
-  for (const row of rows) {
-    const title = (row.values[titleIdx] ?? "").trim();
-    if (!title) {
-      summary.skipped++;
-      continue;
-    }
-
-    const checksum = checksumOf(row.values);
-
-    const { data: existing } = await admin
-      .from("knowledge_items")
-      .select("id, source_checksum")
-      .eq("source_sheet_tab", config.tab)
-      .eq("source_sheet_row", row.rowNumber)
-      .maybeSingle();
-
-    if (existing && existing.source_checksum === checksum) {
-      summary.skipped++;
-      continue;
-    }
-
-    // Unmapped columns are preserved as metadata (same info as the sheet).
-    const metadata: Record<string, string> = {};
-    headers.forEach((h, i) => {
-      if (!mappedIdx.has(i) && h && (row.values[i] ?? "").trim()) {
-        metadata[h] = row.values[i].trim();
-      }
-    });
-
-    let content = contentIdx >= 0 ? (row.values[contentIdx] ?? "").trim() : "";
-    if (!content) {
-      content = Object.entries(metadata)
-        .map(([k, v]) => `**${k}:** ${v}`)
-        .join("\n\n");
-    }
-    if (!content) content = title;
-
-    const fields = {
-      type_id: type.id,
-      title,
-      summary: summaryIdx >= 0 ? (row.values[summaryIdx] ?? "").trim() || null : null,
-      content,
-      metadata,
-      status: config.publish ? ("published" as const) : ("draft" as const),
-      source_sheet_tab: config.tab,
-      source_sheet_row: row.rowNumber,
-      source_checksum: checksum,
-    };
-
+  for (const tab of usable) {
+    let allRows: { rowNumber: number; values: string[] }[];
     try {
-      let itemId: string;
-      if (existing) {
-        const { error } = await admin
-          .from("knowledge_items")
-          .update(fields)
-          .eq("id", existing.id);
-        if (error) throw new Error(error.message);
-        itemId = existing.id;
-        summary.updated++;
-      } else {
-        const { data: created, error } = await admin
-          .from("knowledge_items")
-          .insert({ ...fields, owner_id: profile.id })
-          .select("id")
-          .single();
-        if (error || !created) throw new Error(error?.message ?? "insert falló");
-        itemId = created.id;
-        summary.created++;
-      }
-
-      // Tags column → tag rows.
-      if (tagsIdx >= 0) {
-        const names = (row.values[tagsIdx] ?? "")
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean);
-        for (const name of names) {
-          const slug = name
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)+/g, "");
-          if (!slug) continue;
-          const { data: tag } = await admin
-            .from("tags")
-            .upsert({ name, slug }, { onConflict: "slug" })
-            .select("id")
-            .single();
-          if (tag) {
-            await admin
-              .from("item_tags")
-              .upsert({ item_id: itemId, tag_id: tag.id });
-          }
-        }
-      }
-
-      // Queue indexing (and mirror) as pending jobs; they are processed in
-      // batches from the sync panel to keep the import fast and resumable.
-      await admin.from("sync_jobs").insert([
-        { kind: "reindex", item_id: itemId },
-        { kind: "sheet_mirror", item_id: itemId },
-      ]);
+      ({ rows: allRows } = await readTab(spreadsheetId, tab));
     } catch (error) {
-      summary.errors.push(
-        `Fila ${row.rowNumber}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      parts.push({
+        created: 0,
+        updated: 0,
+        skipped: 0,
+        errors: [
+          `Pestaña «${tab}»: ${error instanceof Error ? error.message : String(error)}`,
+        ],
+      });
+      continue;
     }
+    if (allRows.length === 0) continue;
+
+    const headerRowNumber = detectHeaderRow(allRows);
+    const headerRowData = allRows.find((r) => r.rowNumber === headerRowNumber);
+    if (!headerRowData) continue;
+    const headers = headerRowData.values.map((h) => h.trim());
+    const mapping = autoMapColumns(headers);
+    if (mapping.titleIdx < 0) {
+      parts.push({
+        created: 0,
+        updated: 0,
+        skipped: 0,
+        errors: [`Pestaña «${tab}»: no encontré una columna de título.`],
+      });
+      continue;
+    }
+    const rows = allRows.filter((r) => r.rowNumber > headerRowNumber);
+    parts.push(
+      await upsertImportedRows({
+        admin,
+        ownerId: profile.id,
+        typeSlug: inferTypeSlug(tab),
+        sourceTab: `${spreadsheetId} · ${tab}`,
+        headers,
+        rows,
+        mapping,
+        publish: true,
+      })
+    );
   }
 
+  const summary = mergeSummaries(parts);
   await audit({
     actorId: profile.id,
     actorEmail: profile.email,
     action: "sheets.import",
     entity: "knowledge_items",
-    detail: { tab: config.tab, type: config.typeSlug, ...summary },
+    detail: { spreadsheetId, tabs: usable, ...summary },
   });
 
-  // Kick off a first batch of jobs right away (best effort).
   try {
     await runPendingJobs();
   } catch (error) {
