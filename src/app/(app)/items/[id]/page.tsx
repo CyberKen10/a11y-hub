@@ -147,18 +147,19 @@ export default async function ItemPage({
           <Badge variant={item.status === "published" ? "default" : "outline"}>
             {STATUS_LABEL[item.status]}
           </Badge>
+          {(looksLikeApproach(metadata, type?.slug) ||
+            type?.slug === "deque") && (
+            <WcagScBadges metadata={metadata} />
+          )}
           {looksLikeApproach(metadata, type?.slug) && (
-            <>
-              <WcagScBadges metadata={metadata} />
-              <ApprovalBadge
-                state={getApprovalState(metadata)}
-                count={
-                  getApprovalState(metadata) === "discarded"
-                    ? undefined
-                    : getApproverCount(metadata)
-                }
-              />
-            </>
+            <ApprovalBadge
+              state={getApprovalState(metadata)}
+              count={
+                getApprovalState(metadata) === "discarded"
+                  ? undefined
+                  : getApproverCount(metadata)
+              }
+            />
           )}
           <span className="text-sm text-muted-foreground">
             Actualizado{" "}

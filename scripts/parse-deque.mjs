@@ -102,7 +102,7 @@ export function splitCheckpoints(markdown, fileName) {
 
   const flush = () => {
     if (!current) return;
-    current.body = body.join("\n").trim();
+    current.body = formatDequeBody(body.join("\n"));
     if (current.body) parts.push(current);
     body.length = 0;
   };
@@ -124,6 +124,23 @@ export function splitCheckpoints(markdown, fileName) {
   }
   flush();
   return parts;
+}
+
+const SECTION_TITLES =
+  /^(Overview|Testing Methodology|Issue Descriptions|Best Practices|Not an Issue|Things to think about|Desktop Web - Manual|Desktop Web - Assistive Technology|Required for testing|NOTE|Note)$/i;
+
+export function formatDequeBody(raw) {
+  const lines = unescapeMammoth(raw).replace(/\r\n/g, "\n").split("\n");
+  const out = [];
+  for (const line of lines) {
+    const stripped = stripDecor(line);
+    if (stripped && SECTION_TITLES.test(stripped)) {
+      out.push(`### ${stripped}`);
+      continue;
+    }
+    out.push(unescapeMammoth(line));
+  }
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
 function compareVariant(a, b) {

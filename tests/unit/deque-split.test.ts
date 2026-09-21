@@ -67,6 +67,7 @@ __Overview__
     expect(items[0]?.metadata.variants).toBe("a, b");
     expect(items[0]?.content).toContain("## 1.3.1.a Headings");
     expect(items[0]?.content).toContain("## 1.3.1.b Tables");
+    expect(items[0]?.content).toContain("### Overview");
     expect(items[0]?.source_sheet_tab).toBe("Deque · 1.3.1");
   });
 });

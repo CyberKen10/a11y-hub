@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requireProfile } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { isGoogleAuthConfigured } from "@/lib/google/sheets";
 import { ImportWizard } from "@/components/admin/import-wizard";
 import { WikiApproachesImport } from "@/components/admin/wiki-approaches-import";
@@ -11,6 +12,20 @@ export const maxDuration = 300;
 
 export default async function ImportPage() {
   await requireProfile("admin");
+  const supabase = await createClient();
+  const { data: dequeType } = await supabase
+    .from("knowledge_types")
+    .select("id")
+    .eq("slug", "deque")
+    .maybeSingle();
+  let dequeCount = 0;
+  if (dequeType) {
+    const { count } = await supabase
+      .from("knowledge_items")
+      .select("id", { count: "exact", head: true })
+      .eq("type_id", dequeType.id);
+    dequeCount = count ?? 0;
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -25,7 +40,10 @@ export default async function ImportPage() {
 
       <WikiApproachesImport />
 
-      <DequeImport />
+      <DequeImport
+        typeReady={Boolean(dequeType)}
+        itemCount={dequeCount}
+      />
 
       {!isGoogleAuthConfigured() && (
         <Alert>

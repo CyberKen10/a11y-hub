@@ -2,9 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCcw, RotateCw } from "lucide-react";
+import { ListChecks, RefreshCcw, RotateCw } from "lucide-react";
 import { toast } from "sonner";
-import { processPendingJobs, retryJob } from "@/lib/actions/sheets";
+import {
+  processAllPendingJobs,
+  processPendingJobs,
+  retryJob,
+} from "@/lib/actions/sheets";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,39 +31,97 @@ const STATUS_VARIANT: Record<
   failed: "destructive",
 };
 
-const KIND_LABEL: Record<string, string> = {
-  reindex: "Indexación del chat",
+const STATUS_LABEL: Record<string, string> = {
+  done: "listo",
+  pending: "pendiente",
+  running: "en curso",
+  failed: "fallido",
 };
 
 export function SyncPanel({
   jobs,
+  counts,
 }: {
-  jobs: (SyncJob & { item_title: string | null })[];
+  jobs: (SyncJob & { item_title: string | null; type_name: string | null })[];
+  counts: {
+    remaining: number;
+    pending: number;
+    failed: number;
+    running: number;
+    done: number;
+  };
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const remaining = counts.remaining;
+  const batchSize = Math.min(25, remaining);
 
   return (
     <div className="space-y-4">
-      <Button
-        disabled={pending}
-        onClick={() =>
-          startTransition(async () => {
-            const result = await processPendingJobs();
-            toast.success(`Lote procesado: ${result.processed} trabajos.`);
-            router.refresh();
-          })
-        }
-      >
-        <RefreshCcw aria-hidden="true" />
-        {pending ? "Procesando…" : "Procesar pendientes (lotes de 25)"}
-      </Button>
+      <p role="status" className="text-sm">
+        {remaining === 0 ? (
+          <>
+            <strong>No falta ninguno.</strong> {counts.done} ya indexados.
+          </>
+        ) : (
+          <>
+            <strong>Faltan {remaining}</strong>
+            {counts.pending > 0 ? ` · ${counts.pending} pendientes` : ""}
+            {counts.failed > 0 ? ` · ${counts.failed} fallidos` : ""}
+            {counts.running > 0 ? ` · ${counts.running} en curso` : ""}
+            {" · "}
+            {counts.done} ya listos
+          </>
+        )}
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          disabled={pending || remaining === 0}
+          onClick={() =>
+            startTransition(async () => {
+              const result = await processPendingJobs();
+              toast.success(
+                result.processed === 0
+                  ? "No había pendientes."
+                  : `Lote listo: ${result.processed} indexados.`
+              );
+              router.refresh();
+            })
+          }
+        >
+          <RefreshCcw aria-hidden="true" />
+          {pending
+            ? "Procesando…"
+            : remaining === 0
+              ? "Nada pendiente"
+              : `Procesar ${batchSize}`}
+        </Button>
+        <Button
+          variant="outline"
+          disabled={pending || remaining === 0}
+          onClick={() =>
+            startTransition(async () => {
+              const result = await processAllPendingJobs();
+              toast.success(
+                result.remaining === 0
+                  ? `Listo: ${result.processed} indexados. No queda ninguno.`
+                  : `Avanzó ${result.processed}. Aún faltan ${result.remaining}.`
+              );
+              router.refresh();
+            })
+          }
+        >
+          <ListChecks aria-hidden="true" />
+          {pending ? "Procesando…" : `Sincronizar todos (${remaining})`}
+        </Button>
+      </div>
 
       <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Trabajo</TableHead>
+              <TableHead>Apartado</TableHead>
               <TableHead>Elemento</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Intentos</TableHead>
@@ -80,13 +142,13 @@ export function SyncPanel({
             )}
             {jobs.map((job) => (
               <TableRow key={job.id}>
-                <TableCell>{KIND_LABEL[job.kind] ?? job.kind}</TableCell>
+                <TableCell>{job.type_name ?? "—"}</TableCell>
                 <TableCell className="max-w-56 truncate">
                   {job.item_title ?? "—"}
                 </TableCell>
                 <TableCell>
                   <Badge variant={STATUS_VARIANT[job.status] ?? "outline"}>
-                    {job.status}
+                    {STATUS_LABEL[job.status] ?? job.status}
                   </Badge>
                 </TableCell>
                 <TableCell>{job.attempts}</TableCell>

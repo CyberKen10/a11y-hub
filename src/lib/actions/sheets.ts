@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listSheetTabs, readTab, isGoogleAuthConfigured } from "@/lib/google/sheets";
-import { runPendingJobs, processJob } from "@/lib/sync/jobs";
+import {
+  runPendingJobs,
+  runAllPendingJobs,
+  processJob,
+} from "@/lib/sync/jobs";
 import { audit } from "@/lib/audit";
 import {
   autoMapColumns,
@@ -128,6 +132,14 @@ export async function retryJob(jobId: string) {
 export async function processPendingJobs() {
   await requireProfile("admin");
   const result = await runPendingJobs();
+  revalidatePath("/admin/sync");
+  return result;
+}
+
+/** Processes every remaining reindex job, in batches of 25. */
+export async function processAllPendingJobs() {
+  await requireProfile("admin");
+  const result = await runAllPendingJobs();
   revalidatePath("/admin/sync");
   return result;
 }
