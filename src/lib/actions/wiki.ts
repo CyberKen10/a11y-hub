@@ -12,7 +12,11 @@ import {
   inferTypeSlug,
   shouldSkipTab,
 } from "@/lib/import/auto-map";
-import type { ImportSummary, WikiSeedSummary } from "@/lib/import/types";
+import {
+  toWikiSeedSummary,
+  type ImportSummary,
+  type WikiSeedSummary,
+} from "@/lib/import/types";
 import { mergeSummaries, upsertImportedRows } from "@/lib/import/upsert-rows";
 import {
   seedApproachWiki,
@@ -104,7 +108,7 @@ export async function importExcelUpload(
         items: parsed.items,
       });
       await dedupePendingReindex(admin);
-      summary = { ...seeded, file: file.name };
+      summary = toWikiSeedSummary(seeded, file.name);
     } else {
       const generic = await importGenericWorkbook({
         workbook: parsed.workbook,

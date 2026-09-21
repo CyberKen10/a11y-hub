@@ -10,7 +10,7 @@ import {
   loadDequeItemsFromFolder,
 } from "@/lib/import/parse-deque-docs";
 import { seedDeque, dedupePendingReindex } from "@/lib/import/seed-deque-mod";
-import type { WikiSeedSummary } from "@/lib/import/types";
+import { toWikiSeedSummary, type WikiSeedSummary } from "@/lib/import/types";
 
 const MAX_DOCX_BYTES = 20 * 1024 * 1024;
 
@@ -60,7 +60,7 @@ export async function importDequeFolder(): Promise<
       items: parsed.items,
     });
     await dedupePendingReindex(admin);
-    return finishImport(profile, { ...seeded, file: parsed.file });
+    return finishImport(profile, toWikiSeedSummary(seeded, parsed.file));
   } catch (error) {
     return {
       ok: false,
@@ -110,7 +110,7 @@ export async function importDequeUpload(
       items: parsed.items,
     });
     await dedupePendingReindex(admin);
-    return finishImport(profile, { ...seeded, file: parsed.file });
+    return finishImport(profile, toWikiSeedSummary(seeded, parsed.file));
   } catch (error) {
     return {
       ok: false,

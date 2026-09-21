@@ -194,7 +194,7 @@ export async function seedApproachWiki(supabase, options = {}) {
     : loadApproachWikiItems();
   const items = loaded.items;
   if (items.length === 0) {
-    return { file: loaded.file, created: 0, updated: 0, skipped: 0, errors: ["El Excel no produjo filas."] };
+    return { file: loaded.file, created: 0, updated: 0, skipped: 0, errors: ["El Excel no produjo filas."], queued: 0 };
   }
 
   const { data: type, error: typeError } = await supabase
