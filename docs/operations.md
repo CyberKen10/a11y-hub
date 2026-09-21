@@ -13,8 +13,9 @@ Las cuentas se crean en **Supabase → Authentication → Users → Add user** (
 ## Importar conocimiento
 
 1. **Excel:** Administración → Importar conocimiento → sube un .xlsx desde el PC.
-2. **Google Sheet:** pega el enlace. Comparte el Sheet con la cuenta de servicio como Lector (`GOOGLE_SERVICE_ACCOUNT_EMAIL`).
-3. Tras cargar, procesa los pendientes en **Administración → Sincronización** para que el chat encuentre el contenido.
+2. **Deque:** sube los .docx o pulsa **Cargar carpeta deque/**. Se crea una ficha por criterio WCAG; las variantes a/b van juntas.
+3. **Google Sheet:** pega el enlace. Comparte el Sheet con la cuenta de servicio como Lector (`GOOGLE_SERVICE_ACCOUNT_EMAIL`).
+4. Tras cargar, procesa los pendientes en **Administración → Sincronización** para que el chat encuentre el contenido.
 
 ## Sincronización
 

@@ -1,0 +1,218 @@
+__1\.4\.4\.a Resize \(200%\)__
+
+__Overview__
+
+- General \- The screen must be readable and functional when zoomed to 200% of its original size\.
+- HTML \- The screen must be readable and functional when zoomed to 200% of its original size\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Responsive Web Design Testing:__ When doing Responsive Web testing for tablet or phone breakpoints on a desktop computer, this Desktop testing methodology does not apply\. People using actual tablet or phone devices can use pinch\-to\-zoom to satisfy 1\.4\.4\.a\.
+
+These tests use two different browsers \(not just two different windows within the same browser\) set to a viewport size of 1366px wide by 768px high\.
+
+1. IMPORTANT: see the instructions under "Recommended tools to size the browser viewport" for instructions on how to set the viewport size properly\.
+2. __Browser 1:__ Open the page in Browser 1, set the viewport size to 1366px width by 768px height WITH zoom set to 100%\.
+3. __Browser 2:__ Open the page in Browser 2, set the viewport size to 1366px width by 768px height with zoom set to 100%, AND THEN zoom the page to 200%\.
+4. Compare the content/functionality available in Browser 1 to Browser 2\. You may want to use a second monitor to do this\.
+5. Verify that: 
+	- The text can be resized to 200% of its original size\.
+	- When text is increased by 200%, all content and functionality are available\.
+6. __Exception:__ Media captions and images\-of\-text are excluded from this checkpoint's requirements\.
+
+If you discover content or functionality are unavailable in Browser 2, or the text size cannot be increased by 200%, complete the following additional test:
+
+1. __Browser 2:__ Restore the page zoom to 100%
+2. __Browser 2:__ Navigate to __Chrome Settings > Appearance > Customize Fonts__ \(chrome://settings/fonts\)
+3. Slide the __Font size__ setting from __16__ to __32__\.
+4. Compare the content/functionality available in Browser 1 to Browser 2\. You may want to use a second monitor to do this\.
+5. Verify that: 
+	- The text is resized to 200% of its original size\.
+	- When text is increased by 200%, all content and functionality are available\.
+
+If either test passes, then the checkpoint passes\.
+
+__Things to think about__
+
+- How much content is visible on a screen may change from the standard desktop view at different zoom levels, screen widths, or screen orientations due to responsive design changes\. For example, navigation menus that are fully visible in a desktop layout are often collapsed into a single menu button \(the 'hamburger' icon pattern\) or sections of a screen may be collapsed under toggled controls so they take up less screen space\. This checkpoint is passed __as long as__ all content and functionality are still available either: directly on the screen, revealed via accessible controls on the same screen, accessible via direct links from the screen being assessed, or via clear instructions on how to locate the content or functionality\.
+- It is acceptable, but not desirable, for horizontal scrolling to be necessary to view the page when zoomed\. Scrolling is not a failure of this checkpoint\.
+
+__Recommended tools to size the browser viewport__
+
+Chrome and Edge Developer Tools:
+
+1. Open the Inspect panel\. You may dock it to the side or the bottom of the main browser window or decouple it from the main browser window\. Use the three vertical dots button \("Customize and control DevTools" button\) in the upper right corner of the Developer Tools panel and select a placement from the "Dock side" options\. __NOTE:__ If you need the screen width to be less than 500px, you will need to dock the Inspect panel to the right side of the main browser window\.
+2. Ensure the browser zoom is set to 100%\.
+3. Resize the main browser window by dragging and view the size stats in the upper right corner of the browser window\.
+4. You can double\-check the browser size by going to the Inspect panel > Console tab, and typing in window\.innerWidth or window\.innerHeight\.
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)for Chrome and Firefox:
+
+1. Use Resize > Resize Window to set the Window width and height\.
+2. Check the resulting Viewport size and adjust\. __NOTE:__ There is a difference between Window size and Viewport size\. The __Window__ size includes the browser toolbars above the __Viewport__ and scrollbars\. When you use "Resize Window" you are setting the Window, not the Viewport\. To view and adjust the Viewport: 
+	1. Use __Resize > Display Window Size__\. This will display both the Window size AND the Viewport size\. The Viewport height will be shorter than the desired height\. The Viewport width may also be narrower than the desired width\.
+	2. Use __Resize > Window Size__ to adjust the Window height and/or width upward to compensate for the toolbars and scrollbars included in the Window size\.
+	3. Repeat the two steps above until the height and width match the intended __Viewport__ size\.
+
+__Desktop Web \- Assistive Technology__
+
+Screen reader testing is not applicable for this checkpoint\.
+
+__Issue Descriptions__
+
+- The ability to pinch the screen to zoom has been disabled\. \(resize\-pinch\-to\-zoom\-disabled, "issue", serious\)
+- Content is lost, clipped, or obscured when the page is zoomed to 200%\. \(resize\-text\-content\-lost, "issue", serious\)
+- Content is lost, clipped, or obscured when text is resized to Accessibility setting maximum\. \(resize\-text\-content\-lost\-mobile, "issue", serious\)
+- Text cannot be resized by 200% by browser zoom or increasing default font size\. \(resize\-text\-does\-not\-respond, "issue", serious\)
+- Font size does not respond to resizing from Accessibility Settings\. \(resize\-text\-does\-not\-respond\-mobile, "issue", serious\)
+- Functionality is lost when the page is zoomed to 200%\. \(resize\-text\-function\-lost, "issue", serious\)
+- Functionality is lost when text is resized to Accessibility setting maximum\. \(resize\-text\-function\-lost\-mobile, "issue", serious\)
+
+__Best Practices__
+
+- Avoid horizontal scrolling \- When the page content is resized to 200%, the content should be visible without scrolling horizontally\. \(content\-too\-wide, "best\-practice", moderate, May 24, 2016\)
+- Allow for text\-only resize to 200% \- Content should not be lost, clipped, or obscured when only the text is resized to 200%\. \(resize\-text\-only, "best\-practice", moderate, January 14, 2022\)
+
+__1\.4\.10\.a Reflow__
+
+__Overview__
+
+- General \- Content must be presented without loss of information or functionality and without scrolling in two directions when the viewport is set to the equivalent of 320 CSS pixels wide and 256 pixels high\.
+- HTML \- Content must be presented without loss of information or functionality and without scrolling in two directions when the viewport is set to the equivalent of 320 CSS pixels wide and 256 pixels high\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Responsive Web Design Testing:__ When doing Responsive Web testing for tablet or phone breakpoints on a desktop computer, you do not have to test this checkpoint again if it has already been done for the Desktop breakpoint\. It is redundant to test again\.
+
+1. Open the page in Chrome\. Ensure that Chrome is displaying the page at its actual size with the site's provided CSS\. \(In other words, no zoom, no magnification, no user supplied CSS features are turned on\)\.
+2. Resize the browser viewport to one of the following \(all are the equivalent to 320px width at 100% zoom\): 
+	- 320px width by 256px height at 100% zoom OR
+	- 640px width by 512px height at 100% and then zoom to 200% OR
+	- 1280px width by 1024px height at 100% and then zoom to 400% zoom
+	- __NOTE:__ Be sure to resize the viewport while at 100% zoom BEFORE applying the 200% or 400% zoom\.
+	- __NOTE:__ Be sure to CAREFULLY read the viewport resize instructions under "Recommended tools to size the browser viewport"\.
+3. Confirm that "content" can be read without scrolling in more than one direction at a time\. See "Things to think about" below for important details about how "content" is defined\.
+4. __Exceptions:__ Content that is allowed to scroll horizontally: maps, diagrams, video, games, presentations, data tables \(not individual cells\), and interfaces where it is necessary to keep toolbars in view while manipulating content\.
+5. __Is 1\.4\.10 Reflow cumulatively tested with 1\.4\.4 Resize?__ No\. [WCAG Success Criteria \(SC\) are not cumulative [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://github.com/w3c/wcag21/issues/850)](https://github.com/w3c/wcag21/issues/850)\.
+
+__Things to think about__
+
+- Just because a horizontal scrollbar appears when the screen is resized does not automatically mean this checkpoint is failed\! Sometimes a scrollbar may appear \(due to extra CSS padding or a decorative element\), but the text can all be seen in the viewport width and fulfills this checkpoint\.
+- "Content" is not a defined term in WCAG\. For the purposes of this checkpoint, "content" can be thought of as self\-contained portions of page content\. Each portion of content is evaluated for scrolling in more than one direction\. For example, the main body of the page reflows to 320px but certain portions of the page may scroll horizontally such as: 
+	- Individual carousel panels or slider cards \(such as product carousel / slider on an ecommerce site or movie cards on a streaming site\)\. The carousel or slider may scroll horizontally; however, each individual panel / card must fit horizontally within the viewport\. \(It is permissible for the individual panels to scroll vertically\.\)
+	- Horizontal navigation menus\. The menu bar may scroll horizontally; however, each individual menu item must fit horizontally within the viewport\.
+- How much content is visible on a screen may change from the standard desktop view at different zoom levels, screen widths, or screen orientations due to responsive design changes\. For example, navigation menus that are fully visible in a desktop layout are often collapsed into a single menu button \(the 'hamburger' icon pattern\), or sections of a screen may be collapsed under toggled controls so they take up less screen space\. This checkpoint is passed __as long as__ all information and functionality are still available either: directly on the screen, revealed via accessible controls on the same screen, accessible via direct links from the screen being assessed, or via clear instructions on how to locate the information or functionality\.
+
+__Recommended tools to size the browser viewport__
+
+Chrome and Edge Developer Tools:
+
+1. Open the Inspect panel\. You may dock it to the side or the bottom of the main browser window or decouple it from the main browser window\. Use the three vertical dots button \("Customize and control DevTools" button\) in the upper right corner of the Developer Tools panel and select a placement from the "Dock side" options\. __NOTE:__ If you need the screen width to be less than 500px, you will need to dock the Inspect panel to the right side of the main browser window\.
+2. Ensure the browser zoom is set to 100%\.
+3. Resize the main browser window by dragging and view the size stats in the upper right corner of the browser window\.
+4. You can double\-check the browser size by going to the Inspect panel > Console tab, and typing in window\.innerWidth or window\.innerHeight\.
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)for Chrome and Firefox:
+
+1. Use Resize > Resize Window to set the Window width and height\.
+2. Check the resulting Viewport size and adjust\. __NOTE:__ There is a difference between Window size and Viewport size\. The __Window__ size includes the browser toolbars above the __Viewport__ and scrollbars\. When you use "Resize Window" you are setting the Window size, not the Viewport size\. To view and adjust the Viewport: 
+	1. Use __Resize > Display Window Size__\. This will display both the Window size AND the Viewport size\. The Viewport height will be shorter than the desired height\. The Viewport width may also be narrower than the desired width\.
+	2. Use __Resize > Window Size__ to adjust the Window height and/or width upward to compensate for the toolbars and scrollbars included in the Window size\.
+	3. Repeat the two steps above until the height and width match the intended __Viewport__ size\.
+
+__Desktop Web \- Assistive Technology__
+
+Screen reader testing is not applicable for this checkpoint\.
+
+__Issue Descriptions__
+
+- Content does not reflow to fit horizontally within the viewport when the page is adjusted to an equivalent width of 320px\. \(content\-horizontal\-scroll, "issue", serious\)
+- Information or functionality is lost due to overlapping content when the page is adjusted to an equivalent width of 320px\. \(content\-reflow\-content\-lost, "issue", serious\)
+- Information or functionality is unavailable when the page is adjusted to an equivalent width of 320px\. \(content\-reflow\-content\-missing, "issue", serious\)
+
+__Best Practices__
+
+No best practices
+
+- [![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAARCAMAAAA11AaTAAAAdVBMVEUxVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX8xVX+nQfNZAAAAJnRSTlMAAQIJDBESGR4kLzE4OVFZZ3uEhZWdoqa0v8fO2uHj6/P2+fv9/tHLA7sAAABfSURBVBiVVc5LAoIwFEPRKKIoAvKnIAgq2f8S7cjX3NkZJYCUi1LHQJf2S3NUruTfh2ImzfeRNCf9TvOp2mjh/GSYn+l2MZBNahwfLzEQNx8xcHNqf3ER+yf1Wwxchx8IpRGlcapG1wAAAABJRU5ErkJggg==)](https://dequeuniversity.com/class/wcag-conformance/interpreting/wcag/aa/wcag21aa/1.4.10)
+
+__1\.4\.12\.a Text Spacing__
+
+__Overview__
+
+- General \- The spacing between letters, words, lines of text and paragraphs must be adjustable to certain spacing guidelines without loss of content or functionality\.
+- HTML \- The spacing between letters, words, lines of text and paragraphs must be adjustable to certain spacing guidelines without loss of content or functionality\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+1. __Browser 1:__ Open the page in a browser with the viewport set to 1366px width by 768px height AND zoom set to 100%\.
+2. __Browser 2:__ Open the page in a second browser with the viewport set to 1366px width by 768px height AND zoom set to 100%\. Activate [Dylan Barrell's 1\.4\.12 Text Spacing Bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://dylanb.github.io/bookmarklets.html)](https://dylanb.github.io/bookmarklets.html)\.
+3. Visually confirm that text spacing responds to the bookmarklet\. The expected outcome is: 
+	- Line height \(1\.5 times the font size\)
+	- Spacing following paragraph \(at least 2 times the font size\)
+	- Letter spacing \(at least \.12 times the font size\)
+	- Word spacing \(at least \.16 times the font size\)
+4. __Note:__ If the text spacing requirements are met BEFORE the bookmarklet is applied, one should not expect an increase ABOVE the default appearance\. For example, if the line spacing is already at least "1\.5 times the font size", the test spacing bookmarklet is not expected to make the line spacing larger\.
+5. Compare the content and functionality available in the two browsers\. Make sure there is no loss of content or functionality on the page where the "1\.4\.12 Text Spacing" bookmarklet has been applied\.
+6. __Exceptions:__ Text spacing is not required for the following: 
+	- Video captions embedded directly into the video frame
+	- PDF
+	- Images of text
+	- Options inside an HTML select dropdown or datalist dropdown
+	- Text implemented in Canvas
+	- Rare: Cases where the style properties of line height, spacing following a paragraph, letter spacing, or word spacing are not available in a language or script can conform using only the properties that exist for that combination of language and script\.
+7. Content in frames: Due to technical restraints, the bookmarklet may not work for content within an iframe\. If content within an iFrame needs to be tested: 
+	- Identify the iframe element within the HTML\.
+	- Copy the URL in the src attribute of the iframe\.
+	- Paste the URL in a new browser tab\.
+	- Run the bookmarklet\.
+
+__Recommended tools to size the browser viewport__
+
+Chrome and Edge Developer Tools:
+
+1. Open the Inspect panel\. You may dock it to the side or the bottom of the main browser window or decouple it from the main browser window\. Use the three vertical dots button \("Customize and control DevTools" button\) in the upper right corner of the Developer Tools panel and select a placement from the "Dock side" options\. __NOTE:__ If you need the screen width to be less than 500px, you will need to dock the Inspect panel to the right side of the main browser window\.
+2. Ensure the browser zoom is set to 100%\.
+3. Resize the main browser window by dragging and view the size stats in the upper right corner of the browser window\.
+4. You can double\-check the browser size by going to the Inspect panel > Console tab, and typing in window\.innerWidth or window\.innerHeight\.
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)for Chrome and Firefox:
+
+1. Use Resize > Resize Window to set the Window width and height\.
+2. Check the resulting Viewport size and adjust\. __NOTE:__ There is a difference between Window size and Viewport size\. The __Window__ size includes the browser toolbars above the __Viewport__ and scrollbars\. When you use "Resize Window" you are setting the Window, not the Viewport\. To view and adjust the Viewport: 
+	1. Use __Resize > Display Window Size__\. This will display both the Window size AND the Viewport size\. The Viewport height will be shorter than the desired height\. The Viewport width may also be narrower than the desired width\.
+	2. Use __Resize > Window Size__ to adjust the Window height and/or width upward to compensate for the toolbars and scrollbars included in the Window size\.
+	3. Repeat the two steps above until the height and width match the intended __Viewport__ size\.
+
+__Desktop Web \- Assistive Technology__
+
+Screen reader testing is not applicable for this checkpoint\.
+
+__Issue Descriptions__
+
+- When text spacing is adjusted, some content cannot be seen because it is cut off\. \(text\-spacing\-cut\-off, "issue", serious\)
+- The spacing between letters, words, lines of text and/or paragraphs cannot be adjusted\. \(text\-spacing\-not\-adjusted, "issue", serious\)
+- When text spacing is adjusted, some content is unclear because it overlaps with other content\. \(text\-spacing\-overlap, "issue", serious\)
+
+__Best Practices__
+
+No best practices
+

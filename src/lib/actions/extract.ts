@@ -88,7 +88,7 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
     types = data ?? [];
     if (types.length === 0) {
       throw new Error(
-        "No hay apartados activos (approaches, metodologías, herramientas, plantillas)."
+        "No hay apartados activos (approaches, metodologías, herramientas, plantillas, deque)."
       );
     }
   } catch (error) {
@@ -132,12 +132,14 @@ Cómo partir:
 - Un solo bug, approach o idea → 1 ficha.
 - Varios bugs, acuerdos o temas distintos → 1 ficha por cada uno.
 - Mezcla (p. ej. un approach y una metodología) → ficha aparte para cada uno, con el type_slug correcto.
+- Deque: 1.3.1.a y 1.3.1.b del mismo criterio → una sola ficha, no las separes.
 
 type_slug:
 - approaches: cómo tratar un bug/issue concreto (WCAG, plataforma, si se reporta, severidad por cliente).
 - metodologias: cómo trabajan o evalúan (pasos, rituales, criterios de auditoría).
 - herramientas: decisión de usar/no usar una tool.
 - plantillas: un documento o checklist.
+- deque: cómo testear un criterio WCAG según Deque (metodología, issues, best practices). Un criterio (1.3.1.a + 1.3.1.b) = una ficha.
 
 Omite saludos, logística, fechas de calendar y repeticiones.
 

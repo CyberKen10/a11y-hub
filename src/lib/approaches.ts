@@ -133,11 +133,34 @@ export const APPROACH_COMPOSER_FIELDS: KnowledgeFieldDef[] = [
   },
 ];
 
+export const DEQUE_COMPOSER_FIELDS: KnowledgeFieldDef[] = [
+  {
+    key: "CP",
+    label: "SC WCAG",
+    kind: "multiselect",
+    options: WCAG_SC_SELECT_OPTIONS,
+    help: "Criterio o criterios que cubre esta ficha de testeo.",
+  },
+  {
+    key: "variants",
+    label: "Variantes",
+    kind: "text",
+    help: "Letras Deque que van juntas, p. ej. a, b.",
+  },
+  {
+    key: "Origen",
+    label: "Documento",
+    kind: "text",
+    help: "Manual Deque de origen.",
+  },
+];
+
 export function composerFieldsFor(
   slug: string,
   typeFields?: KnowledgeFieldDef[] | null
 ): KnowledgeFieldDef[] {
   if (slug === "approaches") return APPROACH_COMPOSER_FIELDS;
+  if (slug === "deque") return DEQUE_COMPOSER_FIELDS;
   return typeFields ?? [];
 }
 

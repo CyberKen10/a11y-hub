@@ -32,7 +32,7 @@ const GROUPS: {
         icon: Sheet,
         title: "Importar conocimiento",
         description:
-          "Carga un Excel o un Google Sheet.",
+          "Carga un Excel, Deque o un Google Sheet.",
       },
       {
         href: "/admin/sync",

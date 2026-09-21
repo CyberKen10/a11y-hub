@@ -1,0 +1,224 @@
+2\.1\.1\.a Keyboard
+
+__Overview__
+
+- General \- All functionalities must be available using the keyboard, unless the functionality cannot be accomplished in any known way using a keyboard\.
+- HTML \- Page functionalities must be available using the keyboard, unless the functionality cannot be accomplished in any known way using a keyboard\.
+
+__This checkpoint MUST be tested with the screen reader turned OFF and ALSO with the screen reader turned ON\.__
+
+1. Visually explore the screen to discover all of the functionality that is available to someone using a mouse\.
+2. Ensure that the equivalent functionality is available using only the keyboard\. 
+	1. Use the TAB key to navigate focus among buttons, links, form inputs, links, menu items, tab panels, accordions, and other interactive UI elements\.
+	2. Use SHIFT\-TAB to navigate the focus in the reverse direction through all interactive UI elements\.
+	3. You may need to use the UP, DOWN, RIGHT or LEFT arrow keys to move focus within elements including elements such as: radio buttons, select \(drop down\) elements, menus, tabs, and accordions\.
+	4. Ensure that every interactive element can be focused with via keyboard and that the ENTER key or the SPACEBAR selects or activates the interactive UI element that has focus\.
+3. If an interactive element is not keyboard accessible it may still pass this checkpoint if at least one of the following is true: 
+	1. Equivalent functionality is available on the same screen in a keyboard\-accessible way\.
+	2. An alternate accessible version of the functionality is available on a different screen AND the link to the accessible alternate version is clearly identified on the current screen\. \(More information about [Understanding Conforming Alternate Versions\.\) [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/WCAG22/Understanding/conformance#conforming-alt-versions)](https://www.w3.org/WAI/WCAG22/Understanding/conformance#conforming-alt-versions)
+4. __Exception \(rare\):__ The underlying function requires input that depends on the path of the user's movement and not just the endpoints\. Examples include activities like: freehand drawing, watercolor painting, and flying a helicopter through an obstacle course\. The input required for these activities cannot currently be done from the keyboard in any known fashion without requiring an inordinate number of keystrokes\.
+
+__Things to think about__
+
+- The use of the ESC key to dismiss a modal dialog is a __Best Practice__\.
+- Examples of activities commonly done by mouse that __can and must be made keyboard accessible__ include: 
+	- Drag and drop
+	- Resizing windows
+	- Drawing a straight line
+	- Drawing preset geometric shapes \(examples: circle, square, triangle, star, spiral\)
+- Examples of conforming alternate versions: 
+	- __Note:__ To be a valid [Conforming Alternate Version [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/WCAG22/Understanding/conformance#conforming-alt-versions)](https://www.w3.org/WAI/WCAG22/Understanding/conformance#conforming-alt-versions)it must "provide all of the same information and functionality"\.
+	- __Passes:__ A web site includes a map view that supports a mouse only event handler to zoom into the map content, and mouse only drag gestures to move the visible area\. Keyboard accessible \[\+\] and \[\-\] buttons provide the same functionality to zoom in and out, and arrow buttons to move the visible area in all directions\.
+	- __Passes:__ A news site has a carousel with 5 news stories and only one story is visible at a time\. At the bottom of the carousel are 5 dots representing each story that can only be triggered with a mouse\. To the left and right of the carousel, a next and previous arrow button is available for both keyboard and mouse users\. Mouse users can navigate to the different stories by clicking on either the dots or the next/previous arrows\. The keyboard only user can use the accessible next and previous buttons to perform the same functionality\. 
+	- __Fails:__ A calendar picker is not accessible via keyboard\. Only mouse users can access \(see\) the calendar and pick dates directly from the calendar\. Keyboard only users must use an edit field to enter the date, and they cannot see the calendar\. This fails because the keyboard only user is at a disadvantage because they cannot see all the information that the calendar view provides\. Note: __information__ is not limited to text content\. Information can also be conveyed by visual relationships, grouping, heading structure, and other context dependent cues\.
+
+__Issue Descriptions__
+
+- There is no way to perform the function using only the keyboard on the same screen or on a qualifying conforming alternate version\. \(keyboard\-inaccessible, "issue", critical\)
+- In page links are not keyboard operable\. \(keyboard\-inpage\-link\-not\-accessible, "issue", moderate\)
+- Action cannot be performed using switch control\. \(keyboard\-not\-switch\-accessible, "issue", critical\)
+- Action cannot be performed with a screen reader turned on\. \(keyboard\-not\-touch\-accessible, "issue", critical\)
+- Action cannot be performed using Voice Control\. \(keyboard\-not\-voice\-control\-accessible, "issue", critical\)
+- The method to dismiss/close the modal/alert without submitting data is not keyboard accessible\. \(modal\-forces\-submission, "issue", critical\)
+- The modal dialog is missing a close button and there is no way to close the modal with a keyboard\. \(modal\-unclosable, "issue", critical\)
+
+__Best Practices__
+
+- Instructions should be provided for non\-standard key interactions \- Instructions should be provided to explain the non\-standard keyboard interaction used to access an element\. \(keyboard\-nonstandard\-no\-instructions, "best\-practice", critical, January 8, 2019\)
+- ESC for modals \- Modals or layers that appear should close on ESC\. \(modal\-no\-esc, "best\-practice", minor, March 26, 2013\)
+- Provide a button to close modal or layer \- A modal or layer that appears should have a button to close it other than just the ESC key\. \(modal\-only\-esc, "best\-practice", minor, February 13, 2020\)
+
+2\.1\.1\.b Shortcuts Key\(Deprecated\)
+
+2\.1\.1\.c Customes Gestures 
+
+__Issue Descriptions__
+
+- Custom gesture is not accessible when the screen reader is turned on\. \(keyboard\-custom\-gestures\-not\-accessible, "issue", critical\)
+
+__Best Practices__
+
+No best practices
+
+2\.1\.2\.a Keyboard Trap
+
+__2\.1\.2\.a Keyboard Trap__
+
+__Overview__
+
+- General \- The focus of the keyboard, or equivalent device, must not be locked or trapped in a particular element and the user must be able to navigate to and from all navigable elements using only this device\.
+- HTML \- The focus of the keyboard, or equivalent device, must not be locked or trapped in a particular element and the user must be able to navigate to and from all navigable elements using only this device\.
+
+__This checkpoint MUST be tested with the screen reader turned OFF and ALSO with the screen reader turned ON\.__
+
+1. Using only the keyboard as you navigate through the page, verify that keyboard focus is never trapped \(stuck\) on or in a component\. 
+	1. Use the TAB key to navigate focus among buttons, links, form inputs, links, menu items, tab panels, accordions, and other interactive UI elements\.
+	2. Use SHIFT\-TAB to navigate the focus in the reverse direction through all interactive UI elements\.
+	3. If TAB or SHIFT\-TAB do not work, also try any and all of the following: 
+		- Standard exit keys \(Enter, Spacebar, ESC\)
+		- Up, down, right, left arrow keys
+2. If moving away from a component requires more than TAB or SHIFT\-TAB, unmodified arrow keys, Enter, Spacebar, or ESC, verify that the user is provided instructions for moving focus away\.
+
+__Issue Descriptions__
+
+- There is a keyboard trap\. \(keyboard\-trap, "issue", critical\)
+- Screen reader focus is trapped in an element\. \(keyboard\-trap\-screen\-reader, "issue", critical\)
+- The dialog cannot be dismissed when the screen reader is turned on\. \(keyboard\-trap\-screen\-reader\-dialog, "issue", critical\)
+- The dialog cannot be dismissed using switch control\. \(keyboard\-trap\-switch, "issue", critical\)
+- Switch control focus is trapped in a control\. \(keyboard\-trap\-switch\-dialog, "issue", critical\)
+
+2\.4\.3\.a Focus Order 
+
+__Overview__
+
+- General \- The navigation order of links, form elements, etc\. must preserve the meaning and operability of the content\.
+- HTML \- The navigation order of links, form elements, etc\. must preserve the meaning and operability of the content\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+Testing for this checkpoint can be accomplished using either the "Manual" methodology or the "Assistive Technology" methodology or a combination of both\.
+
+1. __Tab order:__ 
+	1. Place the cursor in the __URL field__ of your browser\.
+	2. Press the __Tab__ key until focus moves into the page\.
+	3. Continue pressing Tab until you reach the end of the document, while ensuring that focus moves from element to element __in a way that preserves the meaning and operability of the content__ and does not jump around erratically\.
+2. __In\-page interactions:__ 
+	1. Activate in\-page links or interactions, such as back to top links, skip to main content links, links to or from footnotes, and other in\-page navigation links\.
+	2. Ensure that when visual focus is moved \(i\.e\. the viewport is shifted\), programmatic focus \(i\.e\. keyboard focus\) is also moved to the intended target\.
+3. __Interactive elements:__ 
+	1. Navigate to interactive elements such as buttons, links, or tabs that show or hide content\.
+	2. Activate or interact with the elements using Enter, Spacebar, or arrow keys, as appropriate\.
+	3. When content is added or removed, navigate through the content \(using tab or arrow keys as appropriate\) to ensure that the focus order preserves meaning and operability\.
+	4. Continue to press tab to move past the content \(unless focus is intended to be trapped such as in a modal dialog\) to ensure focus order preserves meaning and operability\. 
+		- __Note:__ For an element to be considered a modal dialog and therefore keep focus while the element is open, it must be truly "modal"\. That means that while the modal dialog is open, users cannot interact with content outside the element\. Content outside an active dialog is typically visually obscured or dimmed\. Popups, tooltips, or other overlays often do not meet the definition of "modal" and therefore keyboard and screen reader focus are not required to be maintained within when they are not truly "modal"\.
+	5. Repeat steps 2 and 3 if the interactive content introduces additional interactive functionality\.
+
+__Things to think about__
+
+- Focus does NOT have to move in the exact visual order of left\-to\-right and top\-to\-bottom\. Only log an issue if the focus order negatively impacts the "meaning or operability" of the content\.
+- If it is difficult to tell where focus is, use a tool such as the [Force Focus bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://pauljadam.com/bookmarklets/focus.html)](http://pauljadam.com/bookmarklets/focus.html)to make focus obvious\.
+- It is not a failure if non\-interactive content receives keyboard focus\.
+- It is not a failure if the initial focus is set to a place within the page \(like the search field on google\.com or a login field on a bank site\), because it does not destroy the meaning of the page\. A logical reading order is still available to AT users\.
+- Common failures: 
+	- When a modal dialog is opened, focus is not explicitly placed on or in the modal dialog
+	- When a modal dialog is closed, focus is not explicitly placed back on the trigger or another a logical location in the workflow\.
+	- When a modal dialog is opened, focus is not maintained within the modal dialog\.
+	- When activating a button causes the button to be removed from the screen, focus is not explicitly placed on a logical location in the workflow\.
+	- Some JavaScript frameworks inject new content at the end of the DOM \(while positioning it via CSS\) and send focus to it, however tabbing or shift\-tabbing away from the element may reveal focus order problems\.
+
+__Issue Descriptions__
+
+- Keyboard focus is lost or placed on the wrong element during user interaction, content refresh or update, or other reason\. \(focus\-lost, "issue", serious\)
+- Keyboard focus is not maintained within the modal\. It is possible to tab out of the modal\. \(focus\-modal\-moves\-outside, "issue", serious\)
+- Switch control focus is not maintained within the modal\. Switch control users can access content behind the modal dialog\. \(focus\-modal\-moves\-outside\-switch, "issue", serious\)
+- When the modal dialog is activated, keyboard focus is not placed on/in it\. \(focus\-modal\-none, "issue", serious\)
+- When the modal dialog or similar element is closed, keyboard focus is not returned to the triggering element\. \(focus\-modal\-not\-returned, "issue", serious\)
+- Keyboard focus does not follow visual focus or move to the intended target, such as with a "return to top" link\. \(focus\-not\-moved, "issue", moderate\)
+- Keyboard focus or touch screen swiping falls on an element that is hidden or empty\. \(focus\-on\-hidden\-item, "issue", serious\)
+- Switch control focus falls on an element that is hidden or empty\. \(focus\-on\-hidden\-item\-switch, "issue", serious\)
+- The use of positive tabindex value\(s\) is not logical and has created a tab order that does not preserve the meaning of the content\. \(tab\-order\-bad\-index, "issue", serious\)
+- Keyboard focus order is not logical in such a way that it affects the meaning or operability of the content\. \(tab\-order\-illogical, "issue", serious\)
+
+__Best Practices__
+
+- Move focus to error message or field \- When a form error message is returned, move focus to the error message or the first field with an error\. \(focus\-errors\-elsewhere, "best\-practice", serious, February 5, 2018\)
+- Move focus to error message \- When a form error message is returned, move focus to the error message\. \(focus\-errors\-none, "best\-practice", serious, February 5, 2018\)
+- Be careful when setting focus on load \- Consider the confusion that may be caused to screen reader users when programmatic focus on load is set to something other than the first interactive element\. \(focus\-order\-first, "best\-practice", moderate, May 19, 2018\)
+- Avoid focusing on static elements \- In most cases, it is best to avoid focusing on static elements\. Try to reduce the keystrokes required to navigate to all interactive elements on a page\. Elements that receive focus are usually interactive\. It may cause confusion when a static \(non\-interactive\) element receives focus\. \(static\-focus, "best\-practice", moderate, September 25, 2017\)
+- Focus order identical \- Focus order and DOM order should match\. \(structure\-dom\-visual\-mismatch, "best\-practice", moderate, March 26, 2013\)
+
+2\.4\.7\.a Focus Visible
+
+__Overview__
+
+- General \- It must be visually apparent which interactive element has the current keyboard focus \(i\.e\., as you tab through the page, you can see where you are\)\.
+- HTML \- It must be visually apparent which interactive element has the current keyboard focus \(i\.e\., as you tab through the page, you can see where you are\)\.
+
+__Using the keyboard only:__
+
+1. Navigate to, and interact with, all interactive elements and widgets using the keyboard\.
+2. Verify that all elements have a visible focus indicator\. \(See "Things to think about" below for a definition of "visible"\.\)
+3. Common methods of indicating visible focus include \(but are not limited to\): 
+	- When a text field receives focus, a vertical bar is displayed in the field or the text is highlighted\.
+	- A visible border is displayed around the element\.
+	- The background color is changed\.
+	- An icon is added, such as an arrow, next to a menu item\.
+	- A thick line is added under or next to the focused element\.
+	- A distinctive change is made to the text of the component such as making it bold and/or underlined\.
+
+__Things to think about__
+
+- WCAG does not define what qualifies as "visible", so use this standard when testing: 
+	- This checkpoint passes if a person with "good" or "20/20" vision \(corrected or uncorrected\) and no color blindness can see the focus indicator\.
+	- 20/20 vision: A person with 20/20 vision can see what an average individual can see on an eye chart when they are standing 20 feet away\. In metric, the standard is 6 meters and called 6/6 vision\.
+- A focus indicator IS required when a non\-interactive element receives focus as you Tab through the screen\.
+- A visible focus indicator IS NOT required when a non\-interactive element receives programmatic focus\. Examples include: A skip link or other in\-page link is used to move focus to another part of the page, or focus is moved to the heading of a modal dialog when it is opened, or focus is moved to the heading of a new single page app view\.
+- Mouse on\-hover behavior is not specified by WCAG\. No requirements exist for visual rendering of mouse on\-hover\.
+- __Reality Check:__ As I navigate through a screen using only my keyboard, I never have to guess where the keyboard focus is because I can always see it\.
+
+__Issue Descriptions__
+
+- The visual focus indicator is missing altogether\. \(focus\-indicator\-missing, "issue", critical\)
+- The focus indicator \(e\.g\. border or dotted underline / background etc\.\) is not visible as one tabs through the page\. \(focus\-not\-clearly\-visible, "issue", serious\)
+
+__Best Practices__
+
+- Color contrast on visual focus \- The visual focus indicator should have at least a 3 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for visual focus\. \(contrast\-focus\-3\-1, "best\-practice", moderate, April 16, 2013\)
+- Color Contrast on Visual Focus \- Ideally, the visual focus indicator should have at least a 4\.5 to 1 color contrast ratio\. While the minimum requirement for WCAG is any visual focus be present including the simple default browser 1 px dotted outline, this may be very difficult to see\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for visual focus\. \(contrast\-focus\-4\.5\-1, "best\-practice", moderate, April 16, 2013\)
+- Hover indicator same as focus indicator \- The mouse hover indicator should be the same as the keyboard focus indicator\. \(focus\-different\-device, "best\-practice", minor, April 9, 2013\)
+
+2\.4\.11 Focus Not Obscured\(Minimum\)
+
+__Overview__
+
+- General \- When a user interface component receives keyboard focus, the component must not be entirely hidden due to author\-created content\.
+- HTML \- When a user interface component receives keyboard focus, the component must not be entirely hidden due to author\-created content\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+1. Test the initial page state: 
+	1. Using a keyboard, press the Tab key to move through the page to the last focusable element\.
+	2. From the last focusable element, use Shift \+ Tab to move backward through the page\.
+	3. As each element is focused, ensure that some part of the element \(no matter how small\) is visible \(not covered by things like sticky headers or footers or other popups or menus\.\)
+	4. When the color of the element and the background it is on are the same, it may not be obvious while tabbing through a page what the boundary of an element is, for example: a link hit area that extends beyond the link text\. Use the mouse hit or hover area to determine the actual boundary of the element\.
+2. Test interactive page states: 
+	1. Using a keyboard, open things such as submenus, chat widgets, message panels, “toggletips”\.
+	2. Tab and Shift \+ Tab away from / around the element to see if any focusable elements are fully obscured by the opened content\.
+	3. If such an element is found, see if the opened element can be closed while focus stays on the obscured element\. Options include the ESC key, scrolling the page using arrow keys, and using a key to toggle between the page and the opened overlay\.
+
+__Issue Descriptions__
+
+- The focused element is completely covered by other author\-created content\. \(focus\-fully\-obscured, "issue", moderate\)
+
+__Best Practices__
+
+- No part of a focus indicator is hidden \- No part of an element's focus indicator is hidden by author\-created content\. \(focus\-fully\-visible, "best\-practice", minor, November 3, 2022\)
+

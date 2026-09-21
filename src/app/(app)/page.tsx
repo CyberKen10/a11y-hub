@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  BookOpen,
   Compass,
   FileText,
   FileWarning,
@@ -27,6 +28,7 @@ const TYPE_ICONS: Record<string, LucideIcon> = {
   metodologias: Workflow,
   herramientas: Wrench,
   plantillas: FileText,
+  deque: BookOpen,
 };
 
 export default async function DashboardPage() {

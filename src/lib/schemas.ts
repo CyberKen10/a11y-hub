@@ -104,7 +104,7 @@ export const knowledgeItemsSchema = z.object({
     .array(knowledgeItemDraftSchema)
     .max(10)
     .describe(
-      "Una ficha si el texto es un solo tema; varias si hay approaches, metodologías, herramientas o plantillas distintos. Máximo 10."
+      "Una ficha si el texto es un solo tema; varias si hay approaches, metodologías, herramientas, plantillas o deque distintos. Máximo 10."
     ),
 });
 

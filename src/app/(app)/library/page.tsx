@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { ItemCard } from "@/components/items/item-card";
 import { LibraryFilters } from "@/components/items/library-filters";
-import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
+import { ACTIVE_TYPE_SLUG_LIST, typeUsesWcagFilter } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType } from "@/lib/types";
 import { collectWcagFilterOptions, wcagScFilterClause } from "@/lib/wcag";
 
@@ -44,7 +44,7 @@ export default async function LibraryPage({
     supabase
       .from("knowledge_items")
       .select("metadata, knowledge_types!inner(slug)")
-      .eq("knowledge_types.slug", "approaches"),
+      .in("knowledge_types.slug", ACTIVE_TYPE_SLUG_LIST.filter(typeUsesWcagFilter)),
   ]);
   const items = (data ?? []) as unknown as KnowledgeItemWithType[];
   const wcagOptions = collectWcagFilterOptions(wcagRows ?? []);

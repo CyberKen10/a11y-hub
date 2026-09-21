@@ -7,7 +7,7 @@ import { ItemCard } from "@/components/items/item-card";
 import { LibraryFilters } from "@/components/items/library-filters";
 import { PaginationNav } from "@/components/items/pagination-nav";
 import { Button } from "@/components/ui/button";
-import { isActiveTypeSlug } from "@/lib/knowledge-sections";
+import { isActiveTypeSlug, typeUsesWcagFilter } from "@/lib/knowledge-sections";
 import type { KnowledgeItemWithType, KnowledgeType } from "@/lib/types";
 import { collectWcagFilterOptions, wcagScFilterClause } from "@/lib/wcag";
 
@@ -64,14 +64,15 @@ export default async function TypePage({
   ) {
     query = query.eq("metadata->>approval_state", aprobacion);
   }
-  const scClause =
-    typeSlug === "approaches" ? wcagScFilterClause(sc ?? "") : null;
+  const scClause = typeUsesWcagFilter(typeSlug)
+    ? wcagScFilterClause(sc ?? "")
+    : null;
   if (scClause) query = query.or(scClause);
 
   const from = (page - 1) * PAGE_SIZE;
   const [{ data, count }, { data: wcagRows }] = await Promise.all([
     query.range(from, from + PAGE_SIZE - 1),
-    typeSlug === "approaches"
+    typeUsesWcagFilter(typeSlug)
       ? supabase
           .from("knowledge_items")
           .select("metadata")
@@ -80,8 +81,9 @@ export default async function TypePage({
   ]);
   const total = count ?? 0;
   const items = (data ?? []) as unknown as KnowledgeItemWithType[];
-  const wcagOptions =
-    typeSlug === "approaches" ? collectWcagFilterOptions(wcagRows ?? []) : [];
+  const wcagOptions = typeUsesWcagFilter(typeSlug)
+    ? collectWcagFilterOptions(wcagRows ?? [])
+    : [];
 
   const qs = new URLSearchParams();
   if (q?.trim()) qs.set("q", q.trim());

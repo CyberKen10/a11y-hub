@@ -27,6 +27,7 @@ describe("inferTypeSlug", () => {
     expect(inferTypeSlug("Herramientas")).toBe("herramientas");
     expect(inferTypeSlug("Plantillas QA")).toBe("plantillas");
     expect(inferTypeSlug("Approaches")).toBe("approaches");
+    expect(inferTypeSlug("Deque SC")).toBe("deque");
   });
 });
 

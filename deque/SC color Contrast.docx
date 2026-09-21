@@ -1,0 +1,203 @@
+1\.4\.3 a
+
+__Issue Descriptions__
+
+- The contrast ratio between a control's text and its background is not at least 4\.5:1 on hover and/or on focus \(contrast\-link\-infocus\-4\.5\-1, "issue", serious\)
+- The contrast ratio between text and its background is not at least 4\.5:1\. \(contrast\-text\-4\.5\-1, "issue", serious\)
+- All or portions of text over an image do not meet the minimum 4\.5:1 contrast requirement\. \(contrast\-text\-4\.5\-1\-over\-image, "issue", serious\)
+- The contrast ratio between placeholder text and its background is not at least 4\.5:1\. \(contrast\-text\-4\.5\-1\-placeholder, "issue", serious\)
+
+__Best Practices__
+
+- Color Contrast on Visual Focus \- Ideally, the visual focus indicator should have at least a 4\.5 to 1 color contrast ratio\. While the minimum requirement for WCAG is any visual focus be present including the simple default browser 1 px dotted outline, this may be very difficult to see\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for visual focus\. \(contrast\-focus\-4\.5\-1, "best\-practice", moderate, April 16, 2013\)
+- Color contrast of 3 to 1 on icons \- The color contrast of non\-text visual information in icons should have a 3 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for non\-text icon parts required for understanding\. \(contrast\-icon\-3\-1, "best\-practice", moderate, February 1, 2016\)
+- Color contrast of 4\.5 to 1 on icons \- The color contrast of non\-text visual information in icons should have a 4\.5 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for non\-text icon parts required for understanding\. \(contrast\-icon\-4\.5\-1, "best\-practice", moderate, February 1, 2016\)
+
+__Not an Issue__
+
+- Text or images of text that are part of an inactive user interface component have no contrast requirement\. \(contrast\-optional\-disabled\-controls, "issue", not an issue\)
+- Text that is part of a logo or brand name has no minimum contrast requirement\. \(contrast\-optional\-logotype, "issue", not an issue\)
+
+1\.4\.3\.b
+
+WCAG defines __large text__ as at least 18 point __OR__ 14 point and bold\. __Important:__ HTML text is usually defined in px, em, or % NOT pt\. Pixels \(px\) are NOT the same as Points \(pt\)\. Here is a conversion chart to assist you in determining if text meets the WCAG standard for "large":
+
+Font Size Conversion
+
+__Points \(pt\)__
+
+__Pixels \(px\)__
+
+__em__
+
+__%__
+
+14 pt
+
+19 px
+
+1\.2 em
+
+120%
+
+18 pt
+
+24 px
+
+1\.5 em
+
+150%
+
+__Exceptions:__
+
+- __Regular Text:__ If the text is "regular", the requirement is a ratio 4\.5 to 1\. See 1\.4\.3\.a Color Contrast \(regular text\)\.
+- __Logotype:__ Text that is part of a logo or brand name has no contrast requirement\.
+- __Disabled Form Controls:__ Text related to a disabled form control \(aka "inactive user interface component"\) has no contrast requirement\.
+- __Incidental Text:__ Text or images of text that are pure decoration, are a photo or graphical representation of an actual object, that are not visible to anyone, or that are part of a picture that contains significant other visual content, have no contrast requirement\. Text is only purely decorative if the words can be rearranged or substituted without changing their purpose\. Example: The cover page of a dictionary has random words in very light text in the background\.
+
+__Issue Descriptions__
+
+- The contrast ratio between a control's large text and its background is not at least 3:1 on hover and/or on focus\. \(contrast\-link\-infocus\-3\-1, "issue", serious\)
+- The contrast ratio between large text and its background is not at least 3:1\. \(contrast\-text\-3\-1, "issue", serious\)
+- All or portions of large text over an image do not meet the minimum 3:1 contrast requirement\. \(contrast\-text\-3\-1\-over\-image, "issue", serious\)
+
+__Best Practices__
+
+- Color contrast on visual focus \- The visual focus indicator should have at least a 3 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for visual focus\. \(contrast\-focus\-3\-1, "best\-practice", moderate, April 16, 2013\)
+- Color contrast of 3 to 1 on icons \- The color contrast of non\-text visual information in icons should have a 3 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for non\-text icon parts required for understanding\. \(contrast\-icon\-3\-1, "best\-practice", moderate, February 1, 2016\)
+
+__Not an Issue__
+
+- Text or images of text that are part of an inactive user interface component have no contrast requirement\. \(contrast\-optional\-disabled\-controls, "issue", not an issue\)
+- Text that is part of a logo or brand name has no minimum contrast requirement\. \(contrast\-optional\-logotype, "issue", not an issue\)
+
+1\.4\.11\.a 
+
+Use this checkpoint to log issues related to components in their default state \(e\.g\. not checked, not selected, not focused, not hovered, not pressed\)\. Use checkpoint 1\.4\.11\.b for issues related to components not in their default state\.
+
+1. Identify all active \(NOT disabled\) user components on the page\. This includes form elements, buttons, sliders, and other controls\.
+2. For each active user component, identify the visual characteristics that indicate the component's purpose or type \(e\.g\. is it a checkbox, text field, slider, switch, etc\.\)\. 
+	- __Note:__ This Success Criterion does not require a component to have a visual boundary indicating the hit area, but if the visual indicator of the boundary is the ONLY way to identify the component, it must have sufficient contrast\.
+	- Do NOT test disabled components\.
+	- Do NOT test the contrast of the visual boundary of a button that has text or an icon inside of it\.
+	- Do NOT test the contrast of the visual boundary of a text input that has text \(that has at least 4\.5:1 contrast with its background\) inside of it\.
+	- Do NOT test the contrast of the visual boundary if it is the default color set by the browser\.
+3. If a user component is found that relies on its boundary to identify the control and the boundary is NOT the browser default color for that control: 
+	- Use the CSS panel or design documentation to locate the relevant hex color codes\.
+	- If the hex codes cannot be obtained: Take a screenshot and then open it on a desktop computer\.
+	- Use a tool such as [Deque Color Contrast Analyzer [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://dequeuniversity.com/color-contrast)](https://dequeuniversity.com/color-contrast)to pick and/or analyze: 
+		- A representative pixel of the component's visual edge\.
+		- A representative pixel of the primary surrounding color\(s\)\.
+4. Confirm that the contrast ratio is at least 3 to 1\.
+
+__Things to think about__
+
+- One method to determine if the color of a control or its state is the browser's default color is to open the page in other browsers and see if the color changes\. For example, Chrome and Firefox and Safari have different default focus indicator colors and different checkbox, radio button and text input outline colors\. If the color changes from one browser to another, it is highly likely that the control or state is using the browser's default color\.
+- When picking colors with an eyedropper tool, keep in mind that user agent rendering of lines involves smoothing\. As you choose a representative pixel of an element, do not select a smoothing pixel\.
+- Important quote from Understanding 1\.4\.11 *"This success criteria does not require that controls have a visual boundary indicating the hit area, but if the visual indicator of the control is the only way to identify the control, then that indicator must have sufficient contrast\. If text \(or an icon\) within a button or text inside a text input is visible and there is no visual indication of the hit area then the Success Criterion is passed\. If a button with text also has a colored border, since the border does not provide the only indication there is no contrast requirement beyond the text contrast \(1\.4\.3 Contrast \(Minimum\)\)\."*
+
+__Issue Descriptions__
+
+- The visual boundary of an active user interface component lacks 3 to 1 contrast ratio\. \(contrast\-uic\-active\-3\-1, "issue", serious\)
+
+__Best Practices__
+
+- Color contrast of 4\.5 to 1 on icons \- The color contrast of non\-text visual information in icons should have a 4\.5 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for non\-text icon parts required for understanding\. \(contrast\-icon\-4\.5\-1, "best\-practice", moderate, February 1, 2016\)
+- Active user interface component contrast both \- Ideally, an active user interface component could have a contrast of 3 to 1 with both the inner and outer adjacent background colors\. \(contrast\-uic\-active\-both\-3\-1, "best\-practice", minor, June 5, 2018\)
+- Active user interface component contrast better than default \- Ideally, if the browser default rendering of an active user interface component has less than a 3 to 1 contrast, the default is improved by an author supplied style that at least meets the 3 to 1 contrast\. \(contrast\-uic\-active\-browser\-default, "best\-practice", moderate, June 5, 2018\)
+- Default color of component contrasts 3 to 1 with author background \- Ideally, if the browser default rendering of component has less than a 3 to 1 contrast with the author defined background color, the contrast is improved to at least a 3 to 1\. \(contrast\-uic\-active\-browser\-default\-back, "best\-practice", moderate, June 5, 2018\)
+- Contrast between active and inactive components at least 3 to 1 \- Ideally, an active user interface component should have a contrast of 3 to 1 with inactive components\. \(contrast\-uic\-active\-inactive, "best\-practice", moderate, June 5, 2018\)
+- Active user interface component visual boundary \- Ideally, an active user interface component should have a visual boundary\. \(contrast\-uic\-active\-no\-visual, "best\-practice", minor, June 5, 2018\)
+- Inactive user interface component contrast \- Ideally, an inactive user interface component should be visible to a person with low vision\. \(contrast\-uic\-inactive\-3\-1, "best\-practice", moderate, June 5, 2018\)
+
+1\.4\.11\.b
+
+Use this checkpoint to log issues related to controls not in their default state \(e\.g\. they are checked, selected, focused, hovered, pressed\)\. Use checkpoint 1\.4\.11\.a for issues related to controls in their default state\.
+
+1. Identify all active \(NOT disabled\) user components on the page\. This includes form elements, buttons, links, sliders, tabs, and other controls\.
+2. For each active user component, identify all the visual states of that component\. Common states include: checked, selected, focused, hovered, pressed\. 
+	- Do NOT test disabled components\.
+	- Do NOT test the contrast of the state if it is the default color set by the browser\. HOWEVER: __The focus indicator MUST be visible under 2\.4\.7__\. Do report an issue under 2\.4\.7\.a if you cannot see the visual focus \(even if it is the browser default\)\.
+	- Do NOT test the contrast of the hover state indicator\. DO test that the component boundaries and any graphics \(icons\) needed to understand the purpose of the control still meet 1\.4\.11 requirements while hovered\. If text falls below text contrast requirements, log that under a 1\.4\.3 Contrast \(Minimum\) checkpoint\.
+3. If the appearance of the component is NOT the browser default for that control, then test to see if: 
+	- All images or icons or boundaries that are required to understand the purpose of the control maintain a contrast of at least 3 to 1 in all states\.
+	- The visual information necessary to indicate the state \(e\.g\. checked, selected, focused, etc\.\) has a minimum 3 to 1 contrast ratio\.
+	- Focus indicators \- When a focus indicator appears: 
+		- Outside the component, it needs to contrast with the background that the component is on\.
+		- Inside the component, it needs to contrast with the adjacent color\(s\) within the component\.
+		- As the border of the component \(inside the component and adjacent to the outside\), it needs to contrast with both adjacent colors\.
+		- Appears partly inside and partly outside, either part of the focus indicator can contrast with the adjacent colors\.
+	- __Note:__ [Understanding Success Criterion 1\.4\.11: Non\-text Contrast [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast)](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast)provides many useful visual examples of passing and failing scenarios\.
+4. To test: 
+	- Use the CSS panel or design documentation to locate the relevant hex color codes\.
+	- If the hex codes cannot be obtained: Take a screenshot and then open it on a desktop computer\.
+	- Use a tool such as [Deque Color Contrast Analyzer [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://dequeuniversity.com/color-contrast)](https://dequeuniversity.com/color-contrast)to pick and/or analyze: 
+		- A representative pixel of the color of the state's visual edge\.
+		- A representative pixel of the primary surrounding color\(s\)\.
+5. Confirm that the contrast ratio is at least 3 to 1\.
+
+__Things to think about__
+
+- When analyzing focus indicators, be sure to take into account more than just the focus ring that may appear around a link or other control\. Additional indicators that can also be used to meet this requirement include underlining link text on focus and the cursor or caret in a text input field\.
+- Sometimes a control's state \(focused, selected, pressed, etc\) is ONLY indicated by a change in the background color of the control\. If the contrast between the backgrounds of the state being tested and the default state is less than 3:1, only log ONE issue under 1\.4\.1\.a Use of Color\.
+- A commonly overlooked failure of this checkpoint is the indicator of the currently selected or focused option in a select element or combobox\.
+- One method to determine if the color of a control or its state is the browser's default color is to open the page in other browsers and see if the color changes\. For example, Chrome and Firefox and Safari have different default focus indicator colors and different checkbox, radio button and text input outline colors\. If the color changes from one browser to another, it is highly likely that the control or state is using the browser's default color\.
+- When picking colors with an eyedropper tool, keep in mind that user agent rendering of lines involves smoothing\. As you choose a representative pixel of an element, do not select a smoothing pixel\.
+
+__Issue Descriptions__
+
+- Focus indicator lacks 3 to 1 contrast ratio\. \(contrast\-focus\-indicator, "issue", serious\)
+- The state of an active component lacks 3 to 1 contrast ratio\. \(contrast\-uic\-active\-3\-1\-state, "issue", serious\)
+
+__Best Practices__
+
+- Color Contrast on Visual Focus \- Ideally, the visual focus indicator should have at least a 4\.5 to 1 color contrast ratio\. While the minimum requirement for WCAG is any visual focus be present including the simple default browser 1 px dotted outline, this may be very difficult to see\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for visual focus\. \(contrast\-focus\-4\.5\-1, "best\-practice", moderate, April 16, 2013\)
+- State of active component contrast both \- Ideally, the state of an active user interface component could have a contrast of 3 to 1 with both the inner and outer adjacent background colors\. \(contrast\-uic\-active\-both\-3\-1\-state, "best\-practice", minor, June 5, 2018\)
+- Default color of component state contrasts 3 to 1 with author background \- Ideally, if the browser default rendering of the state of a component has less than a 3 to 1 contrast with the author defined background color, the contrast is improved to at least a 3 to 1\. \(contrast\-uic\-active\-browser\-default\-back\-state, "best\-practice", moderate, June 5, 2018\)
+- State of active component contrast better than default \- Ideally, if the browser default rendering of the state of an active user interface component has less than a 3 to 1 contrast, the default is improved by an author supplied style that at least meets the 3 to 1 contrast\. \(contrast\-uic\-active\-browser\-default\-state, "best\-practice", moderate, June 5, 2018\)
+- State of active component contrast no anti\-aliasing \- In a perfect world, the state of an active component would have a 3 to 1 contrast with no anti\-aliasing\. \(contrast\-uic\-state\-anti\-aliasing, "best\-practice", minor, June 5, 2018\)
+- Contrast between component states at least 3 to 1 \- Ideally, a component state should have a contrast of 3 to 1 with the other states of that component\. \(contrast\-uic\-states, "best\-practice", moderate, June 5, 2018\)
+
+1\.4\.11\.c 
+
+__1\.4\.11\.c Non\-Text Contrast \- Graphical Objects__
+
+__Overview__
+
+- General \- Parts of images and other graphical objects \(that are required to understand the content\) must have a contrast ratio of 3 to 1 against adjacent color\(s\)\. Exceptions exist\.
+- HTML \- Parts of images and other graphical objects \(that are required to understand the content\) must have a contrast ratio of 3 to 1 against adjacent color\(s\)\. Exceptions exist\.
+
+Use this checkpoint to log issues related to graphics for static \(e\.g\. charts, informative icons, infographics, etc\.\) and interactive content \(e\.g\. button icons\)\.
+
+1. Identify each graphic on the page that includes information required for understanding the content \(i\.e\. excluding graphics which have visible text for the same information, or are decorative\)\.
+2. For each graphic, in your mind, break down that graphic into the smallest meaningful pieces\. Each meaningful piece is a graphical object\.
+3. For each meaningful piece of the graphic \(graphical object\), check the contrast of the graphical object against its adjacent color\(s\)\. If there are multiple colors and/or a gradient, choose the least contrasting area to test\. 
+	1. Use the CSS panel or design documentation to locate the relevant hex color codes\.
+	2. If the hex codes cannot be obtained: Take a screenshot and then open it on a desktop computer\.
+	3. Use a tool such as [Deque Color Contrast Analyzer [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://dequeuniversity.com/color-contrast)](https://dequeuniversity.com/color-contrast)to pick and/or analyze: 
+		- A representative pixel of the graphical object's visual edge\.
+		- A representative pixel of the primary surrounding color\(s\)\.
+4. Confirm that the contrast ratio is at least 3 to 1\. 
+	1. If the least\-contrasting area is less than 3:1, assume that area is invisible\. Is the graphical object still understandable?
+	2. If there is enough of the graphical object with sufficient contrast to understand, it passes, else fail\. Gestalt principles such as the "law of continuity" can be used to ignore minor overlaps with other graphical objects or colors\.
+
+__Things to think about__
+
+- Logos are exempt from 1\.4\.11 Non\-text Contrast requirements\.
+- When picking colors with an eyedropper tool, keep in mind that user agent rendering of lines involves smoothing\. As you choose a representative pixel of an element, do not select a smoothing pixel\.
+
+__Issue Descriptions__
+
+- Parts of graphics \(required to understand the content\) do not have a contrast ratio of 3 to 1 against adjacent color\(s\)\. \(contrast\-graphical\-objects\-3\-1, "issue", serious\)
+- Parts of an icon \(with no text\) do not have a contrast ratio of 3 to 1 against adjacent color\(s\)\. These icon parts are required for understanding\. \(contrast\-graphical\-objects\-icon\-3\-1, "issue", serious\)
+
+__Best Practices__
+
+- Graphical object with text has 3 to 1 contrast ratio \- A graphical object has visible text that conveys the same information as the graphical object\. The graphical object \(non\-text\) should have at least a 3 to 1 color contrast ratio\. \(contrast\-graphical\-objects\-3\-1\-plus\-text, "best\-practice", moderate, June 5, 2018\)
+- Graphical object contrast no anti\-aliasing \- In a perfect world, the graphical object would have a 3 to 1 contrast with no anti\-aliasing\. \(contrast\-graphical\-objects\-anti\-aliasing, "best\-practice", minor, June 5, 2018\)
+- Graphical object has 3 to 1 contrast ratio with both \- Ideally, a graphical object could have a contrast of 3 to 1 with both the inner and outer adjacent background colors\. \(contrast\-graphical\-objects\-both\-3\-1, "best\-practice", moderate, June 5, 2018\)
+- Flag graphical object has 3 to 1 contrast \- In a perfect world, graphical object\(s\) in a flag \(like for a state, country or organization\) would have at least a contrast of 3 to 1\. \(contrast\-graphical\-objects\-flag, "best\-practice", minor, June 5, 2018\)
+- Crossing data lines have 3 to 1 contrast \- Ideally, crossing data lines would have at least a contrast of 3 to 1\. \(contrast\-graphical\-objects\-line\-cross, "best\-practice", moderate, June 5, 2018\)
+- Logo graphical object has 3 to 1 contrast \- Ideally, graphical object\(s\) in a Logo should have a contrast of 3 to 1\. \(contrast\-graphical\-objects\-logo, "best\-practice", moderate, June 5, 2018\)
+- Color contrast of 4\.5 to 1 on icons \- The color contrast of non\-text visual information in icons should have a 4\.5 to 1 color contrast ratio\. Note: In WCAG 2\.1, SC 1\.4\.11 Non\-Text Contrast requires contrast of 3 to 1 for non\-text icon parts required for understanding\. \(contrast\-icon\-4\.5\-1, "best\-practice", moderate, February 1, 2016\)
+

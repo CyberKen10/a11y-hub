@@ -3,6 +3,7 @@ import { requireProfile } from "@/lib/auth";
 import { isGoogleAuthConfigured } from "@/lib/google/sheets";
 import { ImportWizard } from "@/components/admin/import-wizard";
 import { WikiApproachesImport } from "@/components/admin/wiki-approaches-import";
+import { DequeImport } from "@/components/admin/deque-import";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const metadata: Metadata = { title: "Importar conocimiento" };
@@ -16,12 +17,15 @@ export default async function ImportPage() {
       <div>
         <h1 className="tracking-tight">Importar conocimiento</h1>
         <p className="text-muted-foreground">
-          Sube un Excel o pega el enlace de un Google Sheet. Las fichas entran
-          al hub; el chat se actualiza en Sincronización.
+          Sube un Excel, los DOCX de Deque o pega el enlace de un Google
+          Sheet. Las fichas entran al hub; el chat se actualiza en
+          Sincronización.
         </p>
       </div>
 
       <WikiApproachesImport />
+
+      <DequeImport />
 
       {!isGoogleAuthConfigured() && (
         <Alert>

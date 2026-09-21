@@ -4,6 +4,7 @@ export const ACTIVE_TYPE_SLUGS = [
   "metodologias",
   "herramientas",
   "plantillas",
+  "deque",
 ] as const;
 
 export type ActiveTypeSlug = (typeof ACTIVE_TYPE_SLUGS)[number];
@@ -22,4 +23,9 @@ export function resolveTypeSlugs(requested?: string[] | null): string[] {
     return ACTIVE_TYPE_SLUG_LIST;
   }
   return requested.filter(isActiveTypeSlug);
+}
+
+/** Approaches y Deque se filtran por criterio WCAG. */
+export function typeUsesWcagFilter(slug: string | null | undefined): boolean {
+  return slug === "approaches" || slug === "deque";
 }

@@ -1,0 +1,1492 @@
+4\.1\.2\.a Name,Role, Value
+
+__Overview__
+
+- General \- The name, role and value of user interface components \(controls\) must be programmatically determinable by assistive technologies\.
+- HTML \- The name, role and value of user interface components \(controls\) must be programmatically determinable by assistive technologies\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+See Assistive Technology testing procedure\.
+
+__Desktop Web \- Assistive Technology__
+
+In general, you will find name, role, state, or value issues under this checkpoint related to HTML elements or custom components that have an HTML equivalent such as links, buttons, checkboxes, radio buttons, and selects\. For name, role, state, or value issues related to more complex widgets, especially ones that relate to existing ARIA authoring patterns such as tabpanels, dialogs, listboxes, sliders, carousels, etc, see the issues under checkpoint 4\.1\.2\.b Custom Controls\.
+
+Use checkpoint 4\.1\.2\.c Compatibility to log issues for complex interactions that don't have HTML or ARIA widget equivalents and are so broken that breaking them down into individual issues is not effective or productive\.
+
+__Screen reader testing is required for this checkpoint\.__
+
+Using a screen reader:
+
+1. Sequentially go through all the content in the page\.
+2. Access all user interface components one by one, relying only on the screen reader\.
+3. Make sure the screen reader correctly conveys the following information about each component: 
+	- __Its role:__ e\.g\., button, link, checkbox, radio button, text field, tab, slider, switch, combobox, etc\.
+	- __Its name:__ e\.g\. a label for a form control or button, the name of the tab, the label of a checkbox, etc\.
+	- __If applicable, its value or state:__ e\.g\., selected, pressed, disabled, expanded/collapsed, on/off, text field's value, slider's value, etc\.
+
+__NOTE: __ARIA authoring patterns \(ARIA attributes and keyboard patterns\) are not normative \(i\.e\. are not required for WCAG conformance\)\. Elements and widgets can meet 4\.1\.2 without following an ARIA pattern exactly AS LONG AS the element or widget provides the needed name, role, values, and states for a screen reader user\. These states and properties may be provided via HTML or ARIA\.
+
+__Issue Descriptions__
+
+- An AREA element has no text alternative\. \(alt\-text\-area\-missing, "issue", critical\)
+- Informative text \(static text\) is implemented with an interactive role\. \(android\-active\-role\-inappropriate, "issue", moderate\)
+- A control looks like an AlertDialog but doesn't behave like one\. \(android\-control\-alert, "issue", serious\)
+- A control looks like a BadgeDrawable but doesn't behave like one\. \(android\-control\-badge, "issue", serious\)
+- A control looks like a BottomNavigationView but doesn't behave like one\. \(android\-control\-bottom\-nav, "issue", serious\)
+- A control looks like a CheckBox but doesn't behave like one\. \(android\-control\-checkbox, "issue", serious\)
+- A control looks like a CompoundButton but doesn't behave like one\. \(android\-control\-compound\-button, "issue", serious\)
+- A control looks like an EditText but doesn't behave like one\. \(android\-control\-edit\-text, "issue", serious\)
+- A control looks like an ExpandableListView but doesn't behave like one\. \(android\-control\-expandable\-list, "issue", serious\)
+- A control opens Chrome but is missing the link role\. \(android\-control\-link, "issue", serious\)
+- A control looks like a Menu but doesn't behave like one\. \(android\-control\-menu, "issue", serious\)
+- A control looks like a PopupMenu but doesn't behave like one\. \(android\-control\-popup\-menu, "issue", serious\)
+- A control looks like a ProgressBar but doesn't behave like one\. \(android\-control\-progress\-bar, "issue", serious\)
+- A control looks like a RadioButton but doesn't behave like one\. \(android\-control\-radio\-button, "issue", serious\)
+- A control looks like a RatingBar but doesn't behave like one\. \(android\-control\-rating\-bar, "issue", serious\)
+- A control looks like a SeekBar but doesn't behave like one\. \(android\-control\-seek\-bar, "issue", serious\)
+- A control looks like a SnackBar but doesn't behave like one\. \(android\-control\-snack\-bar, "issue", serious\)
+- A control looks like a Spinner but doesn't behave like one\. \(android\-control\-spinner, "issue", serious\)
+- A control looks like a Switch but doesn't behave like one\. \(android\-control\-switch, "issue", serious\)
+- A control looks like a TabHost but doesn't behave like one\. \(android\-control\-tab\-host, "issue", serious\)
+- A control looks like a Toast but doesn't behave like one\. \(android\-control\-toast, "issue", serious\)
+- A control looks like a ToggleButton but doesn't behave like one\. \(android\-control\-toggle\-button, "issue", serious\)
+- Nesting an anchor or button inside another anchor or button fails validation and may cause troubles for keyboard and screen reader users\. \(button\-link\-nested, "issue", moderate\)
+- The button does not have a role\. \(button\-missing\-role, "issue", serious\)
+- The button is missing an accessible name/label\. As a result its functionality or purpose is not conveyed to screen reader users\. \(button\-name\-inaccessible, "issue", critical\)
+- The button is missing both a role and an accessible name/label\. \(button\-role\-name\-missing, "issue", critical\)
+- The disabled state of an element is not conveyed to screen reader users\. \(button\-state\-disabled, "issue", serious\)
+- The pressed state of a button is not conveyed to screen reader users\. \(button\-state\-pressed, "issue", serious\)
+- The selected state of a button is not conveyed to screen reader users\. \(button\-state\-selected, "issue", serious\)
+- The custom checkbox element is missing a role and/or checked state\. \(checkbox\-missing\-role\-state, "issue", critical\)
+- The control has an incorrect role\. \(control\-incorrect\-role, "issue", serious\)
+- The control has an incorrect state\. \(control\-incorrect\-state, "issue", serious\)
+- The control is missing a role\. \(control\-missing\-role, "issue", critical\)
+- The control is missing a necessary state\. \(control\-missing\-state, "issue", serious\)
+- The control is missing an accessible name/label\. \(control\-name\-inaccessible, "issue", critical\)
+- The control is missing both a role and an accessible name/label\. \(control\-role\-name\-missing, "issue", critical\)
+- The disabled state of a control is not conveyed to screen reader users\. \(control\-state\-disabled, "issue", serious\)
+- The expand/collapse state of a toggle\-type element is missing or is used incorrectly\. \(expand\-collapse\-state, "issue", serious\)
+- Form control is not programmatically associated with its visible label\. \(form\-field\-missing\-label, "issue", critical\)
+- The group of form elements grouped using ARIA role="group" or "radiogroup" has no group\-level label \(similar to an HTML legend\)\. \(form\-group\-not\-labeled, "issue", serious\)
+- The form field does not have an explicit or implicit LABEL relationship, nor a title, aria\-labelledby, aria\-label, or placeholder attribute\. \(form\-label\-missing, "issue", critical\)
+- Informative text \(static text\) is implemented with an interactive role\. \(ios\-active\-role\-inappropriate, "issue", moderate\)
+- Actionable item lacks a role or semantic markup to indicate it is actionable \(e\.g\. listview or tableview cell\)\. \(ios\-control\-actionable, "issue", serious\)
+- A control looks like a UIAlertController but doesn't behave like one\. \(ios\-control\-alert, "issue", serious\)
+- A custom control is not accessible\. \(ios\-control\-custom, "issue", serious\)
+- The custom checkbox control is not accessible\. \(ios\-control\-custom\-checkbox, "issue", serious\)
+- The custom radio button control is not accessible\. \(ios\-control\-custom\-radio\-button, "issue", serious\)
+- A control looks like a UIDatePicker but doesn't behave like one\. \(ios\-control\-date\-picker, "issue", serious\)
+- A control looks like an editable UITextView but doesn't behave like one\. \(ios\-control\-editable\-textview, "issue", serious\)
+- A control opens Safari but is missing the link trait\. \(ios\-control\-link, "issue", serious\)
+- A control looks like a UIPageControl but doesn't behave like one\. \(ios\-control\-page\-control, "issue", serious\)
+- A control looks like a UIPickerView but doesn't behave like one\. \(ios\-control\-picker, "issue", serious\)
+- A control looks like a UIPopoverPresentationController but doesn't behave like one\. \(ios\-control\-popover, "issue", serious\)
+- A control looks like a UIProgressView but doesn't behave like one\. \(ios\-control\-progress, "issue", serious\)
+- A control looks like a UISearchBar but doesn't behave like one\. \(ios\-control\-search, "issue", serious\)
+- A control looks like a UISegmentedControl but doesn't behave like one\. \(ios\-control\-segmented\-control, "issue", serious\)
+- A control looks like a UISlider but doesn't behave like one\. \(ios\-control\-slider, "issue", serious\)
+- A control looks like a UIStepper but doesn't behave like one\. \(ios\-control\-stepper, "issue", serious\)
+- A control looks like a UISwitch but doesn't behave like one\. \(ios\-control\-switch, "issue", serious\)
+- A control looks like a UITabBar but doesn't behave like one\. \(ios\-control\-tab\-bar, "issue", serious\)
+- A control looks like a UITextField but doesn't behave like one\. \(ios\-control\-text\-field, "issue", serious\)
+- The link does not have a role\. \(link\-missing\-role, "issue", serious\)
+- The link is missing accessible link text\. As a result its destination or purpose is not conveyed to screen reader users\. \(link\-missing\-text, "issue", critical\)
+- The custom radio button element is missing a role and/or selected state\. \(radio\-missing\-role\-state, "issue", critical\)
+- The custom select element is missing required roles and/or states or properties\. \(select\-missing\-role\-state, "issue", critical\)
+- The expand/collapse state of a toggle\-type element is missing or is used incorrectly\. \(state\-aria\-expanded\-missing\-incorrect, "issue", serious\)
+- The selected state of an element is not conveyed to screen reader users\. \(state\-selected\-missing\-incorrect, "issue", serious\)
+- The sorted state \(ascending/descending\) of table columns is missing or incorrect\. \(state\-table\-sort, "issue", serious\)
+- The iframe is missing a title\. \(title\-iframe\-missing, "issue", moderate\)
+
+__Best Practices__
+
+- ARIA for tabs, modals and other dynamic widgets \- ARIA should be used to indicate name, role and value for tabs, modals or other dynamic widgets \(aria\-not\-used, "best\-practice", moderate, May 28, 2013\)
+- Provide labels for ARIA regions \- Provide aria\-labels to describe sections with role="region"\. \(aria\-region\-not\-labeled, "best\-practice", moderate, February 28, 2019\)
+- Use button to activate scripted functionality \- Use a button to allow users to activate scripted functionality \(form submission, play/pause, etc\.\)\. \(button\-acts\-like\-link, "best\-practice", moderate, June 26, 2017\)
+- Button should look and act like a button \- If an element looks like a button, it should act like a button \(activate scripted functionality\) and be a button \(or have a role of button\)\. \(button\-looks\-like\-link, "best\-practice", moderate, June 26, 2017\)
+- Avoid duplicate LABEL and TITLE \- Explicit labels should be provided using the LABEL element\. Avoid using a TITLE attribute that duplicates the LABEL\. \(form\-title\-duplicates\-label, "best\-practice", minor, March 19, 2013\)
+- Use an explicit form label \- Associate the label with the corresponding form element using the explicit for/id method\. \(label\-implicit, "best\-practice", minor, April 24, 2017\)
+- Avoid orphaned form labels \- There should not be any orphaned form labels\. Each form LABEL should be associated with its corresponding form element\. \(label\-orphaned, "best\-practice", minor, March 19, 2013\)
+- Avoid duplicate label on a button \- Avoid duplicate label on a button\. The accessible name of an input button can natively be set by the input type or by the value attribute\. Avoid using the label element or title attribute on a button that already has an accessible name\. \(label\-redundant\-button, "best\-practice", minor, May 9, 2018\)
+- Use an implicit/explicit label, or aria\-label or aria\-labelledby attribute to programmatically label fields \- Label input fields using a method that programmatically defines their accessible name \(implicit/explicit label, or aria\-label or aria\-labelledby attribute\), as opposed to accessible description \(title or aria\-describedby attribute\)\. \(label\-title\-only, "best\-practice", minor, May 16, 2017\)
+- Use link to change focus or go to new URL \- Use a link to allow users to activate the user\-agent to change focus or go to a new URL\. \(link\-acts\-like\-button, "best\-practice", moderate, June 26, 2017\)
+- Link should look and act like a link \- If an element looks like a link, it should act like a link \(change browser focus or URL\) and be a link \(or have a role of link\)\. \(link\-looks\-like\-button, "best\-practice", moderate, June 26, 2017\)
+- Provide an accessible name for content section \- Some types of content sections can benefit from having an accessible name\. For example, a tabpanel is a section of content that appears after a user activates the associated tab element\. The tab is the control and must have an accessible name\. The tabpanel is the child \(content section\) of the tab\. Adding aria\-labelledby to the tabpanel is a best practice\. \(name\-section, "best\-practice", moderate, October 9, 2017\)
+
+4\.1\.2\.b Custom Controls
+
+__Overview__
+
+- General \- Complex components must meet code specifications appropriate for the platform and facilitate accessibility support with assistive technologies\.
+- HTML \- Complex components must meet code specifications appropriate for the platform and facilitate accessibility support with assistive technologies\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+See Assistive Technology testing procedure\.
+
+__Desktop Web \- Assistive Technology__
+
+In general, you will find name, role, state, or value issues under this checkpoint related to more complex widgets, especially ones that relate to existing ARIA authoring patterns such as tabpanels, dialogs, listboxes, sliders, carousels, etc\. For name, role, state, or value issues related to HTML elements and custom components that have an HTML equivalent such as links, buttons, checkboxes, radio buttons, and selects, see the issues under checkpoint 4\.1\.2\.a Name, Role, Value\.
+
+Use checkpoint 4\.1\.2\.c Compatibility to log issues for complex interactions that don't have HTML or ARIA widget equivalents and are so broken that breaking them down into individual issues is not effective or productive\.
+
+__Screen reader testing is required for this checkpoint\.__
+
+Using a screen reader:
+
+1. Sequentially go through all the content in the page\.
+2. Access all user interface components one by one, relying only on the screen reader\.
+3. Make sure the screen reader correctly conveys the following information about each component: 
+	- __Its role:__ e\.g\., button, link, checkbox, radio button, text field, tab, slider, switch, combobox, etc\.
+	- __Its name:__ e\.g\. a label for a form control or button, the name of the tab, the label of a checkbox, etc\.
+	- __If applicable, its value or state:__ e\.g\., selected, pressed, disabled, expanded/collapsed, on/off, text field's value, slider's value, etc\.
+
+__NOTE: __ARIA authoring patterns \(ARIA attributes and keyboard patterns\) are not normative \(i\.e\. are not required for WCAG conformance\)\. Elements and widgets can meet 4\.1\.2 without following an ARIA pattern exactly AS LONG AS the element or widget provides the needed name, role, values, and states for a screen reader user\. These states and properties may be provided via HTML or ARIA\.
+
+__Issue Descriptions__
+
+- The element has an invalid ARIA attribute \(a misspelled attribute or one that does not exist\)\. \(aria\-attribute\-invalid, "issue", critical\)
+- The element is missing an ARIA attribute that is required for its role\. \(aria\-attribute\-missing, "issue", critical\)
+- The element's ARIA attribute has an invalid value \(a misspelled value or one that is not valid for the attribute\)\. \(aria\-attribute\-value\-invalid, "issue", critical\)
+- The element's accessible name is missing or is not appropriate for the element's purpose\. \(aria\-name\-missing\-incorrect, "issue", critical\)
+- The element's ARIA role requires that other elements with specific roles be contained within it\. At least one child role is missing\. \(aria\-required\-child\-missing, "issue", critical\)
+- The element's ARIA role requires that it be contained inside a parent element with a specific role\. The parent role is missing\. \(aria\-required\-parent\-missing, "issue", critical\)
+- The element's role attribute has an invalid value \(a misspelled value or one that does not exist\)\. \(aria\-role\-invalid, "issue", critical\)
+- The element's role is missing or is not appropriate for the element's function\. \(aria\-role\-missing, "issue", critical\)
+- The element has missing or incorrect states or properties that are necessary for screen reader users to interact with or understand the content conveyed by the element\. \(aria\-state\-property\-missing, "issue", critical\)
+- The element appears and functions like an accordion \(show/hide toggles\) but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-accordion, "issue", serious\)
+- The breadcrumb region is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-breadcrumb, "issue", moderate\)
+- The state of the currently displayed carousel slide is indicated visually, but this is not conveyed to screen reader users\. \(custom\-carousel\-current, "issue", moderate\)
+- The total number of slides in the carousel is indicated visually, but this is not conveyed to screen readers users\. \(custom\-carousel\-number, "issue", moderate\)
+- The element appears and functions like a combobox but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-combobox, "issue", critical\)
+- The element appears and functions like a date picker but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-date\-picker, "issue", critical\)
+- The element appears and functions like a modal dialog but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-dialog, "issue", moderate\)
+- The element appears and functions like a grid widget but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-grid, "issue", critical\)
+- The element appears and functions like a listbox but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-listbox, "issue", critical\)
+- Site navigation or application\-style menu is missing required roles and/or attributes\. \(custom\-navigation, "issue", critical\)
+- The element appears and functions like a progressbar but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-progressbar, "issue", critical\)
+- role="application" is used inappropriately\. \(custom\-role\-application, "issue", critical\)
+- The element appears and functions like a slider but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-slider, "issue", critical\)
+- The element appears and functions like a switch but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-switch, "issue", critical\)
+- The element appears and functions like a tab/tabpanel interface but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-tabs, "issue", moderate\)
+- The element appears and functions like a toolbar but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-toolbar, "issue", critical\)
+- Tooltip content is not accessible to screen readers\. \(custom\-tooltip, "issue", critical\)
+- The element appears and functions like a treeview but is missing required ARIA role\(s\) and/or attribute\(s\)\. \(custom\-treeview, "issue", critical\)
+- The element functions as if it has two roles\. Elements are allowed to have only one functioning role\. \(dual\-role, "issue", serious\)
+
+__Best Practices__
+
+- Custom ARIA button should activate with enter and spacebar \- An element that visually appears like a button and has an ARIA role of button should function the same as a native button\. The custom button should activate with enter and spacebar\. \(aria\-custom\-button\-spacebar, "best\-practice", serious, August 26, 2016\)
+- ARIA for tabs, modals and other dynamic widgets \- ARIA should be used to indicate name, role and value for tabs, modals or other dynamic widgets \(aria\-not\-used, "best\-practice", moderate, May 28, 2013\)
+
+4\.1\.2\.c Compatibility
+
+__Overview__
+
+- General \- Features and components must be compatible with assistive technologies\.
+- HTML \- Features and components must be compatible with assistive technologies\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+Same procedure as Assistive Technology\.
+
+__Desktop Web \- Assistive Technology__
+
+Use checkpoint 4\.1\.2\.c Compatibility for complex interactions that don't have HTML or ARIA widget equivalents and are so broken that breaking them down into individual issues is not effective or productive\.
+
+__Screen reader testing is required for this checkpoint\.__
+
+Using a screen reader:
+
+1. Sequentially go through all the content in the page\.
+2. Access all user interface components one by one, relying only on the screen reader\.
+3. Make sure the screen reader correctly conveys the following information about each component: 
+	- __Its role:__ e\.g\., button, link, checkbox, radio button, text field, tab, slider, switch, combobox, etc\.
+	- __Its name:__ e\.g\. a label for a form control or button, the name of the tab, the label of a checkbox, etc\.
+	- __If applicable, its value or state:__ e\.g\., selected, pressed, disabled, expanded/collapsed, on/off, text field's value, slider's value, etc\.
+
+__Issue Descriptions__
+
+- Custom user interface component is not compatible with AT \(see issue Details for more info\)\. \(custom\-not\-compatible, "issue", critical\)
+
+__Best Practices__
+
+No best practices
+
+1\.3\.2\.a Reading Order 
+
+__Overview__
+
+- General \- When the meaning of content depends on the order in which it is read, the reading order must be programmatically determinable by assistive technology\.
+- HTML \- When the meaning of content depends on the order in which it is read, the reading order must be programmatically determinable by assistive technology\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Desktop Web \- Assistive Technology__
+
+__If dynamic content is present, screen reader testing is required for this checkpoint, and highly recommended in all scenarios\.__
+
+1. Using NVDA start at the top of the page, or portion of the page, being tested and browse down the content using the down arrow key\. 
+	- Ensure that the reading order of the static content is consistent with the intended meaning of the content\.
+	- Ensure that content that is meant to be hidden from all users is hidden from the screen reader\.
+2. Start back at the top of the content being tested\. Browse down to controls that add or delete content from the page\. As you encounter these controls, activate the control\. 
+	- Ensure the reading order of the new content is logical within the workflow of the page interactions\.
+	- Specifically for modals, activate the modal and ensure that screen reader browsing is maintained within the modal while it is open\. 
+		- __Note:__ For an element to be considered a modal dialog and therefore keep focus while the element is open, it must be truly "modal"\. That means that while the modal dialog is open, users cannot interact with content outside the element\. Content outside an active dialog is typically visually obscured or dimmed\. Popups, tooltips, or other overlays often do not meet the definition of "modal" and therefore keyboard and screen reader focus are not required to be maintained within when they are not truly "modal"\.
+
+__Issue Descriptions__
+
+- Screen reader focus is lost or placed on the wrong element during user interaction, content refresh or update, or other reason\. \(focus\-lost\-screen\-reader, "issue", serious\)
+- When the modal dialog is activated, screen reader focus is not placed on/in it\. \(focus\-modal\-none\-screen\-reader, "issue", serious\)
+- When the modal dialog or similar element is closed, screen reader focus is not returned to the triggering element\. \(focus\-modal\-not\-returned\-screen\-reader, "issue", serious\)
+- Screen reader focus does not follow visual focus or move to the intended target, such as with a "return to top" control\. \(focus\-not\-moved\-screen\-reader, "issue", moderate\)
+- Screen reader focus falls on an interactive element that is hidden or empty\. \(focus\-on\-hidden\-item\-screen\-reader, "issue", serious\)
+- The correct reading order of dynamically changed content is not programmatically determinable by screen readers\. \(new\-content\-bad\-location, "issue", serious\)
+- Screen readers can read content outside the modal dialog\. \(reading\-order\-browse\-outside\-modal, "issue", serious\)
+- Static text displayed and screen reader announcement do not match and the intended meaning of the content is changed\. \(reading\-order\-content\-mismatch, "issue", critical\)
+- Informative \(static\) content is not readable by a screen reader\. \(reading\-order\-content\-skipped, "issue", critical\)
+- The reading order does not make sense when CSS is disabled\. \(reading\-order\-css\-dependent, "issue", critical\)
+- Content that is intended to be hidden from all users is readable with a screen reader\. \(reading\-order\-hidden\-content, "issue", serious\)
+- The reading order of the layout table does not make sense when linearized\. \(reading\-order\-layout\-table\-non\-linear, "issue", critical\)
+- The screen reader reading order of the content changes the intended meaning of the content\. \(reading\-order\-not\-logical, "issue", critical\)
+- aria\-hidden="true" is used on informative content making it inaccessible to assistive technology\. \(semantic\-hidden, "issue", critical\)
+
+__Best Practices__
+
+- Content in newly opened modal is auto announced \- Content in newly opened modal is automatically announced by screen reader\. \(new\-content\-modal\-not\-announced, "best\-practice", serious, May 2, 2018\)
+- New content is automatically announced \- New content is automatically announced by screen reader\. \(new\-content\-not\-announced, "best\-practice", serious, May 2, 2018\)
+- Add a link to footnote \- Consider adding a link from the footnote reference to the footnote content\. \(reading\-order\-footnote, "best\-practice", moderate, April 26, 2018\)
+- Add return\-to\-trigger link to footnote \- Consider adding a return\-to\-trigger link from the footnote back to the original location\. \(reading\-order\-footnote\-return, "best\-practice", minor, January 11, 2017\)
+- Reading order identical \- Reading order and visual order should match\. \(reading\-order\-visual\-order\-mismatch, "best\-practice", serious, March 26, 2013\)
+
+1\.3\.1\.a
+
+__1\.3\.1\.a Semantics__
+
+__Overview__
+
+- General \- Information, structure, and relationships that are presented visually must be conveyed programmatically or in text\. Semantic elements must be used according to their semantic meaning, not because of the way they appear visually\.
+- HTML \- Information, structure, and relationships that are presented visually must be conveyed programmatically or in text\. Semantic elements must be used according to their semantic meaning, not because of the way they appear visually\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+The purpose of this checkpoint is to document issues related to Success Criterion 1\.3\.1 Information and Relationships that do not fall under any of the other 1\.3\.1 checkpoints for: tables, group labels, headings, and lists\.
+
+Failures to log under this checkpoint include scenarios below\. All of these scenarios are relevant to a screen reader user’s experience and are usually found when reviewing content with a screen reader\.
+
+- Information, structure, or relationship is presented visually but is not conveyed programmatically or in text\. This includes information that is conveyed through visual relationship, color \+ contrast, or other visual cue\. For example: 
+	- Visual relationship: A chat interface shows a conversation between two or more people\. A sighted user can see who a comment is from by the visual relationship of the shape or color of the chat bubble and the chat participant it is "pointing" to, but a screen reader user doesn’t get that same information\.
+	- Visual relationship: Comments on a blog post are visually presented such that one can tell which comments are replies to other comments because they are indented\. There is no use of list markup, heading markup, or text to convey that relationship to screen reader users
+	- Color or Contrast: The difference between two elements is conveyed by color, but with enough contrast to pass 1\.4\.1 Use of Color\. However, the difference between the elements is not also conveyed to screen readers\.
+- Text that is shown visually as being deleted or inserted is not identified for screen readers either programmatically or in text\.
+- An incorrect ARIA landmark or HTML sectioning element is used\.
+- Missing <blockquote> markup for block quotations\.
+- Using semantic markup for visual purposes that misrepresents the meaning, structure, or relationships of the content\.
+- Use of role="presentation" is on content that conveys semantic information, so the semantic information is not conveyed\.
+- MAIN NAVIGATION area is missing semantics that convey its structure\. Possible ways to convey the group include using: 
+	- list markup
+	- headings
+	- role="navigation"
+	- <nav> element
+	- menu with menuitem\(s\)
+	- menubar with menuitem\(s\)
+
+__Things to think about__
+
+- SC 1\.3\.1 says Information, structure, and relationships conveyed through presentation can be programmatically determined or are available in text\. Do not forget the part "\.\.\.or in text" when evaluating this Success Criterion"\.
+- Log issues related to tables, group labels, headings, and lists under the appropriate 1\.3\.1 checkpoint\.
+
+__Desktop Web \- Assistive Technology__
+
+Use a screen reader to evaluate the issues described above\.
+
+__Issue Descriptions__
+
+- Information, structure, or relationship is presented visually but is not conveyed programmatically or in text\. \(info\-relationship\-visual\-only, "issue", critical\)
+- The element is a quotation, but is not marked as such\. \(quotation\-not\-indicated, "issue", moderate\)
+- Text that is shown visually as being deleted or inserted is not identified for screen readers either programmatically or in text\. \(semantic\-del\-ins\-missing, "issue", serious\)
+- Incorrect semantic markup is used\. \(semantic\-incorrect, "issue", serious\)
+- Semantic markup has been used inappropriately and misrepresents the meaning, structure, or relationships of the content\. \(semantic\-markup\-used\-for\-presentation, "issue", serious\)
+- A visual group of navigation links is not marked up semantically to convey their relationship\. Some possible solutions include using list\(s\), role of navigation, nav element, headings, menu or menubar\. \(semantic\-nav, "issue", moderate\)
+- role="presentation" or "none" is used on content that conveys semantic information, so the semantic information is not conveyed\. \(semantic\-role\-presentation, "issue", critical\)
+- USER AGENT: Use of DEL or INS element is not supported by all screen readers\. \(user\-agent\-semantic\-del\-ins, "issue", serious\)
+
+__Best Practices__
+
+- Programmatically associate errors \- Error messages should be programmatically associated with the corresponding form field\. \(form\-error\-not\-associated, "best\-practice", serious, February 3, 2016\)
+- Programmatically assoc instructions/descriptions \- When additional instructions/descriptions are provided for a control, they should be programmatically associated with the control\. \(instructions\-not\-associated, "best\-practice", serious, March 27, 2017\)
+- Provide labels when multiple navigation regions exist \- When multiple navigation regions are present on a page, provide aria\-labels to distinguish the purpose of each\. \(nav\-sections\-not\-identified, "best\-practice", moderate, February 28, 2019\)
+- Use text in addition to DEL or INS elements \- Use a text\-based method in addition to DEL or INS elements to convey the meaning of the deleted or inserted text\. The text can be provided for screen readers only or be visible on screen\. \(semantic\-del\-ins\-plus\-text, "best\-practice", moderate, February 7, 2022\)
+- Use STRONG or EM instead of B or I \- Use STRONG to indicate importance\. Use EM to indicate emphasis\. Only use B or I as a last resort when no other element is more appropriate\. \(semantic\-strong\-or\-emphasis\-not\-used, "best\-practice", minor, April 24, 2017\)
+
+1\.3\.1\.b
+
+__1\.3\.1\.b Data Tables__
+
+__Overview__
+
+- General \- Data cells must be explicitly associated with header cells for data tables, and descriptive table captions and summaries may be provided where appropriate\.
+- HTML \- Data cells must be explicitly associated with header cells for data tables, and descriptive table captions and summaries may be provided where appropriate\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Look for content that visually looks like it is arranged as a table\.
+2. Determine whether the table is used as a presentation \(layout\) table or to display tabular \(data\) information\. 
+	- For __presentation tables__, ensure that there are no th, caption, or summary elements, or scope or headers attributes\. 
+		- __Note:__ Adding role="presentation" or role="none" to a layout table is a recommended best practice\. It is not a failure if it is not present\.
+	- For data tables: 
+		- Most two\-dimensional tables with at least three columns need both column and row headers\. Ask yourself if you were reading down a column with a screen reader, would you need to know the content of the first cell in that row to understand what the data in that cell relates to?
+		- Ensure that table cells acting as headers \(USUALLY, but not always, bold, centered, on the top row and/or first column\) are identified as th elements\.
+			- __Note:__ The scope attribute is not required for tables that have simple row and / or column headers\. It is not a failure if it is not present\.
+			- Empty table header cells are not a failure\.
+		- Complex tables, such as those with grouped headers \(merged row and/or column headers\) or complex headers \(data cells are merged or there are more than two levels of headers for any given dimension\), require additional table semantics\. See examples of various data table types and code techniques in [Deque University [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://dequeuniversity.com/class/semantic-structure/tables/)](https://dequeuniversity.com/class/semantic-structure/tables/)and the [WAI Tables Tutorial [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/tutorials/tables/)](https://www.w3.org/WAI/tutorials/tables/)\.
+
+__Example Simple Data Table__
+
+Simple, two\-dimensional table
+
+__<th>__
+
+__<th>__
+
+__<th>__
+
+__<th>__
+
+<td>
+
+<td>
+
+__<th>__
+
+<td>
+
+<td>
+
+__Things to think about__
+
+A simple display of name value pairs is not required to be marked up as a data table\. For example, the following name / value pairs could simply be marked up using divs, spans, a list, or a layout table\.
+
+Policy and Contact Information
+
+Policy Number:
+
+AB\-782\-YZ
+
+Policy Type:
+
+boatowner
+
+Mailing Address:
+
+123 Main Street, Pleasantville, Texas 77035
+
+Phone Number:
+
+\(512\) 867\-5309
+
+Email Address:
+
+jenny@foo\.com
+
+__Recommended tools to reveal table markup__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Tables bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals HTML <table> elements\):
+
+- Outline > Show Element Tag Names
+- Outline > Outline Table Cells \(if tables are present, table cells will outline in red\)
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__ However, using a screen reader may be useful on complex tables\. 
+
+- Using __NVDA__, hit the T key \(tables\) to cycle through tables on the page\. Use the UP and DOWN arrow keys to navigate through the cells of a given table\. You can also navigate between table cells in NVDA using the exact same key combinations for JAWS which are to hold down Ctrl \+ Alt and use the UP, DOWN, LEFT and RIGHT arrow keys to move from cell to cell\. 
+- Using __JAWS__, hit the T key \(tables\) to cycle through tables on the page\. To navigate between cells, hold down Ctrl \+ Alt and use the UP, DOWN, LEFT and RIGHT arrow keys to move from cell to cell\. Use Ctrl \+ Alt \+ 5 \(on the numeric keypad\) to read the row and/or column headers for the current cell\. 
+- Using __VoiceOver__, hit the VO and arrow keys to navigate through the tables in the page\. If a table has proper table headers, the column headers will be identified automatically, as the table is explored\. VoiceOver does not currently read row headers, though it will identify the row number\. Hitting the VO \+ C keys will read the column header\. __Note:__ VoiceOver also has difficulty with spanned row or column headers and when the top\-left cell is empty\. This often results in incorrect headers being read\. 
+
+__Issue Descriptions__
+
+- Data is arranged visually like a data table, but the screen reader does not read the required header cells along with the individual pieces of data content\. \(data\-table\-headers, "issue", critical\)
+- The content visually appears to be a data table but is not marked up as one\. \(semantic\-data\-table, "issue", critical\)
+- The data table has missing or incomplete header cell markup\. \(semantic\-data\-table\-headers, "issue", critical\)
+- The headers \+ id association is not correct\. \(table\-complex\-association\-incorrect, "issue", serious\)
+- A table is complex and does not use the headers \+ id method to mark up column and row header cells\. \(table\-complex\-no\-header\-associations, "issue", critical\)
+- The first row of the table acts more like a caption for the table than an actual header row\. \(table\-data\-headers\-captiony, "issue", serious\)
+- More than one table element is used to create a single table so header and data cell association is not correct and table navigation is broken\. \(table\-data\-multiple\-combined, "issue", critical\)
+- A data cell is inappropriately marked as a table header cell\. \(table\-data\-not\-header, "issue", serious\)
+- Layout table uses data table markup: TH or CAPTION elements or SUMMARY, HEADERS, or SCOPE attributes\. \(table\-layout\-header\-markup, "issue", serious\)
+- The table uses the scope attribute incorrectly\. \(table\-simple\-scope\-incorrect, "issue", critical\)
+- The scope attribute value is not a valid value\. Valid values are row, col, rowgroup, or colgroup\. \(table\-simple\-scope\-invalid, "issue", critical\)
+- The scope attribute is used on TD elements\. This is obsolete\. Use a TH element instead\. \(table\-simple\-scope\-on\-td, "issue", moderate\)
+
+__Best Practices__
+
+- Table caption \- Tables should use the caption element to programmatically associate a visual name with the data table\. \(table\-caption\-not\-associated, "best\-practice", minor, February 12, 2015\)
+- Complex table headers \- If a complex tables uses TH with HEADERS \+ ID association, avoid using the SCOPE attribute\. \(table\-complex\-multiple\-associations, "best\-practice", minor, February 12, 2015\)
+- Avoid complex tables \- When a data table is complex, try breaking the complex table into separate simple tables\. \(table\-complex\-simplify, "best\-practice", moderate, March 19, 2015\)
+- Avoid nested tables \- Layout tables should not be nested\. If nested data tables exist, reconsider the design to avoid nested tables\. \(table\-data\-nested, "best\-practice", moderate, March 19, 2015\)
+- Avoid duplicate SUMMARY and CAPTION \- The table SUMMARY attribute and CAPTION element should not be identical\. \(table\-data\-summary\-caption, "best\-practice", minor, February 12, 2015\)
+- Use role="presentation" or "none" on layout tables \- If a layout table exists, you should add role="presentation" or "none" on the TABLE element\. \(table\-layout\-improper\-role, "best\-practice", moderate, March 19, 2015\)
+- Avoid layout tables \- Tables should only be used for tabular data\. Avoid using tables for layout\. \(table\-layout\-use\-css, "best\-practice", minor, March 19, 2013\)
+- Consider data table for name value pairs \- Name value pairs may be marked up as a data table\. \(table\-name\-value\-pairs, "best\-practice", moderate, March 19, 2015\)
+- Table header SCOPE \- A table that has both row and column headers should use the SCOPE attribute in each header\. \(table\-simple\-headers\-unscoped, "best\-practice", minor, March 19, 2015\)
+
+1\.3\.1\.c Programatic Labels \(Depreticated\)
+
+1\.3\.1\.d
+
+__1\.3\.1\.d Group Related Form Elements__
+
+__Overview__
+
+- General \- For groups of related controls where the individual labels for each control do not provide a sufficient description, additional group labels must be provided\.
+- HTML \- For groups of related controls where the individual labels for each control do not provide a sufficient description, additional group labels must be provided\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Locate any form controls on the screen that visually have a group label, for example a group of radio buttons with a group label above\.
+2. Determine if the purpose of the individual fields __cannot__ be determined without the group label\. 
+	- Grouping controls is most important for related radio buttons and checkboxes\. 
+		- Most commonly, the individual label associated with a radio or checkbox control does not fully convey the group's context, so the group label is required to be programmatically associated with the group of controls\.
+		- Less commonly, the individual label for radio buttons or checkboxes does include clear instructions or distinct selections\. In this case, the group label \(if present\) is not required to be programmatically associated with the controls\.
+	- It is much less common for other controls, such as text fields, to require a group label to understand the purpose of individual fields\. An example of when group labels may be required is if a form contains multiple address types \("shipping address" vs\. "billing address"\)\. In this case, a group label is required to understand which address group a particular "street address" or "city" field belongs to\.
+3. For form groups where the purpose of the individual fields __cannot__ be determined without the group label, confirm that the fields are grouped and associated with the group label using one of the following techniques: 
+	- Look at the code using the browser's DOM Inspect tool or use the [Forms bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://pauljadam.com/bookmarklets/forms.html)](http://pauljadam.com/bookmarklets/forms.html)to identify <fieldset> and <legend> elements\.
+	- Look at the code using the browser's DOM Inspect tool or use the [ARIA bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://pauljadam.com/bookmarklets/aria.html)](http://pauljadam.com/bookmarklets/aria.html)to confirm that the elements are grouped within an element that has: 
+		- The role="group" OR role="radiogroup" attribute AND
+		- An aria\-labelledby attribute that points to the ID value on the group label OR an aria\-label whose value contains the group label\.
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+Follow the testing methodology for Desktop Web \- Manual using a screen reader to test that group labels are programmatically associated with grouped fields when required\.
+
+__Issue Descriptions__
+
+- The group label is not programmatically associated with its checkboxes\. The purpose of individual checkboxes in the group cannot be understood without the group label\. \(label\-group\-checkboxes\-not\-associated, "issue", serious\)
+- The group of form controls is not associated with its group label\. The purpose of individual controls in the group cannot be understood without the group label\. \(label\-group\-not\-associated, "issue", serious\)
+- The group label is not associated with its group of radio buttons\. The purpose of individual radio buttons in the group cannot be understood without the group label\. \(label\-group\-radio\-not\-associated, "issue", serious\)
+
+__Best Practices__
+
+- Avoid FIELDSET with no LEGEND \- Each FIELDSET should have a LEGEND element\. \(legend\-missing, "best\-practice", minor, April 9, 2013\)
+
+1\.3\.1\.e Headings
+
+__1\.3\.1\.e Headings__
+
+__Overview__
+
+- General \- Headings used to describe sections of content must be semantically identified as such\.
+- HTML \- Headings used to describe sections of content must be semantically identified as such\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Look for text that looks and functions as a heading\.
+2. Ensure that every element on the screen that functions as a heading is marked as a heading\.
+3. Ensure that the levels of the headings properly convey the structural hierarchy of the content\.
+4. Ensure that content that does not function as a heading for other content is not marked as a heading\.
+
+__Things to think about__
+
+- Headings must function as headings for other content\. Just because text is big and bold doesn’t mean it is always an actual heading\.
+- There does not always have to be content between headings\. It is permissible for a nested heading to immediately follow a heading\.
+- While WCAG’s normative Success Criterion and informative Understanding Document language is clear that text that functions as a heading must be marked as a heading, it is surprisingly vague about how strict one should be about heading levels\. When evaluating heading levels, keep the following in mind: 
+	- Skipping heading levels is not a failure\.
+	- Multiple h1s is not necessarily a failure\.
+	- Although rare, not every screen has to have an h1 \- or even any headings\.
+	- To be a failure, heading levels must be out of order in such a way that the relative hierarchical structure of the page is misrepresented\. For example: 
+		- An h2 follows an h4, where the h2 is clearly meant to be a subheading of the h4\.
+		- A screen that has two headings that look and function at the same hierarchical level, but the second heading is marked as being a subheading of the first heading\.
+		- A screen has two headings that look and function as if the second heading is a subheading to the first heading, but they are marked as being the same heading level\.
+
+__Failure Example: out of order headings__
+
+h1: My Computer Store  
+h5: Products  
+h2: Desktop computers  
+h2: Laptop computers  
+h2: Contact Us 
+
+__Recommended tools to reveal heading markup__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Headings bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals HTML headings\):
+
+- Outline > Show Element Tag Names
+- Outline > Outline Headings
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+1. Using __NVDA__ or __JAWS__, 
+	1. Use the H key \(Headings\) to cycle through headings on the page, or hit the 1 to 6 keys to find heading of the corresponding levels \(if present\)\. 
+		- Alternatively, use the NVDA \+ F7 key to prompt a dialog box showing all headings available in the page \(INS \+ F6 for JAWS\)\. 
+2. Using __VoiceOver__, 
+	1. Use the VO keys \+ Command \+ H to navigate through the headings in the page\. 
+3. Make sure every element in the page that functions as a heading is spoken as such by the screen reader\.
+
+__Issue Descriptions__
+
+- Heading levels are out of order in such a way that the structure of the content is not properly conveyed\. \(heading\-level\-order, "issue", serious\)
+- Text appears and functions like a section heading but is not marked up as such\. \(semantic\-heading, "issue", serious\)
+- Text that does not serve as a section heading is inappropriately coded as a heading\. \(semantic\-heading\-misused, "issue", serious\)
+- Text appears and functions like a section heading but is not marked up as such\. \(semantic\-heading\-mobile, "issue", moderate\)
+
+__Best Practices__
+
+- Avoid empty headings \- All heading elements should have content\. \(heading\-empty, "best\-practice", minor, March 19, 2015\)
+- Avoid skipping heading levels \- Heading levels should not be skipped\. \(heading\-level\-increase, "best\-practice", moderate, April 23, 2013\)
+- Avoid more than one H1 \- There should only be one H1 per page\. \(heading\-multiple\-h1s, "best\-practice", minor, March 19, 2013\)
+- At least one H1 \- There should be at least one H1 per page\. \(heading\-no\-h1, "best\-practice", moderate, April 23, 2013\)
+- Headings \- Each page should have headings\. \(heading\-none, "best\-practice", serious, April 23, 2013\)
+
+1\.3\.1\.f List
+
+__1\.3\.1\.f Lists__
+
+__Overview__
+
+- General \- Lists must be semantically identified as such\.
+- HTML \- Lists must be semantically identified as such\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Locate text that visually looks like a list\. A list is a number of connected items printed consecutively, typically one below the other\. A list often \(but not always\) has bullets, numbers or letters before each item\. 
+	- __Note:__ According to the HTML specification, it is permissible for a list to contain zero or more list items, i\.e\. a list containing zero items or one list item is acceptable\.
+2. Success Criteria 1\.3\.1 requires that structure that is conveyed through presentation be available programmatically OR in text\. This means that list structure MAY be conveyed by text \(e\.g\. actual text numbers or alternative text for an image\) without semantic structural markup such as <ul>/<li>\. See the Examples section below for some pass/fail scenarios\.
+3. Check to see if a list is conveyed by text \(see the Examples section below\)\. For any lists that are NOT conveyed using text, check that the list is marked as a list using HTML or ARIA\. 
+	- Use the [Lists bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://pauljadam.com/bookmarklets/lists.html)](http://pauljadam.com/bookmarklets/lists.html)or browser Inspect/Inspect Element panel to ensure that text that serves as a list is marked as a list using one of the following: 
+		- HTML elements: <ul>/<li>, <ol>/<li>, <dl>/<dt> OR
+		- ARIA attributes role="list" and role="listitem"\. __Note:__ ARIA only has one type of list: unordered\.
+4. Check that the list type is correct\. Types of lists include: 
+	- Unordered list <ul> \- a list of items where the order of the items does not impact the meaning of the list content\.
+	- Ordered list <ol> \- a list of items where the order of the items impacts the meaning of the list content\.
+	- Description list <dl> \- a list used to pair a term with one or more descriptions such as terms and definitions, questions and answers, categories and topics, or any other groups of term\-description pairs\.
+5. Check that list markup is not used on text that is not a functionally a list\. 
+	- Use the [Lists bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://pauljadam.com/bookmarklets/lists.html)](http://pauljadam.com/bookmarklets/lists.html)or browser Inspect/Inspect Element panel to ensure that only text that serves as a list is marked as a list\.
+
+__Validation:__
+
+1. Text that visually serves as a list is marked as a list using text, HTML, or ARIA\.
+2. The list type \- unordered, ordered, description \- is appropriate\.
+3. List markup is not used on text that is not a list\.
+
+__Examples__
+
+Example 1: No list markup required:  
+I bought 3 things today: 1\. bread, 2\. butter, 3\. eggs\.
+
+Example 2: No list markup required:  
+I bought 3 things today: bread, butter, and eggs\.
+
+Example 3: No list markup required because the numbers are in text and meet the bare minimum of WCAG 2\.0 SC 1\.3\.1:  
+I bought 3 things today:   
+1\. bread   
+2\. butter   
+3\. eggs
+
+Example 4: List markup is required because visual presentation \(not text\) is being used to visually indicate a list:  
+I bought 3 things today:   
+bread   
+butter   
+eggs
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+Using a screen reader ensure:
+
+1. Text that visually serves as a list is read as a list\.
+2. The list type \- unordered, ordered, description \- is appropriate\.
+3. List markup is not used on text that is not a list\.
+
+__Issue Descriptions__
+
+- The description list is not marked up properly\. \(semantic\-description\-list, "issue", serious\)
+- Content appears like a list but is not marked up as such\. \(semantic\-list, "issue", serious\)
+- The nested list is not marked properly\. \(semantic\-list\-nested, "issue", serious\)
+- The list or list item is not marked up properly\. \(semantic\-list\-or\-item, "issue", serious\)
+- List element has direct children that are not allowed inside UL or OL elements\. Lists must only directly contain LI, SCRIPT, or TEMPLATE elements\. \(semantic\-list\-unallowed\-children, "issue", moderate\)
+- Content is not a list but it is marked as such\. \(semantic\-list\-used\-for\-presentation, "issue", moderate\)
+
+__Best Practices__
+
+No best practices
+
+__1\.1\.1\.a Alternative Text \(Active Images\)__
+
+__Overview__
+
+- General \- All linked images must have a descriptive text alternative that serves the same purpose and presents the same information as the linked image\.
+- HTML \- All linked images must have a descriptive text alternative that serves the same purpose and presents the same information as the linked image\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Note:__ If an <img>, <svg>, or an element with role="img" is missing a programmatic text alternative, the automated tests in axe Auditor \(axe\-core rules\) will create an issue under checkpoint 1\.1\.1\.b by default\. Testers using axe Auditor MAY choose to: Examine the automated issues and move them to a more relevant checkpoint depending on the type of image, and edit the automated issue to pick an issue from the issue description library and choose an appropriate remediation recommendation from the remediation recommendation library\.
+
+1. Locate each image that can be activated as part of the user interface\. Common examples include: 
+	1. Images inside a link
+	2. Images inside a button
+	3. <area> elements
+	4. <input type=”image”>
+2. Ensure that the image has an appropriate text alternative\.
+
+__Things to think about__
+
+- If the image is the only element providing an accessible name for a control, it must have a text alternative that describes the destination, purpose, or function of the control\.
+- If the control also contains text content, ensure that one of the following is true: 
+	- The image text alternative, together with the control's text content, conveys the purpose of the control\.
+	- The image conveys the same information as the text content, so is redundant and therefore "decorative"\. The image should instead be assessed as part of the Alternative Text \(Decorative Images\) checkpoint\.
+- The alt attribute is not the only way to provide an accessible name for an image or a control\. Valid alternatives also include: 
+	- aria\-label="some text here" \(on the image or the control it is inside\)
+	- aria\-labelledby="someID" \(on the image or the control it is inside\), where "someID" points to the ID given to other descriptive text in the page
+	- CSS clipped text \(inside the control\)
+	- title="some text here" \(on the image or the control it is inside\)
+- <canvas> elements used to display images must have role="img" and a text alternative provided by aria\-label or aria\-labelledby pointing to text within the <canvas> element itself\.
+- __Reality Check:__ If you replaced the active image with the text alternative, you would still understand the destination, purpose, or function of the control\.
+- __Best Practice:__ If there is meaningful text embedded in the active image, the text alternative should contain that exact text\.
+
+__Recommended tools to reveal an image’s text alternative include:__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Images bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals alt and title attributes on <img> and <input type="text">\):
+
+- Images > Display Alt Attributes
+- Information > Display Title Attributes
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using NVDA:__ 
+
+1. To cycle through images on the page, hit the G key \(graphics\)\.
+2. Ensure each image link has a text alternative value that properly describes the same purpose and presents the same information as the active image\. 
+
+__Using VoiceOver:__ 
+
+1. To cycle through images on the page, hit the VO\+Command\+G key \(graphics\)\.
+2. Verify that each image link has a text alternative value that properly describes the same purpose and presents the same information as the active image\.
+
+__Issue Descriptions__
+
+- The image is changing dynamically but the text alternative doesn't correspond to the active image displayed\. \(alt\-text\-dynamic\-image\-inconsistent\-active, "issue", serious\)
+- The text alternative does not contain the essential text in the active image, and therefore does not present the same information as the image\. \(alt\-text\-essential\-image\-text\-active, "issue", serious\)
+- The text alternative does not serve the same purpose as the image\. \(alt\-text\-inconsistent, "issue", serious\)
+- The text alternative for the active image is missing\. \(alt\-text\-missing\-active, "issue", critical\)
+- A server\-side image map is missing an equivalent set of text links and/or text alternative to alert the user that these links are available\. \(image\-map\-equivalent, "issue", critical\)
+
+__Best Practices__
+
+- Alt text exact \- When text is embedded in an image, the alt text should include the exact text that is embedded in the image\. \(alt\-text\-image\-text\-mismatch, "best\-practice", minor, July 16, 2013\)
+- Avoid alt text that duplicates adjacent link text \- Alt text for a linked image should not duplicate the adjacent link text for the same resource / destination because it creates a stutter effect\. \(alt\-text\-redundancy\-adjacent\-link, "best\-practice", minor, March 19, 2015\)
+- Avoid alt text that duplicates link or button text \- Alt text for an image inside a link or button should not duplicate the text content of the link or button\. The alt text should be null\. \(alt\-text\-redundancy\-link\-text, "best\-practice", minor, March 19, 2015\)
+- Alt text length \- The alt text value should be less than 150 characters\. \(alt\-text\-too\-long, "best\-practice", minor, March 19, 2013\)
+- Alt text for trademark \- The text alternative should include text to represent the trademark, service mark, registered trademark or copyright symbol that is embedded in the image\. \(alt\-text\-trademark, "best\-practice", minor, July 16, 2013\)
+- Succinct alt text \- The alt text should succinctly describe the image content without being too verbose\. \(alt\-text\-verbose, "best\-practice", minor, March 19, 2015\)
+
+__1\.1\.1\.b Alternative Text \(Informative Images\)__
+
+__Overview__
+
+- General \- Images that convey content must have a descriptive text alternative that serves the same purpose and presents the same information as the image\.
+- HTML \- Images that convey content must have a descriptive text alternative that serves the same purpose and presents the same information as the image\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Note:__ If an <img>, <svg>, or an element with role="img" is missing a programmatic text alternative, the automated tests in axe Auditor \(axe\-core rules\) will create an issue under checkpoint 1\.1\.1\.b\. by default\. Testers using axe Auditor MAY choose to: Examine the automated issues and move them to a more relevant checkpoint depending on the type of image, and edit the automated issue to pick an issue from the issue description library and choose an appropriate remediation recommendation from the remediation recommendation library\.
+
+1. Locate each informative \(non\-active / non\-functional\) image\.
+2. Ensure that the image has an appropriate text alternative that serves the same purpose and presents the same information as the image\.
+
+__Things to think about__
+
+- If the information presented by the image is provided elsewhere on the page in real text, it is permissible to treat the image as redundant or decorative\. See the checkpoint Alternative Text \(Decorative Images\)\.
+- The alt attribute is not the only way to provide an accessible name for an image\. Valid alternatives also include: 
+	- aria\-label="some text here"
+	- aria\-labelledby="someID", where "someID" points to the ID given to other descriptive text in the page
+	- CSS clipped text
+	- title="some text here"
+- <canvas> elements used to display images must have role="img" and a text alternative provided by aria\-label or aria\-labelledby pointing to text within the <canvas> element itself\.
+- __Reality Check:__ If you replaced the informative image with the text alternative, you would still have access to all the meaningful information in that image\.
+- __Best Practice:__ If there is meaningful text embedded in the image, the text alternative should contain that exact text\.
+
+__Recommended tools to reveal an image's text alternative include:__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Images bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals alt and title attributes on <img> and <input type="text">\):
+
+- Images > Display Alt Attributes
+- Information > Display Title Attributes
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using NVDA:__ 
+
+1. To cycle through images on the page, hit the G key \(graphics\)\.
+2. Ensure each informative image has a text alternative value that properly describes the same purpose and presents the same information as the informative image\.
+
+__Using VoiceOver:__ 
+
+1. To cycle through images on the page, hit the VO\+Command\+G key \(graphics\)\.
+2. Verify that the informative image has a text alternative value that properly describes the same purpose and presents the same information as the informative image\.
+
+__Examples__
+
+- [A Simple Alt Text Decision Tree [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/tutorials/images/decision-tree/)](https://www.w3.org/WAI/tutorials/images/decision-tree/)
+
+__Issue Descriptions__
+
+- The text alternative does not present the same information as the image\. \(alt\-text\-different, "issue", serious\)
+- The image is changing dynamically but the text alternative doesn't correspond to the informative image displayed\. \(alt\-text\-dynamic\-image\-inconsistent, "issue", serious\)
+- The text alternative does not contain the essential text in the informative image, and therefore does not present the same information as the image\. \(alt\-text\-essential\-image\-text, "issue", serious\)
+- The text alternative for the informative image is missing\. \(alt\-text\-missing, "issue", critical\)
+
+__Best Practices__
+
+- Alt text exact \- When text is embedded in an image, the alt text should include the exact text that is embedded in the image\. \(alt\-text\-image\-text\-mismatch, "best\-practice", minor, July 16, 2013\)
+- Alt text length \- The alt text value should be less than 150 characters\. \(alt\-text\-too\-long, "best\-practice", minor, March 19, 2013\)
+- Alt text for trademark \- The text alternative should include text to represent the trademark, service mark, registered trademark or copyright symbol that is embedded in the image\. \(alt\-text\-trademark, "best\-practice", minor, July 16, 2013\)
+- Succinct alt text \- The alt text should succinctly describe the image content without being too verbose\. \(alt\-text\-verbose, "best\-practice", minor, March 19, 2015\)
+
+__1\.1\.1\.c Alternative Text \(Complex Images\)__
+
+__Overview__
+
+- General \- Images that are too complex to be fully described in a short text alternative must have their purpose described using an extended text alternative\.
+- HTML \- Images that are too complex to be fully described in a short text alternative must have their purpose described using an extended text alternative\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__Note:__ If an <img>, <svg>, or an element with role="img" is missing a programmatic text alternative, the automated tests in axe Auditor \(axe\-core rules\) will create an issue under checkpoint 1\.1\.1\.b\. by default\. Testers using axe Auditor MAY choose to: Examine the automated issues and move them to a more relevant checkpoint depending on the type of image, and edit the automated issue to pick an issue from the issue description library and choose an appropriate remediation recommendation from the remediation recommendation library\.
+
+1. Locate each complex image \(i\.e\. an image that cannot be accurately described in approximately 150 characters or less\)\.
+2. Ensure that the image has a short text alternative that briefly describes the image\.
+3. Ensure that a full \(long\) text description has also been provided\.
+
+__Things to think about__
+
+- Ideally, the short text alternative references where a full description can be found; however, it is not a failure if it does not\.
+- The alt attribute is not the only way to provide an accessible name for an image\. Valid alternatives also include: 
+	- aria\-label="some text here"
+	- aria\-labelledby="someID", where "someID" points to the ID given to other descriptive text in the page
+	- CSS clipped text
+	- title="some text here"
+- Options for providing a full \(long\) description include: 
+	- Provide the long description in the context of the page itself\.
+	- Provide a button that expands a collapsed region that contains the long description\.
+	- Provide a button to open a dialog that contains the long description\.
+	- Provide a link to a long description on another page via a normal link text\.
+- If a complex image is interactive, understanding the information being provided by the interaction is essential to assessing whether a text alternative that may be present provides an adequate alternative\.
+- A short text alternative is required using one of the recommended methods \(e\.g\., role="img" with aria\-label or aria\-labelledby and text within the <canvas> element\)\. It's a best practice to use aria\-describedby to point to the long description for <canvas> elements\.
+- __Reality Check:__ If you replaced the complex image \(and any available interactions\) with the short text alternative and the long description you would still have access to all the meaningful information in the complex image\.
+
+__Recommended tools to reveal an image's text alternative include:__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Images bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals alt and title attributes on <img> and <input type="text">\):
+
+- Images > Display Alt Attributes
+- Information > Display Title Attributes
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using a screen reader:__ 
+
+1. Cycle through images on the page\. For NVDA, use the G key \(graphics\)\. For VoiceOver, VO\+Command\+G key \(graphics\)\.
+2. If the short alt text description is not sufficient, ensure a long description has been provided\. Options for providing a full \(long\) description include: 
+	- Provide the long description in the context of the page itself\.
+	- Provide a button that expands a collapsed region that contains the long description\.
+	- Provide a button to open a dialog that contains the long description\.
+	- Provide a link to a long description on another page via a normal link text\.
+
+__Examples__
+
+- [A Simple Alt Text Decision Tree [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/tutorials/images/decision-tree/)](https://www.w3.org/WAI/tutorials/images/decision-tree/)
+
+__Issue Descriptions__
+
+- The complex image is missing both short and detailed text alternatives\. \(alt\-text\-complex\-missing, "issue", critical\)
+- The detailed textual description of the complex image is not adequate to convey its full meaning\. \(alt\-text\-longdesc\-inadequate, "issue", serious\)
+- The detailed textual description of the complex image is missing\. \(alt\-text\-longdesc\-missing, "issue", critical\)
+- A short text alternative for a complex image is missing\. \(alt\-text\-short\-text\-missing, "issue", serious\)
+- The short text alternative for the complex image is not appropriate or meaningful\. \(alt\-text\-short\-text\-not\-meaningful, "issue", serious\)
+
+__Best Practices__
+
+- Alt text length \- The alt text value should be less than 150 characters\. \(alt\-text\-too\-long, "best\-practice", minor, March 19, 2013\)
+- Alt text for trademark \- The text alternative should include text to represent the trademark, service mark, registered trademark or copyright symbol that is embedded in the image\. \(alt\-text\-trademark, "best\-practice", minor, December 31, 2014\)
+- Succinct alt text \- The alt text should succinctly describe the image content without being too verbose\. \(alt\-text\-verbose, "best\-practice", minor, March 19, 2015\)
+
+__1\.1\.1\.d Alternative Text \(Decorative Images\)__
+
+__Overview__
+
+- General \- Images that do not convey content, are decorative, or with content that is already conveyed in text must not be given a text alternative that is exposed to assistive technology\.
+- HTML \- Images that do not convey content, are decorative, or with content that is already conveyed in text must be coded to be ignored by assistive technology\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+__NOTE:__ If an <img>, <svg>, or an element with role="img" is missing a programmatic text alternative, the automated tests in axe Auditor \(axe\-core rules\) will create an issue under checkpoint 1\.1\.1\.b\. by default\. Testers using axe Auditor MAY choose to: Examine the automated issues and move them to a more relevant checkpoint depending on the type of image, and edit the automated issue to pick an issue from the issue description library and choose an appropriate remediation recommendation from the remediation recommendation library\.
+
+1. Locate each decorative image\.
+2. Ensure each redundant, unimportant, or decorative image has been implemented in such a way that it can be ignored by assistive technologies \(i\.e\. such as screen readers\)\.
+
+__Things to think about__
+
+- There are multiple ways to code images so they are ignored by assistive technologies: 
+	- The image is implemented as a CSS background image\.
+	- An <img> is given an empty alt attribute value \(alt=""\) and no title attribute\.
+	- An <img> is given role="none", role="presentation" or aria\-hidden="true"\.
+	- An <svg> or icon font is given aria\-hidden="true"\.
+
+__Recommended tools to reveal an image’s text alternative include:__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Images bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals alt and title attributes on <img> and <input type="text">\):
+
+- Images > Display Alt Attributes
+- Information > Display Title Attributes
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using NVDA:__ 
+
+1. To cycle through images on the page, hit the G key \(graphics\)\.
+2. Ensure each decorative non\-text content is ignored because it is assigned an empty alt attribute value \(alt=””\) or is implemented in CSS\. 
+
+__Using VoiceOver:__ 
+
+1. To cycle through images on the page, hit the VO\+Command\+G key \(graphics\)\.
+2. Ensure each decorative non\-text content is ignored because it is assigned an empty alt attribute value \(alt=””\) or is implemented in CSS\.
+
+__Examples__
+
+- [A Simple Alt Text Decision Tree [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/tutorials/images/decision-tree/)](https://www.w3.org/WAI/tutorials/images/decision-tree/)
+
+__Issue Descriptions__
+
+- The decorative image is not hidden from screen readers\. \(alt\-text\-decorative, "issue", moderate\)
+- The decorative image is not hidden from screen readers\. \(alt\-text\-decorative\-inappropriate, "issue", moderate\)
+
+__Best Practices__
+
+- Avoid alt text that duplicates adjacent text \- Alt text for an image should not duplicate the adjacent text\. \(alt\-text\-redundancy, "best\-practice", minor, December 11, 2023\)
+- Avoid alt text that duplicates adjacent link text \- Alt text for a linked image should not duplicate the adjacent link text for the same resource / destination because it creates a stutter effect\. \(alt\-text\-redundancy\-adjacent\-link, "best\-practice", minor, March 19, 2015\)
+- Avoid alt text that duplicates link or button text \- Alt text for an image inside a link or button should not duplicate the text content of the link or button\. The alt text should be null\. \(alt\-text\-redundancy\-link\-text, "best\-practice", minor, March 19, 2015\)
+
+1\.1\.1\.e Alternative Text\(CSS Images\)\(Deprecated\)
+
+1\.1\.1\.f Alternative Text\(Input Images\)\(Deperecated\)
+
+  
+__1\.1\.1\.g Alternative Text \(Captcha\)__
+
+__Overview__
+
+- General \- Interactions designed to verify human users must not rely on a single sense to be successfully completed and alternate forms using different modalities must be provided to address the needs of people with different disabilities\.
+- HTML \- Captcha tests must have descriptive text alternatives describing the purpose of the CAPTCHA, and alternate forms using different modalities must be provided to address the needs of people with different disabilities\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+- Hearing or hearing assist
+
+__Desktop Web \- Manual__
+
+1. Locate the CAPTCHA image\.
+2. Ensure there is an appropriate short text alternative describing the purpose of the CAPTCHA\.
+3. Ensure there is an option to complete the CAPTCHA without vision \(the alternative is usually an audio CAPTCHA, but modalities can differ\)\.
+
+__Things to think about__
+
+The text alternative referred to in this checkpoint is NOT a text alternative for each CAPTCHA image\. Providing a text alternative on each image would make the CAPTCHA operable by robots, thus defeating its purpose\. In this case the text alternative would describe the overall purpose of the CAPTCHA, and alternate forms using different modalities would be provided to address the needs of people with different disabilities\.
+
+__Recommended tools to reveal an image’s text alternative include:__
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Images bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+[Web Developer browser extension [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](http://chrispederick.com/work/web-developer/)](http://chrispederick.com/work/web-developer/)\(Note limited capabilities: only reveals alt and title attributes on <img> and <input type="text">\):
+
+- Images > Display Alt Attributes
+- Information > Display Title Attributes
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using NVDA:__ 
+
+1. To cycle through images on the page, hit the G key \(graphics\)\.
+2. Ensure each CAPTCHA file is assigned an appropriate short text alternative describing the purpose of the CAPTCHA\.
+3. Ensure there is an option to complete the CAPTCHA without vision \(the alternative is usually an audio CAPTCHA, but modalities can differ\)\.
+
+__Using VoiceOver:__ 
+
+1. To cycle through images on the page, hit the VO\+Command\+G key \(graphics\)\.
+2. Ensure each CAPTCHA file is assigned an appropriate short text alternative describing the purpose of the CAPTCHA\.
+3. Ensure there is an option to complete the CAPTCHA without vision \(the alternative is usually an audio CAPTCHA, but modalities can differ\)\.
+
+__Reality Check:__ You can close your eyes and using the screen reader and keyboard alone, you can complete the CAPTCHA using the non\-visual option \(usually that will be an audio option, but other options are acceptable too\)\.
+
+__Issue Descriptions__
+
+- The text alternative for the CAPTCHA image does not describe its purpose\. \(alt\-text\-inappropriate\-captcha, "issue", serious\)
+- The text alternative for the CAPTCHA image is missing\. \(alt\-text\-missing\-captcha, "issue", serious\)
+- There is only one option for the CAPTCHA task and it requires vision to complete it successfully\. \(captcha\-requires\-vision, "issue", critical\)
+
+__Best Practices__
+
+- Alt text length \- The alt text value should be less than 150 characters\. \(alt\-text\-too\-long, "best\-practice", minor, March 19, 2013\)
+- Alt text for trademark \- The text alternative should include text to represent the trademark, service mark, registered trademark or copyright symbol that is embedded in the image\. \(alt\-text\-trademark, "best\-practice", minor, December 31, 2014\)
+- Succinct alt text \- The alt text should succinctly describe the image content without being too verbose\. \(alt\-text\-verbose, "best\-practice", minor, March 19, 2015\)
+
+__1\.1\.1\.h Alternative Text \(Audio or Video\)__
+
+__Overview__
+
+- General \- Text alternatives must be provided to identify the purpose of the video or audio content\.
+- HTML \- Text alternatives must be provided to identify the purpose of the video or audio content\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+- Hearing or hearing assist
+
+__Desktop Web \- Manual__
+
+__Looking at the page:__ 
+
+1. Locate the multimedia object \(audio or video\)\.
+2. Alternative/Identifying Text \- there is a short description \(like a title, heading, sentence or link text\) that identifies what the topic of the audio or video is\. 
+
+__Reality Check:__ I know \(at a high level\) what the topic is for this multimedia content before I play it\. 
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+__Using NVDA:__ 
+
+1. To cycle through multimedia files on the page, hit the O key \(object\)\.
+2. Ensure each audio or video file is assigned a text alternative that describes the video or audio and/or gives its title\.
+
+__Using VoiceOver:__ 
+
+1. To cycle through multimedia files on the page, hit the VO\+Command\+O key \(objects\)\.
+2. Verify that each audio or video file is assigned a text alternative that describes the video or audio and/or gives its title\.
+
+__Issue Descriptions__
+
+- The text alternative is not appropriate\. \(alt\-text\-inappropriate, "issue", serious\)
+- There is no text alternative to describe the media file\. \(alt\-text\-missing\-media\-file, "issue", serious\)
+
+__Best Practices__
+
+- Alt text exact \- When text is embedded in an image, the alt text should include the exact text that is embedded in the image\. \(alt\-text\-image\-text\-mismatch, "best\-practice", minor, July 16, 2013\)
+- Alt text length \- The alt text value should be less than 150 characters\. \(alt\-text\-too\-long, "best\-practice", minor, March 19, 2013\)
+- Alt text for trademark \- The text alternative should include text to represent the trademark, service mark, registered trademark or copyright symbol that is embedded in the image\. \(alt\-text\-trademark, "best\-practice", minor, December 31, 2014\)
+- Succinct alt text \- The alt text should succinctly describe the image content without being too verbose\. \(alt\-text\-verbose, "best\-practice", minor, March 19, 2015\)
+
+__2\.4\.4\.a Link Purpose \(In Context\)__
+
+__Overview__
+
+- General \- The purpose of each link must be understandable from the link text alone, or from the link text and its programmatic context, unless the link purpose is ambiguous to users in general\.
+- HTML \- The purpose of each link must be understandable from the link text alone, or from the link text and its programmatic context, unless the link purpose is ambiguous to users in general\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Identify all links on the screen\.
+2. Identify any links that DO NOT meet AT LEAST ONE of the following criteria: 
+	- The visible link text \(or alternative text for an image link or image map link\) alone is sufficient to describe the purpose of the link\.
+	- The visible link text \(or alternative text for an image link or image map link\) plus the text in the same sentence, paragraph, list item, table cell, or table header for the cell is sufficient to describe the purpose of the link\.
+3. For each link that DOES NOT meet one of the above criteria \(including image links and image maps\), check the accessible name for the link to see if the visible link text has been supplemented by an ARIA or title attribute or screen reader only text\.
+4. __Exception:__ There is an exception to this checkpoint for where the purpose of the link would be ambiguous to users in general\. This would include situations where the purpose of the link is supposed to be unknown or obscured, for instance in a game\.
+
+__Things to think about__
+
+- Apply this Checkpoint 2\.4\.4\.a Link Purpose \(In Context\) to controls that function as navigation links \(i\.e\. navigate within the same page or screen or to a different page or screen\) even if they have a different role such as "button" or are missing a role\.
+- Apply Checkpoint 2\.4\.6\.b Descriptive Labels to non\-link controls even if they have a link role or are missing a role\.
+- There are multiple ways to provide supplemental information to link text including: 
+	- aria\-label="some text here" \(on the <a> element or an image inside it\)\. Note: aria\-label will completely replace any other link text inside the link\.
+	- aria\-labelledby="someID" \(on the <a> element\), where "someID" points to the ID given to other descriptive text in the page\. Note: aria\-labelledby will completely replace any other link text inside the link\.
+	- aria\-describedby="someID" \(on the <a> element\), where "someID" points to the ID given to other descriptive text in the page\. Note: aria\-describedby will supplement \(not replace\) the link text inside the link\.
+	- CSS clipped text \(inside the <a> element\)\.
+	- LEAST PREFERRED OPTION: title="some text here" \(on the <a> element\)\. Note: a title attribute will supplement \(not replace\) the link text inside the link, but will ONLY be read by most screen readers when tabbing to the link, not when reading by arrow keys\. Therefore it is strongly discouraged as a method to supplement visible link text\.
+
+__Recommended tools to reveal the accessible name of a link include:__
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+Use a screen reader to read the link name\.
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+1. Using a screen reader like NVDA or JAWS, pull up a list of links \(NVDA key \+ F7 or F7 for JAWS\)\. 
+	1. Check if the link text for each link adequately describes its purpose, without other contextual information\.
+2. For a link whose text, by itself, does not convey the purpose: 
+	1. Check if tabbing to it announces contextual information \.\.\. this should happen if the title attribute or ARIA attributes are used\.
+	2. Otherwise, use screen\-reader keys to check if the immediate context of the link \(sentence, paragraph, list item, associated row/column header cells\) provides supplemental text properly describing the purpose of the link\.
+3. __Exception:__ There is an exception to this checkpoint for where the purpose of the link would be ambiguous to users in general\. This would include situations where the purpose of the link is supposed to be unknown or obscured, for instance in a game\.
+
+__Issue Descriptions__
+
+- The text alternative for each area of the image map is not unique\. \(alt\-text\-image\-map\-nonunique, "issue", serious\)
+- The purpose of the link is not clear within its programmatically determined link context\. \(link\-purpose\-unclear, "issue", serious\)
+- Multiple links with identical link text but different destinations are present, and the purpose of each link is not clear within its programmatically determined link context\. \(link\-purpose\-unclear\-multiple, "issue", serious\)
+
+__Best Practices__
+
+- Meaningful link text \- Link text should be clear from the link text alone\. While WCAG 2\.0 Success Criteria 2\.4\.4 allows the meaning to be taken within the context of the enclosing sentence, paragraph, list item or data table, it is better for all users if the link text is clear from the link text alone\. \(link\-purpose\-unidentifiable\-from\-text, "best\-practice", moderate, March 26, 2013\)
+
+__2\.4\.6\.a Descriptive Headings__
+
+__Overview__
+
+- General \- Headings must be informative\.
+- HTML \- Headings must be informative\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+1. Locate all text on the screen that functions as a heading\.
+2. Ensure each heading: 
+	- Provides a clear description of the content in that section\.
+	- Gives users an effective overview of the content and its organization\.
+
+__Things to think about__
+
+- This checkpoint does not require a screen to have headings, but if headings are provided, they must be descriptive\.
+- The proper markup of headings is covered by checkpoint 1\.3\.1\.e
+- An empty heading element is not a failure of the checkpoint\.
+
+__Failure Examples__
+
+- On Bob's Used Cars home page, the H1 is "Come on down\!" which doesn't convey that the page is for selling used cars\.
+- On a movie review page, there are multiple headings of "Movie", each with different movie reviews below\.
+- On a recruiter's webpage, several jobs are listed but each has the same H3 heading of "Open Position"\.
+- A restaurant webpage has sufficient H3 heading text for dinner items; however the accessible name for all is overwritten by aria\-label="meal 1", "meal 2", etc\.
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+Follow the testing methodology for Desktop Web \- Manual\.
+
+__Examples__
+
+No examples
+
+__Issue Descriptions__
+
+- The heading does not describe the topic or purpose of the content that follows it\. \(heading\-not\-descriptive, "issue", moderate\)
+
+__Best Practices__
+
+No best practices
+
+__2\.4\.6\.b Descriptive Labels__
+
+__Overview__
+
+- General \- Labels used to identify specific components within content must be descriptive\.
+- HTML \- Labels used to identify specific components within content must be descriptive\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+Testing for this checkpoint can be accomplished using either the "Manual" methodology or the "Assistive Technology" methodology or a combination of both\.
+
+1. Visually identify each form control or interactive component on the screen\. 
+	1. Verify that each control or component has a visible text OR graphic label that describes its purpose\.
+	2. Verify that the control or component's accessible name also describes its purpose\.
+	3. If there is no visible label, log the issue under 3\.3\.2\.a\.
+2. Look for controls or interactive components that are used over and over on the screen\. These might need to provide additional information beyond what is provided visually\. For example, multiple "delete" or "purchase" buttons will need additional information about what is being deleted or purchased\. 
+	1. Confirm that the label \(accessible name\) has additional context to sufficiently describe the purpose of the control\. Options include: 
+		- The accessible name itself
+		- An accessible description \(e\.g\. via aria\-describedby or a title attribute\)
+		- A programmatically associated table header
+		- A legend if it is in a fieldset
+		- The accessible name of a semantic grouping if it is in an HTML sectioning element or ARIA landmark
+		- The accessible name of a <video> element if it is a control in a video element
+3. For each iframe and/or frame found in the page, verify that the value provided in the title or aria\-label attribute describes its purpose\.
+
+__Things to think about__
+
+- Apply this Checkpoint 2\.4\.6\.b Descriptive Labels to non\-link controls even if they have a link role or are missing a role\.
+- Apply Checkpoint 2\.4\.4\.a Link Purpose \(In Context\) to controls that function as navigation links \(i\.e\. navigate within the same page or screen or to a different page or screen\) even if they have a different role such as "button" or are missing a role\.
+- An icon MAY serve as a label\. Examples of common icons that label form fields \(or user controls\) include: magnifying glass \(for search\), 3 horizontal lines on top of each other \(hamburger menu\), gear \(preferences or settings\), trash can \(delete or view trash depending on context\)\. Remember, these are just a few examples\.
+
+__Recommended methods to reveal the accessible name and description of a control include:__
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+Use a screen reader to read the component's name and description\.
+
+__Desktop Web \- Assistive Technology__
+
+Referencing the Desktop testing methodology above, with a screen reader turned on, confirm that each control or component's label has enough context to sufficiently describe its purpose\.
+
+__Issue Descriptions__
+
+- Multiple controls have the same labels/names but perform different actions\. This is not conveyed via text associated with individual controls\. \(buttons\-confusing, "issue", serious\)
+- The label does not convey the purpose of the control\. \(label\-not\-descriptive, "issue", serious\)
+- The programmatic label does not convey the purpose of the control\. The programmatic label and visual label do not convey consistent information\. \(label\-programmatic\-not\-descriptive, "issue", serious\)
+- The visible label does not convey the purpose of the control\. The programmatic label and visual label do not convey consistent information\. \(label\-visible\-not\-descriptive, "issue", serious\)
+- The iframe's title is not unique \- another iframe on the same page has the same title\. \(title\-iframe\-duplicate, "issue", moderate\)
+- The title for the iframe is not meaningful\. \(title\-iframe\-not\-meaningful, "issue", moderate\)
+
+__Best Practices__
+
+- Button's programmatic name equals visible text label \- Button's programmatic name and visible text label should be identical\. \(button\-value\-text\-mismatch, "best\-practice", minor, May 23, 2018\)
+
+__2\.4\.6\.b Descriptive Labels__
+
+__Overview__
+
+- General \- Labels used to identify specific components within content must be descriptive\.
+- HTML \- Labels used to identify specific components within content must be descriptive\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+Testing for this checkpoint can be accomplished using either the "Manual" methodology or the "Assistive Technology" methodology or a combination of both\.
+
+1. Visually identify each form control or interactive component on the screen\. 
+	1. Verify that each control or component has a visible text OR graphic label that describes its purpose\.
+	2. Verify that the control or component's accessible name also describes its purpose\.
+	3. If there is no visible label, log the issue under 3\.3\.2\.a\.
+2. Look for controls or interactive components that are used over and over on the screen\. These might need to provide additional information beyond what is provided visually\. For example, multiple "delete" or "purchase" buttons will need additional information about what is being deleted or purchased\. 
+	1. Confirm that the label \(accessible name\) has additional context to sufficiently describe the purpose of the control\. Options include: 
+		- The accessible name itself
+		- An accessible description \(e\.g\. via aria\-describedby or a title attribute\)
+		- A programmatically associated table header
+		- A legend if it is in a fieldset
+		- The accessible name of a semantic grouping if it is in an HTML sectioning element or ARIA landmark
+		- The accessible name of a <video> element if it is a control in a video element
+3. For each iframe and/or frame found in the page, verify that the value provided in the title or aria\-label attribute describes its purpose\.
+
+__Things to think about__
+
+- Apply this Checkpoint 2\.4\.6\.b Descriptive Labels to non\-link controls even if they have a link role or are missing a role\.
+- Apply Checkpoint 2\.4\.4\.a Link Purpose \(In Context\) to controls that function as navigation links \(i\.e\. navigate within the same page or screen or to a different page or screen\) even if they have a different role such as "button" or are missing a role\.
+- An icon MAY serve as a label\. Examples of common icons that label form fields \(or user controls\) include: magnifying glass \(for search\), 3 horizontal lines on top of each other \(hamburger menu\), gear \(preferences or settings\), trash can \(delete or view trash depending on context\)\. Remember, these are just a few examples\.
+
+__Recommended methods to reveal the accessible name and description of a control include:__
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+Use a screen reader to read the component's name and description\.
+
+__Desktop Web \- Assistive Technology__
+
+Referencing the Desktop testing methodology above, with a screen reader turned on, confirm that each control or component's label has enough context to sufficiently describe its purpose\.
+
+__Examples__
+
+No examples
+
+__Issue Descriptions__
+
+- Multiple controls have the same labels/names but perform different actions\. This is not conveyed via text associated with individual controls\. \(buttons\-confusing, "issue", serious\)
+- The label does not convey the purpose of the control\. \(label\-not\-descriptive, "issue", serious\)
+- The programmatic label does not convey the purpose of the control\. The programmatic label and visual label do not convey consistent information\. \(label\-programmatic\-not\-descriptive, "issue", serious\)
+- The visible label does not convey the purpose of the control\. The programmatic label and visual label do not convey consistent information\. \(label\-visible\-not\-descriptive, "issue", serious\)
+- The iframe's title is not unique \- another iframe on the same page has the same title\. \(title\-iframe\-duplicate, "issue", moderate\)
+- The title for the iframe is not meaningful\. \(title\-iframe\-not\-meaningful, "issue", moderate\)
+
+__Best Practices__
+
+- Button's programmatic name equals visible text label \- Button's programmatic name and visible text label should be identical\. \(button\-value\-text\-mismatch, "best\-practice", minor, May 23, 2018\)
+
+__2\.5\.3\.a Label in Name__
+
+__Overview__
+
+- General \- For each user interface component with a label that includes text or an image of text, the accessible name must match or include the visible text in the label\.
+- HTML \- For each user interface component with a label that includes text or an image of text, the accessible name must match or include the visible text in the label\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+Notes:
+
+- This checkpoint ONLY applies to controls that have a __visible text or image of text label__\.
+- For the purposes of this checkpoint, when a text field has placeholder text as its only programmatic label, consider the placeholder value to be the field's visible label\.
+- If a control with a visible text label fails checkpoint 4\.1\.2\.a because the text label is not programmatically associated with the control, it also fails this checkpoint, because there is no accessible name for the label to be in\.
+
+1. For every control that has a visible text or image of text label, compare the accessible name of the element to the visible text\.
+2. Ensure the entire onscreen visible text label is EITHER: 
+	- An exact match to the accessible name OR
+	- Is contained within the accessible name \(in the same order presented visually with no words inserted in between\)
+3. __Best Practice:__ It is a best practice \(but not a requirement\) to have the text of the visible label at the start of the accessible name\.
+
+__Recommended methods to reveal the accessible name of a control include:__
+
+Browser inspection tools:
+
+- Chrome Developer Tools > [Accessibility Pane [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)](https://developer.chrome.com/docs/devtools/accessibility/reference/#pane)
+- Firefox Web Developer Tools > [Accessibility Inspector [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)](https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector)
+
+__Desktop Web \- Assistive Technology__
+
+Screen reader testing is not applicable for this checkpoint\. Speech input testing is optional for this checkpoint\.
+
+__Issue Descriptions__
+
+- Accessible name contains the visible label text, but one or more other words is interspersed in the label\. \(speech\-accessible\-name\-interspersed, "issue", serious\)
+- Accessible name does not contain the visible label text\. \(speech\-accessible\-name\-mismatch, "issue", serious\)
+- The visible label is not in the accessible name because the label is not associated with the control\. \(speech\-accessible\-name\-missing, "issue", serious\)
+- Accessible name contains the visible label text, but the words of the visible label are not in the same order as they are in the accessible name\. \(speech\-accessible\-name\-order, "issue", serious\)
+
+__Best Practices__
+
+- Accessible name begins with visible label text \- The accessible name should begin with the same text that is in the visible label\. \(speech\-accessible\-name\-other\-words\-before, "best\-practice", moderate, July 3, 2018\)
+
+__4\.1\.3\.a Status Messages__
+
+__Overview__
+
+- General \- Status messages must be programmatically determinable through role or properties such that they can be presented to the user by assistive technologies without receiving focus\.
+- HTML \- Status messages must be programmatically determinable through role or properties such that they can be presented to the user by assistive technologies without receiving focus\.
+
+__Testing Methodology__
+
+Required for testing:
+
+- Sight or sighted assist
+
+__Desktop Web \- Manual__
+
+1. Identify any status messages that can appear on this page/screen\. 
+	- Status messages are defined as a change in content: 
+		- That provides information to the user on the success or results of an action \(e\.g\. "Request submitted"\), on the waiting state of an application \(e\.g\. a content loading indicator\), on the progress of a process \(e\.g\. a file download indicator\), or on the existence of errors \(e\.g\. error message or failure to load page content or a process failure\)\.
+		- Does not involve a change in focus such as moving focus to the message, to another window or tab, or opening a new page\.
+		- See [status message examples [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html#examples)](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html#examples)\.
+2. Trigger each status message and confirm that the newly added status message is announced by NVDA\. 
+
+__Issue Descriptions__
+
+- Status message is not automatically announced by the screen reader\. \(status\-msg\-not\-auto\-announced, "issue", serious\)
+
+__Best Practices__
+
+No best practices
+
+__2\.4\.2\.a Titles on Pages__
+
+__Overview__
+
+- General \- Screens must have descriptive and informative titles\.
+- HTML \- Screens must have descriptive and informative titles\.
+
+__Testing Methodology__
+
+__Desktop Web \- Manual__
+
+__NOTE:__ If a page is missing a <title> element in the <head>, the automated tests in axe Auditor \(axe\-core rules\) will create an issue\.
+
+1. Ensure the value provided in the <title> element properly describes the content or purpose of the page\.
+2. __Best Practice:__ It is a best practice that the page title is unique\.
+
+__Recommended tools to reveal a page title__
+
+Look at / hover over the browser "tab"\.
+
+Code inspection in browser inspection tools:
+
+- Chrome Developer Tools
+- Firefox Web Developer Tools
+
+Bookmarklets:
+
+- [ANDI bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://www.ssa.gov/accessibility/andi/help/install.html)](https://www.ssa.gov/accessibility/andi/help/install.html)
+- [Paul Adam Page Title bookmarklet [![opens in a new window](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANBAMAAACAxflPAAAAD1BMVEX///8BLMwBLMwBLMwBLMzPU4wZAAAABHRSTlMATL/leS62vgAAAEFJREFUCJljYGBQcXFxUWBgYHBkYGB0ANIOzMYGYJqBGUiruDgwGABpR6A4A5AGQgOQnANUvQNUP0QHAsNMg5oOAE00Cvw94JmgAAAAAElFTkSuQmCC)](https://pauljadam.com/bookmarklets.html)](https://pauljadam.com/bookmarklets.html)
+
+__Desktop Web \- Assistive Technology__
+
+__Screen reader testing is optional for this checkpoint\.__
+
+1. With NVDA turned on, load or reload the webpage\.
+2. Ensure the page title spoken is an accurate description of the screen's content or purpose\.
+3. __Best Practice:__ It is a best practice that the page title is unique\.
+
+__Issue Descriptions__
+
+- The TITLE element on this page is empty\. \(title\-empty, "issue", serious\)
+- This page is missing a TITLE element\. \(title\-missing, "issue", serious\)
+- There is no screen title or main heading at the beginning of the screen to identify the purpose of the screen\. \(title\-missing\-native\-mobile, "issue", serious\)
+- The TITLE element on this page does not identify the contents or purpose of the page\. \(title\-not\-meaningful, "issue", serious\)
+- The screen title or main heading does not identify the purpose of the screen\. \(title\-not\-meaningful\-native\-mobile, "issue", serious\)
+
+__Best Practices__
+
+- Unique page titles \- Each page title on a site should be unique within the website or cohesive context of a website\. \(title\-not\-unique, "best\-practice", moderate, September 3, 2015\)
+

@@ -87,6 +87,7 @@ export function inferTypeSlug(tabName: string): ActiveTypeSlug {
   if (/metodolog/.test(n)) return "metodologias";
   if (/herramient|tool/.test(n)) return "herramientas";
   if (/plantilla|template|checklist/.test(n)) return "plantillas";
+  if (/deque/.test(n)) return "deque";
   if ((ACTIVE_TYPE_SLUGS as readonly string[]).includes(n)) {
     return n as ActiveTypeSlug;
   }
