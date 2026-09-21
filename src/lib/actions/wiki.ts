@@ -1,7 +1,5 @@
 "use server";
 
-import path from "node:path";
-import { pathToFileURL } from "node:url";
 import * as XLSX from "xlsx";
 import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
@@ -16,37 +14,14 @@ import {
 } from "@/lib/import/auto-map";
 import type { ImportSummary, WikiSeedSummary } from "@/lib/import/types";
 import { mergeSummaries, upsertImportedRows } from "@/lib/import/upsert-rows";
+import {
+  seedApproachWiki,
+  dedupePendingReindex,
+  loadApproachWikiItemsFromBuffer,
+  isWikiApproachesWorkbook,
+} from "@/lib/import/seed-approaches-mod";
 
 const MAX_EXCEL_BYTES = 20 * 1024 * 1024;
-
-async function loadSeedModule(): Promise<{
-  seedApproachWiki: (
-    supabase: ReturnType<typeof createAdminClient>,
-    options: {
-      ownerId: string | null;
-      enqueueReindex: boolean;
-      items?: unknown[];
-    }
-  ) => Promise<WikiSeedSummary>;
-  dedupePendingReindex: (
-    supabase: ReturnType<typeof createAdminClient>
-  ) => Promise<number>;
-  loadApproachWikiItemsFromBuffer: (
-    buffer: Buffer,
-    fileName: string
-  ) => { file: string; items: unknown[]; workbook: XLSX.WorkBook };
-  isWikiApproachesWorkbook: (workbook: XLSX.WorkBook) => boolean;
-}> {
-  const href = pathToFileURL(
-    path.join(process.cwd(), "scripts", "seed-approaches.mjs")
-  ).href;
-  const seed = await import(href);
-  const parseHref = pathToFileURL(
-    path.join(process.cwd(), "scripts", "parse-approaches.mjs")
-  ).href;
-  const parse = await import(parseHref);
-  return { ...seed, ...parse };
-}
 
 function sheetToRows(sheet: XLSX.WorkSheet): {
   rowNumber: number;
@@ -116,12 +91,6 @@ export async function importExcelUpload(
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const {
-      seedApproachWiki,
-      dedupePendingReindex,
-      loadApproachWikiItemsFromBuffer,
-      isWikiApproachesWorkbook,
-    } = await loadSeedModule();
     const admin = createAdminClient();
     const parsed = loadApproachWikiItemsFromBuffer(buffer, file.name);
     const wikiLike =

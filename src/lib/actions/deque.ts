@@ -1,43 +1,18 @@
 "use server";
 
-import path from "node:path";
-import { pathToFileURL } from "node:url";
 import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { audit } from "@/lib/audit";
 import { runPendingJobs } from "@/lib/sync/jobs";
+import {
+  loadDequeItemsFromBuffers,
+  loadDequeItemsFromFolder,
+} from "@/lib/import/parse-deque-docs";
+import { seedDeque, dedupePendingReindex } from "@/lib/import/seed-deque-mod";
 import type { WikiSeedSummary } from "@/lib/import/types";
 
 const MAX_DOCX_BYTES = 20 * 1024 * 1024;
-
-async function loadDequeModules(): Promise<{
-  loadDequeItemsFromFolder: (
-    cwd?: string
-  ) => Promise<{ file: string; items: unknown[] }>;
-  loadDequeItemsFromBuffers: (
-    files: { fileName: string; buffer: Buffer }[]
-  ) => Promise<{ file: string; items: unknown[] }>;
-  seedDeque: (
-    supabase: ReturnType<typeof createAdminClient>,
-    options: {
-      ownerId: string | null;
-      enqueueReindex: boolean;
-      items?: unknown[];
-    }
-  ) => Promise<WikiSeedSummary>;
-  dedupePendingReindex: (
-    supabase: ReturnType<typeof createAdminClient>
-  ) => Promise<number>;
-}> {
-  const parse = await import(
-    pathToFileURL(path.join(process.cwd(), "scripts", "parse-deque.mjs")).href
-  );
-  const seed = await import(
-    pathToFileURL(path.join(process.cwd(), "scripts", "seed-deque.mjs")).href
-  );
-  return { ...parse, ...seed };
-}
 
 async function finishImport(
   profile: { id: string; email: string },
@@ -70,8 +45,6 @@ export async function importDequeFolder(): Promise<
 > {
   const profile = await requireProfile("admin");
   try {
-    const { loadDequeItemsFromFolder, seedDeque, dedupePendingReindex } =
-      await loadDequeModules();
     const admin = createAdminClient();
     const parsed = await loadDequeItemsFromFolder(process.cwd());
     if (parsed.items.length === 0) {
@@ -116,8 +89,6 @@ export async function importDequeUpload(
   }
 
   try {
-    const { loadDequeItemsFromBuffers, seedDeque, dedupePendingReindex } =
-      await loadDequeModules();
     const admin = createAdminClient();
     const parsed = await loadDequeItemsFromBuffers(
       await Promise.all(
