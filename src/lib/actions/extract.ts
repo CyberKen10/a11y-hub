@@ -5,12 +5,14 @@ import { requireProfile } from "@/lib/auth";
 import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
 import {
+  aiProvider,
   assertAiConfigured,
   chatModel,
-  chatModelId,
+  extractModelIds,
   extractProviderOptions,
+  googleModel,
 } from "@/lib/ai";
-import { publicAiError, type ChatStage } from "@/lib/ai-errors";
+import { isModelOverloaded, publicAiError, type ChatStage } from "@/lib/ai-errors";
 import {
   knowledgeItemsSchema,
   type ExtractionResult,
@@ -33,6 +35,16 @@ type ExtractResponse =
   | { ok: false; error: string };
 
 const MAX_CHARS = 40_000;
+const OVERLOAD_PAUSE_MS = 4_000;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function extractAttemptModels(): string[] {
+  const ids = extractModelIds();
+  return ids.length === 1 ? [ids[0], ids[0]] : ids;
+}
 
 function fail(stage: ChatStage, error: unknown): ExtractResponse {
   const message = publicAiError(stage, error);
@@ -110,18 +122,13 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
     })
     .join("\n");
 
+  const models = extractAttemptModels();
   console.info("[añadir · inicio]", {
     chars: text.length,
-    model: chatModelId(),
+    models,
   });
 
-  let object: { items?: Array<ExtractionResult & { decision: string }> };
-  try {
-    const result = await generateObject({
-      model: chatModel(),
-      schema: knowledgeItemsSchema,
-      providerOptions: extractProviderOptions(),
-      system: `Eres una persona experta en accesibilidad digital. Recibes texto libre: un dictado, notas, acuerdos o un archivo.
+  const system = `Eres una persona experta en accesibilidad digital. Recibes texto libre: un dictado, notas, acuerdos o un archivo.
 
 Tu trabajo: decidir si hay UN tema o VARIOS, y devolver una ficha por cada tema de conocimiento (máximo 10).
 
@@ -152,12 +159,41 @@ Para cada ficha:
 - tags: 2 a 5, minúsculas.
 - Si no hay fuente URL, sources puede ir vacío.
 
-Si no hay ningún tema de conocimiento, devuelve items: [].`,
-      prompt: text,
-    });
-    object = result.object;
-  } catch (error) {
-    return fail("extract", error);
+Si no hay ningún tema de conocimiento, devuelve items: [].`;
+
+  let object: { items?: Array<ExtractionResult & { decision: string }> } | undefined;
+  for (let i = 0; i < models.length; i++) {
+    const modelId = models[i];
+    if (i > 0) {
+      await sleep(OVERLOAD_PAUSE_MS);
+    }
+    console.info("[añadir · extract]", { model: modelId, attempt: i + 1 });
+    try {
+      const result = await generateObject({
+        model: aiProvider === "google" ? googleModel(modelId) : chatModel(),
+        schema: knowledgeItemsSchema,
+        maxRetries: 0,
+        providerOptions: extractProviderOptions(),
+        system,
+        prompt: text,
+      });
+      object = result.object;
+      break;
+    } catch (error) {
+      const canRetry =
+        i < models.length - 1 && isModelOverloaded(error);
+      console.warn("[añadir · extract]", {
+        model: modelId,
+        overloaded: isModelOverloaded(error),
+        retrying: canRetry,
+      });
+      if (!canRetry) {
+        return fail("extract", error);
+      }
+    }
+  }
+  if (!object) {
+    return fail("extract", new Error("No se pudo crear el objeto de fichas."));
   }
 
   try {

@@ -125,6 +125,25 @@ function rawMessage(error: unknown, depth = 0): string {
   }
 }
 
+function isOverloadMessage(m: string): boolean {
+  return (
+    m.includes("high demand") ||
+    m.includes("spikes in demand") ||
+    m.includes("overloaded") ||
+    (m.includes("unavailable") && m.includes("try again later"))
+  );
+}
+
+/** True when Gemini/OpenAI is busy or rate-limited; worth another model or a pause. */
+export function isModelOverloaded(error: unknown): boolean {
+  const m = rawMessage(error).toLowerCase();
+  return (
+    isOverloadMessage(m) ||
+    m.includes("resource_exhausted") ||
+    m.includes("429")
+  );
+}
+
 function hintFor(message: string): string | null {
   const m = message.toLowerCase();
   if (m.includes("por hoy") && m.includes("medianoche utc")) {
@@ -180,6 +199,9 @@ function hintFor(message: string): string | null {
     m.includes("finishreason") && m.includes("safety")
   ) {
     return "El proveedor bloqueó el texto. Revisa si hay contenido recortado o extraño y reintenta.";
+  }
+  if (isOverloadMessage(m)) {
+    return "Gemini está saturado ahora mismo (mucha gente a la vez). Espera 1–2 minutos y reintenta; no hace falta acortar el texto.";
   }
   if (
     m.includes("429") ||

@@ -69,6 +69,21 @@ export function chatModel() {
     : openai(defaults.openai.chat);
 }
 
+export function googleModel(id: string) {
+  return google(id);
+}
+
+/** Chat model first, then a lighter alias if Gemini 3 is saturated. */
+export function extractModelIds(): string[] {
+  if (aiProvider !== "google") return [chatModelId()];
+  const ids = [
+    chatModelId(),
+    process.env.GEMINI_EXTRACT_MODEL?.trim(),
+    "gemini-flash-latest",
+  ].filter((id): id is string => Boolean(id));
+  return [...new Set(ids)];
+}
+
 /** Gemini 3 uses thinkingLevel; budget 0 rompe el chat en 3.x. */
 export function chatProviderOptions() {
   if (aiProvider === "google") {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatClientActionError,
   formatClientChatError,
+  isModelOverloaded,
   publicAiError,
   sanitizeAiError,
 } from "@/lib/ai-errors";
@@ -79,12 +80,26 @@ describe("ai-errors", () => {
     expect(message).toContain("tiempo");
   });
 
-  it("explains a cut-off server action on the client", () => {
-    const message = formatClientActionError(
+  it("explains Gemini high demand on the extract layer", () => {
+    const message = publicAiError(
       "extract",
-      new Error("An error occurred in the Server Action.")
+      new Error(
+        "Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+      )
     );
     expect(message).toContain("[crear fichas]");
-    expect(message).toContain("Se cortó la petición");
+    expect(message).toContain("saturado");
+    expect(message).not.toContain("Acorta el texto");
+  });
+
+  it("treats high demand as an overload worth retrying", () => {
+    expect(
+      isModelOverloaded(
+        new Error("AI_APICallError: This model is currently experiencing high demand.")
+      )
+    ).toBe(true);
+    expect(isModelOverloaded(new Error("No object generated: schema"))).toBe(
+      false
+    );
   });
 });
