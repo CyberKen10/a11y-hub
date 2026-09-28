@@ -77,6 +77,14 @@ export function chatProviderOptions() {
   return undefined;
 }
 
+/** Faster than chat: meeting .txt can be long and was hitting the 60s cap. */
+export function extractProviderOptions() {
+  if (aiProvider === "google") {
+    return { google: { thinkingConfig: { thinkingLevel: "low" as const } } };
+  }
+  return undefined;
+}
+
 export function embeddingModel() {
   return aiProvider === "google"
     ? google.embedding(defaults.google.embedding)

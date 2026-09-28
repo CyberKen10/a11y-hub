@@ -437,6 +437,7 @@ export function looksLikeApproach(
   metadata: Record<string, unknown> | null | undefined,
   typeSlug?: string | null
 ): boolean {
+  if (typeSlug === "deque") return false;
   if (typeSlug === "approaches") return true;
   if (!metadata) return false;
   return Boolean(
@@ -484,15 +485,14 @@ export function formatCompanyLine(
 }
 
 export function formatSourceFicha(
-  metadata: Record<string, unknown> | null | undefined
+  metadata: Record<string, unknown> | null | undefined,
+  typeSlug?: string | null
 ): string {
-  return [
-    formatWcagLine(metadata),
-    formatApprovalLine(metadata),
-    formatCompanyLine(metadata),
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const parts = [formatWcagLine(metadata)];
+  if (typeSlug !== "deque") {
+    parts.push(formatApprovalLine(metadata), formatCompanyLine(metadata));
+  }
+  return parts.filter(Boolean).join("\n");
 }
 
 export function stripInternalMetadata(

@@ -4,7 +4,6 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleAlert, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { extractProposal } from "@/lib/actions/extract";
 import { saveItem } from "@/lib/actions/items";
 import { parseWcagSuccessCriteria } from "@/lib/wcag";
 import { withAllComposerMetadata } from "@/lib/approaches";
@@ -95,11 +94,29 @@ export function KnowledgeComposer({
     setStep("analyzing");
     startTransition(async () => {
       try {
-        const result = await extractProposal(rawText);
-        if (!result.ok) {
-          showError(result.error);
+        const response = await fetch("/api/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: rawText }),
+        });
+        const payload = (await response.json().catch(() => null)) as
+          | { ok: true; items: ComposerDraft[] }
+          | { ok: false; error: string }
+          | null;
+        if (!payload) {
+          showError(
+            formatClientActionError(
+              "extract",
+              await response.text().catch(() => "")
+            )
+          );
           return;
         }
+        if (!payload.ok) {
+          showError(payload.error);
+          return;
+        }
+        const result = payload;
         if (result.items.length === 0) {
           showError("No hay contenido para convertir en fichas.");
           return;
@@ -288,8 +305,9 @@ export function KnowledgeComposer({
         {step === "analyzing" && (
           <div className="flex flex-col items-center gap-3 py-12" role="status">
             <Loader2 className="size-8 animate-spin" aria-hidden="true" />
-            <p className="text-sm text-muted-foreground">
-              Preparando las fichas…
+            <p className="text-center text-sm text-muted-foreground">
+              Preparando las fichas… Si el .txt es largo, puede tardar un par de
+              minutos.
             </p>
           </div>
         )}

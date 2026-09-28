@@ -8,7 +8,7 @@ import {
   assertAiConfigured,
   chatModel,
   chatModelId,
-  chatProviderOptions,
+  extractProviderOptions,
 } from "@/lib/ai";
 import { publicAiError, type ChatStage } from "@/lib/ai-errors";
 import {
@@ -120,7 +120,7 @@ export async function extractProposal(rawText: string): Promise<ExtractResponse>
     const result = await generateObject({
       model: chatModel(),
       schema: knowledgeItemsSchema,
-      providerOptions: chatProviderOptions(),
+      providerOptions: extractProviderOptions(),
       system: `Eres una persona experta en accesibilidad digital. Recibes texto libre: un dictado, notas, acuerdos o un archivo.
 
 Tu trabajo: decidir si hay UN tema o VARIOS, y devolver una ficha por cada tema de conocimiento (máximo 10).

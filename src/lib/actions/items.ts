@@ -119,18 +119,20 @@ export async function saveItem(raw: KnowledgeItemInput): Promise<ActionResult> {
   }
 
   let metadata = input.metadata as Record<string, unknown>;
-  if (input.id) {
-    const { data: current } = await supabase
-      .from("knowledge_items")
-      .select("metadata")
-      .eq("id", input.id)
-      .single();
-    metadata = mergePreservedApproval(
-      metadata,
-      (current?.metadata ?? {}) as Record<string, unknown>
-    );
-  } else {
-    metadata = mergePreservedApproval(metadata, {});
+  if (input.type_slug === "approaches") {
+    if (input.id) {
+      const { data: current } = await supabase
+        .from("knowledge_items")
+        .select("metadata")
+        .eq("id", input.id)
+        .single();
+      metadata = mergePreservedApproval(
+        metadata,
+        (current?.metadata ?? {}) as Record<string, unknown>
+      );
+    } else {
+      metadata = mergePreservedApproval(metadata, {});
+    }
   }
 
   const fields = {
@@ -200,10 +202,16 @@ export async function approveApproach(itemId: string): Promise<ActionResult> {
 
   const { data: item } = await supabase
     .from("knowledge_items")
-    .select("id, metadata")
+    .select("id, metadata, knowledge_types(slug)")
     .eq("id", itemId)
     .single();
   if (!item) return { ok: false, error: "Elemento no encontrado." };
+  const typeSlug = (
+    item.knowledge_types as unknown as { slug?: string } | null
+  )?.slug;
+  if (typeSlug !== "approaches") {
+    return { ok: false, error: "Solo se aprueban fichas de Approaches." };
+  }
 
   const current = (item.metadata ?? {}) as Record<string, unknown>;
   if (userAlreadyApproved(current, profile.id)) {

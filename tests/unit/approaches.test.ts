@@ -7,6 +7,7 @@ import {
   formatSourceFicha,
   getApprovalState,
   listApprovers,
+  looksLikeApproach,
   mergePreservedApproval,
   queryPrefersPending,
   withAllComposerMetadata,
@@ -116,6 +117,23 @@ describe("formatSourceFicha", () => {
     expect(text).toContain("Ya aprobaron: Yen, Yudi");
     expect(text).toContain("Team: Valid Bug");
     expect(text).toContain("UTest: N/A");
+  });
+
+  it("omits approval state for Deque fichas", () => {
+    const text = formatSourceFicha(
+      { CP: "1.3.1", variants: "a, b", Origen: "SC other.docx" },
+      "deque"
+    );
+    expect(text).toContain("SC WCAG: 1.3.1");
+    expect(text).not.toContain("Estado:");
+    expect(text).not.toContain("Sin aprobar");
+  });
+});
+
+describe("looksLikeApproach", () => {
+  it("never treats Deque as an approach to approve", () => {
+    expect(looksLikeApproach({ Team: "Valid Bug" }, "deque")).toBe(false);
+    expect(looksLikeApproach({}, "approaches")).toBe(true);
   });
 });
 

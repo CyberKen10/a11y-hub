@@ -247,12 +247,18 @@ function withApproval(
   source: RetrievedSource,
   metadata: Record<string, unknown>
 ): RetrievedSource {
+  if (source.type_slug && source.type_slug !== "approaches") {
+    return {
+      ...source,
+      ficha: formatSourceFicha(metadata, source.type_slug),
+    };
+  }
   const state = getApprovalState(metadata);
   return {
     ...source,
     approval_state: state,
     approval_label: APPROVAL_LABEL[state],
-    ficha: formatSourceFicha(metadata),
+    ficha: formatSourceFicha(metadata, source.type_slug),
   };
 }
 

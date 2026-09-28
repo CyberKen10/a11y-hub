@@ -12,7 +12,7 @@ import { BrandLogo } from "@/components/shell/brand-logo";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import type { KnowledgeType } from "@/lib/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export default async function AppLayout({
   children,
