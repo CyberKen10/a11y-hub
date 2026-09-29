@@ -1,6 +1,6 @@
 "use server";
 
-import { generateObject } from "ai";
+import { generateText } from "ai";
 import { requireProfile } from "@/lib/auth";
 import { consumeAiQuota } from "@/lib/ai-quota";
 import { createClient } from "@/lib/supabase/server";
@@ -13,10 +13,8 @@ import {
   googleModel,
 } from "@/lib/ai";
 import { isModelOverloaded, publicAiError, type ChatStage } from "@/lib/ai-errors";
-import {
-  knowledgeItemsSchema,
-  type ExtractionResult,
-} from "@/lib/schemas";
+import { parseExtractedItems } from "@/lib/extract-json";
+import type { ExtractionResult } from "@/lib/schemas";
 import { ACTIVE_TYPE_SLUG_LIST } from "@/lib/knowledge-sections";
 import { composerFieldsFor } from "@/lib/approaches";
 import {
@@ -44,6 +42,13 @@ function sleep(ms: number) {
 function extractAttemptModels(): string[] {
   const ids = extractModelIds();
   return ids.length === 1 ? [ids[0], ids[0]] : ids;
+}
+
+function isExtractRetryable(error: unknown): boolean {
+  if (isModelOverloaded(error)) return true;
+  const message = error instanceof Error ? error.message : String(error);
+  const m = message.toLowerCase();
+  return m.includes("did not match schema") || m.includes("no object generated");
 }
 
 function fail(stage: ChatStage, error: unknown): ExtractResponse {
@@ -159,7 +164,9 @@ Para cada ficha:
 - tags: 2 a 5, minúsculas.
 - Si no hay fuente URL, sources puede ir vacío.
 
-Si no hay ningún tema de conocimiento, devuelve items: [].`;
+Responde SOLO un JSON válido, sin markdown y sin texto alrededor:
+{"items":[{"decision":"...","type_slug":"approaches","title":"...","summary":"...","content":"...","tags":["..."],"metadata":{},"sources":[]}]}
+Si no hay ningún tema de conocimiento, {"items":[]}.`;
 
   let object: { items?: Array<ExtractionResult & { decision: string }> } | undefined;
   for (let i = 0; i < models.length; i++) {
@@ -169,19 +176,22 @@ Si no hay ningún tema de conocimiento, devuelve items: [].`;
     }
     console.info("[añadir · extract]", { model: modelId, attempt: i + 1 });
     try {
-      const result = await generateObject({
+      const result = await generateText({
         model: aiProvider === "google" ? googleModel(modelId) : chatModel(),
-        schema: knowledgeItemsSchema,
         maxRetries: 0,
         providerOptions: extractProviderOptions(),
         system,
         prompt: text,
       });
-      object = result.object;
+      object = {
+        items: parseExtractedItems(
+          result.text.trim() || result.reasoningText?.trim() || ""
+        ),
+      };
       break;
     } catch (error) {
       const canRetry =
-        i < models.length - 1 && isModelOverloaded(error);
+        i < models.length - 1 && isExtractRetryable(error);
       console.warn("[añadir · extract]", {
         model: modelId,
         overloaded: isModelOverloaded(error),

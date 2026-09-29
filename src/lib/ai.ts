@@ -73,13 +73,16 @@ export function googleModel(id: string) {
   return google(id);
 }
 
-/** Chat model first, then a lighter alias if Gemini 3 is saturated. */
+/**
+ * Same model as chat first. gemini-flash-latest aliases to the same Flash
+ * family (often 503 together). Lite is a different pool.
+ */
 export function extractModelIds(): string[] {
   if (aiProvider !== "google") return [chatModelId()];
   const ids = [
     chatModelId(),
     process.env.GEMINI_EXTRACT_MODEL?.trim(),
-    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
   ].filter((id): id is string => Boolean(id));
   return [...new Set(ids)];
 }
@@ -92,12 +95,9 @@ export function chatProviderOptions() {
   return undefined;
 }
 
-/** Faster than chat: meeting .txt can be long and was hitting the 60s cap. */
+/** Same options as chat. Structured JSON mode + thinking was returning HTTP 503. */
 export function extractProviderOptions() {
-  if (aiProvider === "google") {
-    return { google: { thinkingConfig: { thinkingLevel: "low" as const } } };
-  }
-  return undefined;
+  return chatProviderOptions();
 }
 
 export function embeddingModel() {
